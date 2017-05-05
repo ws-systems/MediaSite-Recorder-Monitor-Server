@@ -5,8 +5,8 @@ body {
 }
 
 li.nav-item {
-    padding-left: .75em;
-    padding-right: .75em;
+    padding-left: .5em;
+    padding-right: .5em;
 }
 
 #view-container {

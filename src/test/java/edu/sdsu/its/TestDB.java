@@ -1,5 +1,5 @@
-import edu.sdsu.its.DB;
-import edu.sdsu.its.Vault;
+package edu.sdsu.its;
+
 import org.apache.log4j.Logger;
 import org.junit.Test;
 

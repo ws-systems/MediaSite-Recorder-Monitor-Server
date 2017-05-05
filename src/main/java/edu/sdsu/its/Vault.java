@@ -22,7 +22,7 @@ public class Vault {
     final private static String VAULT_ADDR = System.getenv("VAULT_ADDR").endsWith("/") ? System.getenv("VAULT_ADDR") : System.getenv("VAULT_ADDR") + "/";
     final private static String ROLE_ID = System.getenv("VAULT_ROLE");
     final private static String SECRET_ID = System.getenv("VAULT_SECRET");
-    final private static String APP_NAME = System.getenv("WELCOME_APP");
+    final private static String APP_NAME = System.getenv("MS_APP");
 
     final private static Logger LOGGER = Logger.getLogger(Vault.class);
 

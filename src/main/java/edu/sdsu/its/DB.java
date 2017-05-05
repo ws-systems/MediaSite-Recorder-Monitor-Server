@@ -3,10 +3,7 @@ package edu.sdsu.its;
 import edu.sdsu.its.API.Models.User;
 import org.apache.log4j.Logger;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 /**
  * @author Tom Paulus
@@ -72,6 +69,38 @@ public class DB {
         }.start();
     }
 
+    public static String getPreference(final String name) {
+        Connection connection = getConnection();
+        Statement statement = null;
+        String preference = null;
+
+        try {
+            statement = connection.createStatement();
+            final String sql = "SELECT value FROM preferences WHERE setting = '" + name + "';";
+            LOGGER.info(String.format("Executing SQL Query - \"%s\"", sql));
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            if (resultSet.next()) {
+                preference = resultSet.getString("value");
+            }
+
+            resultSet.close();
+        } catch (SQLException e) {
+            LOGGER.error(String.format("Problem querying DB for Preference with name \"%s\"", name), e);
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                    connection.close();
+                } catch (SQLException e) {
+                    LOGGER.warn("Problem Closing Statement", e);
+                }
+            }
+        }
+
+        return preference;
+    }
+
     /**
      * Get an Array of Users who match the specified criteria.
      * id is the Internal Identifier
@@ -85,7 +114,7 @@ public class DB {
         return null;
     }
 
-    public static void createNewUser(User user){
+    public static void createNewUser(User user) {
         // TODO
     }
 }
