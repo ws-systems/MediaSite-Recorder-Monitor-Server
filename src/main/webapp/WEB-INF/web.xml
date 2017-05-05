@@ -7,42 +7,22 @@
     <display-name>MediaSite Recorder Monitor</display-name>
 
     <servlet>
-        <servlet-name>com.techcasita.jersey.MyApplication</servlet-name>
+        <servlet-name>edu.sdsu.its.mediasite.recorder-mointor</servlet-name>
         <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
 
-        <!-- Register JAX-RS Application, if needed.
-        <init-param>
-            <param-name>javax.ws.rs.Application</param-name>
-            <param-value>my.package.MyApplication</param-value>
-        </init-param>
-        -->
-
-        <!-- Register resources and providers under my.package.-->
         <init-param>
             <param-name>jersey.config.server.provider.packages</param-name>
-            <param-value>com.techcasita.jersey</param-value>
+            <param-value>edu.sdsu.its</param-value>
         </init-param>
 
-
-        <!-- Register my custom provider (not needed if it's in my.package) AND LoggingFilter.
-        <init-param>
-            <param-name>jersey.config.server.provider.classnames</param-name>
-            <param-value>my.package.SecurityRequestFilter;org.glassfish.jersey.filter.LoggingFilter</param-value>
-        </init-param>
-        -->
-
-        <!-- Enable Tracing support.
-        <init-param>
-            <param-name>jersey.config.server.tracing</param-name>
-            <param-value>ALL</param-value>
-        </init-param>
-        -->
         <load-on-startup>1</load-on-startup>
     </servlet>
-
+    <listener>
+        <listener-class>edu.sdsu.its.Init</listener-class>
+    </listener>
     <servlet-mapping>
-        <servlet-name>com.techcasita.jersey.MyApplication</servlet-name>
-        <url-pattern>/rest/*</url-pattern>
+        <servlet-name>edu.sdsu.its.mediasite.recorder-mointor</servlet-name>
+        <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

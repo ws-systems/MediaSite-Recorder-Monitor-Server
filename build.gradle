@@ -19,6 +19,10 @@ dependencies {
     // WebServer
     compile 'javax.ws.rs:javax.ws.rs-api:2.0'
     compile 'org.glassfish.jersey.containers:jersey-container-servlet:2.22.1'
+    providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
+
+    // DB
+    compile 'mysql:mysql-connector-java:5.1.38'
 
     // Web Requests (Outbound)
     compile 'com.google.code.gson:gson:2.5'
@@ -34,6 +38,9 @@ dependencies {
 
     // Email and Reporting
     compile 'org.apache.commons:commons-email:1.4'
+
+    // Scheduler
+    compile group: 'org.quartz-scheduler', name: 'quartz', version: '2.2.3'
 
     // Unit Tests
     testCompile group: 'junit', name: 'junit', version: '4.11'

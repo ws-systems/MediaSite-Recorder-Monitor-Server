@@ -84,4 +84,8 @@ public class DB {
         // TODO
         return null;
     }
+
+    public static void createNewUser(User user){
+        // TODO
+    }
 }

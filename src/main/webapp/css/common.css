@@ -4,6 +4,11 @@ body {
     padding-top: 4.5rem;
 }
 
+li.nav-item {
+    padding-left: .75em;
+    padding-right: .75em;
+}
+
 #view-container {
     padding-top: 1rem;
 }
@@ -25,11 +30,7 @@ body {
     color: #999 !important;
 }
 
-.alert {
-    max-width: 300px;
-    margin: auto auto 0;
-}
-
+/* Sorting and related Icons */
 #sorttable_sortfwdind,
 #sorttable_sortrevind {
     display: none;
