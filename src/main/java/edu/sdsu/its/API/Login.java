@@ -21,7 +21,6 @@ import javax.ws.rs.core.Response;
  */
 @Path("login")
 public class Login {
-    private static final Logger LOGGER = Logger.getLogger(Login.class);
     private final Gson mGson;
 
     public Login() {
