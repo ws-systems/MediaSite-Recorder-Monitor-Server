@@ -19,7 +19,7 @@ import javax.ws.rs.core.Response;
  * @author Tom Paulus
  *         Created on 5/20/17.
  */
-@Path("/")
+@Path("login")
 public class Login {
     private static final Logger LOGGER = Logger.getLogger(Login.class);
     private final Gson mGson;
@@ -36,7 +36,6 @@ public class Login {
      * @param payload {@link String} Login JSON Object - A User object with the Username(username) and Password {@see Models.User}
      * @return {@link Response} User JSON Object {@see Models.User} and Session Token (Header)
      */
-    @Path("login")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

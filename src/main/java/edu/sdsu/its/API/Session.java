@@ -108,10 +108,10 @@ public class Session {
         final String tokenUsername = key[2];
         LOGGER.debug("Token Username: " + tokenUsername);
 
-        final User user = DB.getUser("username = '" + tokenUsername + "'")[0];
-        if (user != null) {
+        final User[] users = DB.getUser("email = '" + tokenUsername + "'");
+        if (users.length > 0 && users[0].getEmail().equals(tokenUsername)) {
             LOGGER.info(String.format("Token for User (\"%s\") is valid!", tokenUsername));
-            return user;
+            return users[0];
         } else {
             LOGGER.info(String.format("Token Validation Failed - User (\"%s\") does not exist", tokenUsername));
             return null;
