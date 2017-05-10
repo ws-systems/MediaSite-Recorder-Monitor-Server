@@ -85,7 +85,7 @@ public class Init implements ServletContextListener {
 
         try {
             Schedule.getScheduler().clear();
-            Schedule.getScheduler().shutdown(true);
+            Schedule.getScheduler().shutdown(false);
         } catch (SchedulerException e) {
             LOGGER.error("Problem shutting down scheduler", e);
         }
