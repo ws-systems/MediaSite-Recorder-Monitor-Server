@@ -27,7 +27,7 @@ public class Init implements ServletContextListener {
     private static final int DEFAULT_ID = 550046348;
     private static final String DEFAULT_FIRST_NAME = "Administrator";
     private static final String DEFAULT_LAST_NAME = "User";
-    private static final String DEFAULT_EMAIL = "";
+    private static final String DEFAULT_EMAIL = "admin";
     private static final String DEFAULT_PASSWORD = "changeme";
 
     /**
@@ -40,7 +40,6 @@ public class Init implements ServletContextListener {
         if (users.length == 0) {
             LOGGER.info("No users were found in the DB. Creating default User.");
             User user = new User(DEFAULT_FIRST_NAME, DEFAULT_LAST_NAME, DEFAULT_EMAIL,DEFAULT_PASSWORD);
-            // int id, String firstName, String lastName, String email, boolean clockable, boolean admin, boolean instructional_designer
             DB.createNewUser(user);
 
             LOGGER.info(String.format("Initial Staff Created. ID: \"%d\"", DEFAULT_ID));

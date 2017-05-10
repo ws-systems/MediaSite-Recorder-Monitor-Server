@@ -2,8 +2,11 @@ package edu.sdsu.its;
 
 import edu.sdsu.its.API.Models.User;
 import org.apache.log4j.Logger;
+import org.jasypt.util.password.StrongPasswordEncryptor;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Tom Paulus
@@ -11,6 +14,7 @@ import java.sql.*;
  */
 public class DB {
     private static final Logger LOGGER = Logger.getLogger(DB.class);
+    private static final StrongPasswordEncryptor PASSWORD_ENCRYPTOR = new StrongPasswordEncryptor();
 
     /**
      * Create and return a new DB Connection
@@ -110,11 +114,103 @@ public class DB {
      * @return {@link User[]} Array of User Objects
      */
     public static User[] getUser(String restriction) {
-        // TODO
-        return null;
+        Connection connection = getConnection();
+        Statement statement = null;
+        List<User> users = new ArrayList<>();
+
+        try {
+            statement = connection.createStatement();
+            restriction = restriction == null || restriction.isEmpty() ? "" : " WHERE " + restriction;
+            final String sql = "SELECT * FROM users " + restriction + " ORDER BY last_name ASC;";
+            LOGGER.info(String.format("Executing SQL Query - \"%s\"", sql));
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            while (resultSet.next()) {
+                User user = new User(
+                        resultSet.getString("first_name"),
+                        resultSet.getString("last_name"),
+                        resultSet.getString("email"),
+                        resultSet.getBoolean("notify"));
+                users.add(user);
+            }
+
+            LOGGER.debug(String.format("Retrieved %d users from DB", users.size()));
+            resultSet.close();
+        } catch (SQLException e) {
+            LOGGER.error("Problem querying DB for Users", e);
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                    connection.close();
+                } catch (SQLException e) {
+                    LOGGER.warn("Problem Closing Statement", e);
+                }
+            }
+        }
+
+        return users.toArray(new User[]{});
     }
 
-    public static void createNewUser(User user) {
-        // TODO
+    /**
+     * Login a Provided User. The User is fetched, and their saved password is compared to the supplied password.
+     *
+     * @param email    {@link String} Email (Equivalent to Username)
+     * @param password {@link String} Password, plaintext
+     * @return {@link User} User if username exists and password valid, else null.
+     */
+    public static User login(String email, String password) {
+        Connection connection = getConnection();
+        Statement statement = null;
+        User user = null;
+        String passHash = "";
+
+        try {
+            statement = connection.createStatement();
+            final String sql = "SELECT * FROM users WHERE email='" + sanitize(email.toLowerCase()) + "';";
+            LOGGER.info(String.format("Executing SQL Query - \"%s\"", sql));
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            if (resultSet.next()) {
+                user = new User(
+                        resultSet.getString("first_name"),
+                        resultSet.getString("last_name"),
+                        resultSet.getString("email"),
+                        resultSet.getBoolean("notify"));
+
+                passHash = resultSet.getString("password");
+            }
+            resultSet.close();
+        } catch (SQLException e) {
+            LOGGER.error("Problem querying DB for User by Username", e);
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                    connection.close();
+                } catch (SQLException e) {
+                    LOGGER.warn("Problem Closing Statement", e);
+                }
+            }
+        }
+
+
+        return password != null && !passHash.isEmpty() && PASSWORD_ENCRYPTOR.checkPassword(password, passHash) ? user : null;
+    }
+
+    public static boolean createNewUser(User user) {
+        if (DB.getUser("email = '" + sanitize(user.getEmail().toLowerCase()) + "'").length > 0)
+            return false;
+
+        final String sql = "INSERT INTO users(email, first_name, last_name, password, notify) VALUES ( '" + sanitize(user.getEmail().toLowerCase()) +
+                "', '" + sanitize(user.getFirstName()) + "', '" + sanitize(user.getLastName()) + "', " +
+                "'" + PASSWORD_ENCRYPTOR.encryptPassword(user.getPassword()) + "', " + (user.getNotify() ? 1 : 0) + ");";
+
+        executeStatement(sql);
+        return true;
+    }
+
+    private static String sanitize(final String s) {
+        return s.replace("'", "");
     }
 }
