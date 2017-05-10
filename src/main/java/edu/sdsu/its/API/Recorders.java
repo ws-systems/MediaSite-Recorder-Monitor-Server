@@ -21,19 +21,13 @@ public class Recorders {
     /**
      * Get All recorders from the DB
      *
-     * @param sessionToken {@link String} Session Authentication Header
      * @return {@link Response} Recorder Array (empty if none in DB)
      */
     @GET
     @Consumes(MediaType.WILDCARD)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllRecorders(@HeaderParam("session") final String sessionToken) {
-        User user = Session.validate(sessionToken);
+    public Response getAllRecorders() {
         Gson gson = new Gson();
-        if (user == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(gson.toJson(new SimpleMessage("Error", "Invalid Session Token"))).build();
-        }
-
         LOGGER.info("[GET] Received Request for All Recorders");
 
 
@@ -46,22 +40,15 @@ public class Recorders {
     /**
      * Get a specific recorder from the DB
      *
-     * @param sessionToken {@link String} Session Authentication Header
-     * @param recorderID   {@link String} Recorder ID to return
+     * @param recorderID {@link String} Recorder ID to return
      * @return {@link Response} Recorder Object if found, else SimpleMessage with Error
      */
     @Path("/{id}")
     @GET
     @Consumes(MediaType.WILDCARD)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getRecorder(@HeaderParam("session") final String sessionToken,
-                                @PathParam("id") String recorderID) {
-        User user = Session.validate(sessionToken);
+    public Response getRecorder(@PathParam("id") String recorderID) {
         Gson gson = new Gson();
-        if (user == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(gson.toJson(new SimpleMessage("Error", "Invalid Session Token"))).build();
-        }
-
         LOGGER.info("[GET] Received Request for Recorders Where ID=" + (recorderID == null ? "" : recorderID));
 
 
