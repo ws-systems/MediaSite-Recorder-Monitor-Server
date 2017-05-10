@@ -7,9 +7,6 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import edu.sdsu.its.DB;
 import org.apache.log4j.Logger;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-
 /**
  * @author Tom Paulus
  *         Created on 5/5/17.
@@ -77,6 +74,50 @@ public class Recorders {
                     ", PhysicalAddress='" + PhysicalAddress + '\'' +
                     ", ImageVersion='" + ImageVersion + '\'' +
                     '}';
+        }
+
+        public Recorder(String id, String name, String description, String serialNumber, String version,
+                        String lastVersionUpdateDate, String physicalAddress, String imageVersion) {
+            Id = id;
+            Name = name;
+            Description = description;
+            SerialNumber = serialNumber;
+            Version = version;
+            LastVersionUpdateDate = lastVersionUpdateDate;
+            PhysicalAddress = physicalAddress;
+            ImageVersion = imageVersion;
+        }
+
+        public String getId() {
+            return Id;
+        }
+
+        public String getName() {
+            return Name;
+        }
+
+        public String getDescription() {
+            return Description != null ? Description : "";
+        }
+
+        public String getSerialNumber() {
+            return SerialNumber;
+        }
+
+        public String getVersion() {
+            return Version;
+        }
+
+        public String getLastVersionUpdateDate() {
+            return LastVersionUpdateDate;
+        }
+
+        public String getPhysicalAddress() {
+            return PhysicalAddress;
+        }
+
+        public String getImageVersion() {
+            return ImageVersion;
         }
     }
 }

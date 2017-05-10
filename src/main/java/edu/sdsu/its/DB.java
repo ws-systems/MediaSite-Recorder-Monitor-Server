@@ -1,5 +1,6 @@
 package edu.sdsu.its;
 
+import edu.sdsu.its.API.Models.Recorder;
 import edu.sdsu.its.API.Models.User;
 import org.apache.log4j.Logger;
 import org.jasypt.util.password.StrongPasswordEncryptor;
@@ -208,6 +209,57 @@ public class DB {
 
         executeStatement(sql);
         return true;
+    }
+
+    /**
+     * Get an Array of Recorders who match the specified criteria.
+     *
+     * @param restriction {@link String} Restriction on the Search, as a WHERE SQL Statement, the WHERE is already included
+     * @return {@link Recorder[]} Array of Recorders
+     */
+    public static Recorder[] getRecorder(String restriction) {
+        Connection connection = getConnection();
+        Statement statement = null;
+        List<Recorder> recorders = new ArrayList<>();
+
+        try {
+            statement = connection.createStatement();
+            restriction = restriction == null || restriction.isEmpty() ? "" : " WHERE " + restriction;
+            final String sql = "SELECT * FROM recorders " + restriction + " ORDER BY id ASC;";
+            LOGGER.info(String.format("Executing SQL Query - \"%s\"", sql));
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            while (resultSet.next()) {
+                Recorder recorder = new Recorder(
+                        resultSet.getString("id"),
+                        resultSet.getString("name"),
+                        resultSet.getString("description"),
+                        resultSet.getString("serial_number"),
+                        resultSet.getString("version"),
+                        resultSet.getString("last_version_update_date"),
+                        resultSet.getString("physical_address"),
+                        resultSet.getString("image_version"),
+                        resultSet.getBoolean("online"),
+                        resultSet.getTimestamp("last_seen"));
+                recorders.add(recorder);
+            }
+
+            LOGGER.debug(String.format("Retrieved %d recorders from DB", recorders.size()));
+            resultSet.close();
+        } catch (SQLException e) {
+            LOGGER.error("Problem querying DB for Recorders", e);
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                    connection.close();
+                } catch (SQLException e) {
+                    LOGGER.warn("Problem Closing Statement", e);
+                }
+            }
+        }
+
+        return recorders.toArray(new Recorder[]{});
     }
 
     private static String sanitize(final String s) {

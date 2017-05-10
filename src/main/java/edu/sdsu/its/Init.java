@@ -1,6 +1,7 @@
 package edu.sdsu.its;
 
 import edu.sdsu.its.API.Models.User;
+import edu.sdsu.its.Jobs.SyncRecorderDB;
 import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobKey;
@@ -51,18 +52,17 @@ public class Init implements ServletContextListener {
         } catch (SchedulerException e) {
             LOGGER.error("Problem Starting Scheduler", e);
         }
-        // TODO Add Sync Job
-//        try {
-//            String envDisable = System.getenv("BB_SYNC_DISABLE");
-//            if (Boolean.parseBoolean(Vault.getParam("syncEnable")) && !(envDisable != null && envDisable.toUpperCase().equals("TRUE")))
-//                SyncUserDB.schedule(Schedule.getScheduler(), Integer.parseInt(Vault.getParam("syncFrequency")));
-//            else if (envDisable != null && envDisable.toUpperCase().equals("TRUE"))
-//                LOGGER.warn("User Sync has been DISABLED via Environment Variable (BB_SYNC_DISABLE)");
-//            else
-//                LOGGER.warn("User Sync has been DISABLED - Check Vault Config to Enable");
-//        } catch (SchedulerException e) {
-//            LOGGER.error("Problem Scheduling User Sync Job", e);
-//        }
+        try {
+            String envDisable = System.getenv("MS_SYNC_DISABLE");
+            if (Boolean.parseBoolean(Vault.getParam("syncEnable")) && !(envDisable != null && envDisable.toUpperCase().equals("TRUE")))
+                SyncRecorderDB.schedule(Schedule.getScheduler(), Integer.parseInt(DB.getPreference("sync-frequency")));
+            else if (envDisable != null && envDisable.toUpperCase().equals("TRUE"))
+                LOGGER.warn("User Sync has been DISABLED via Environment Variable (MS_SYNC_DISABLE)");
+            else
+                LOGGER.warn("User Sync has been DISABLED - Check Vault Config to Enable");
+        } catch (SchedulerException e) {
+            LOGGER.error("Problem Scheduling User Sync Job", e);
+        }
     }
 
     /**
