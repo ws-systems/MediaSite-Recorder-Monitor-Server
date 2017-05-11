@@ -43,3 +43,11 @@ td.recorder-info {
 td.recorder-info:hover {
     color: #002569;
 }
+
+#RecorderInfo div.modal-body div.row div:nth-child(1) {
+    font-weight: bold;
+}
+
+#RecorderInfo div.modal-body div.row {
+    margin-top: 2px;
+}

@@ -1,12 +1,67 @@
 <link rel="stylesheet" href="css/index_view.css">
 
+<div class="modal fade" id="RecorderInfo">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Recorder - <span class="modal-recorder-name"></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col col-4">ID:</div>
+                        <div class="col col-8"><span class="modal-recorder-id"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col col-4">Name:</div>
+                        <div class="col col-8"><span class="modal-recorder-name"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col col-4">Description:</div>
+                        <div class="col col-8"><span class="modal-recorder-description"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col col-4">Serial Number:</div>
+                        <div class="col col-8"><span class="modal-recorder-serial"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col col-4">Version:</div>
+                        <div class="col col-8"><span class="modal-recorder-version"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col col-4">Last Version Update Date:</div>
+                        <div class="col col-8"><span class="modal-recorder-updated"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col col-4">Physical Address:</div>
+                        <div class="col col-8"><span class="modal-recorder-address"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col col-4">Image Version:</div>
+                        <div class="col col-8"><span class="modal-recorder-img-version"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col col-4">Last Seen:</div>
+                        <div class="col col-8"><span class="modal-recorder-last-seen"></span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="page-header">
     <h1>ITS Media Site Recorder Monitor</h1>
 </div>
-<p>Software issues can be reported in YouTrack, via the link below. Please be as descriptive as possible, and please
-    include screenshots if applicable.
-    <br>
-    <a href="http://morden.sdsu.edu:9000/newIssue?project=VIMS&clearDraft=true&c=" target="_blank">http://morden.sdsu.edu:9000</a>
+<p>The status of the various Mediasite Recorders is listed below. In the event of an outage, notification emails will
+    be sent to all users who have opted to receive notifications. Users, Mediasite API settings, as well as Refresh
+    Rates can be managed via the menu above after login.
 </p>
 
 <div class="container" style="padding-top: 1em">
@@ -22,7 +77,7 @@
         </tr>
         </thead>
         <tbody>
-            <!-- Will be filled by getRecorders() on load -->
+        <!-- Will be filled by getRecorders() on load -->
         </tbody>
     </table>
 </div>
