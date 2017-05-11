@@ -19,4 +19,17 @@ CREATE TABLE preferences (
   setting VARCHAR(32) PRIMARY KEY NOT NULL,
   value   TEXT
 );
+CREATE TABLE recorders (
+  id                       VARCHAR(64) PRIMARY KEY NOT NULL,
+  name                     TEXT,
+  description              TEXT,
+  serial_number            TEXT,
+  version                  TEXT,
+  last_version_update_date TEXT,
+  physical_address         TEXT,
+  image_version            TEXT,
+  last_seen                TIMESTAMP  DEFAULT NOW(),
+  online                   TINYINT(1) DEFAULT 1,
+  strikes                  INT        DEFAULT 0
+);
 ```
