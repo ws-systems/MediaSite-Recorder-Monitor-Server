@@ -2,6 +2,7 @@ package edu.sdsu.its.Jobs;
 
 import edu.sdsu.its.DB;
 import edu.sdsu.its.Mediasite.Recorders;
+import edu.sdsu.its.Schedule;
 import org.apache.log4j.Logger;
 import org.quartz.*;
 
@@ -58,19 +59,29 @@ public class SyncRecorderDB implements Job {
             return;
         }
         LOGGER.debug(String.format("Retrieved %d recorders from MS API", recorders.length));
+        syncDB(recorders);
 
+        for (Recorders.Recorder recorder : recorders) {
+            try {
+                if (!context.getScheduler().checkExists(new JobKey("SyncRecorderStatus-" + recorder.getId()))) {
+                    LOGGER.info("Creating New Status Sync Job for Recorder ID: " + recorder.getId());
+                    new SyncRecorderStatus(recorder.getId()).schedule(Schedule.getScheduler(), Integer.parseInt(DB.getPreference("sync-frequency")));
+                }
+            } catch (SchedulerException e) {
+                LOGGER.warn("Problem Adding new Recorders to Sync Scheduler");
+            }
+        }
+
+        LOGGER.info("Finished Recorder Sync Job");
+    }
+
+    private static void syncDB(Recorders.Recorder[] recorders) {
         Statement statement = null;
         Connection connection = null;
 
         try {
             connection = getConnection();
             statement = connection.createStatement();
-
-            //language=SQL
-            final String incrementStrikeSQL = "UPDATE recorders\n" +
-                    "SET `strikes` = `strikes` + 1;";
-            LOGGER.debug(String.format("Incrementing Strike Count for Recorders - \"%s\"", incrementStrikeSQL));
-            statement.addBatch(incrementStrikeSQL);
 
             for (Recorders.Recorder recorder : recorders) {
                 //language=SQL
@@ -92,18 +103,10 @@ public class SyncRecorderDB implements Job {
                                 "  `last_version_update_date` = '" + recorder.getLastVersionUpdateDate() + "',\n" +
                                 "  `physical_address`         = '" + recorder.getPhysicalAddress() + "',\n" +
                                 "  `image_version`            = '" + recorder.getImageVersion() + "',\n" +
-                                "  `last_seen`                = NOW(),\n" +
-                                "  `strikes`                  = 0;";
+                                "  `last_seen`                = NOW();";
                 LOGGER.debug(String.format("Inserting/Updating Recorder %s - \"%s\"", recorder.getName(), insertUpdateSQL));
                 statement.addBatch(insertUpdateSQL);
             }
-
-            //language=SQL
-            final String maxStrikeCount = DB.getPreference("sync-max-strike");
-            final String setOfflineSQL = "UPDATE recorders\n" +
-                    "SET online = `strikes` < " + maxStrikeCount + ";";
-            LOGGER.debug(String.format("Setting DB record for offline recorders - \"%s\"", setOfflineSQL));
-            statement.addBatch(setOfflineSQL);
 
             LOGGER.info("Executing Sync Batch");
             int[] updateCounts = statement.executeBatch();
@@ -120,7 +123,5 @@ public class SyncRecorderDB implements Job {
                 }
             }
         }
-
-        LOGGER.info("Finished Recorder Sync Job");
     }
 }

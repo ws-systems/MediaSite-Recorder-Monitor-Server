@@ -1,7 +1,9 @@
 package edu.sdsu.its;
 
+import edu.sdsu.its.API.Models.Recorder;
 import edu.sdsu.its.API.Models.User;
 import edu.sdsu.its.Jobs.SyncRecorderDB;
+import edu.sdsu.its.Jobs.SyncRecorderStatus;
 import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobKey;
@@ -40,7 +42,7 @@ public class Init implements ServletContextListener {
         LOGGER.info(String.format("Starting Webapp. Found %d staff in DB", users.length));
         if (users.length == 0) {
             LOGGER.info("No users were found in the DB. Creating default User.");
-            User user = new User(DEFAULT_FIRST_NAME, DEFAULT_LAST_NAME, DEFAULT_EMAIL,DEFAULT_PASSWORD);
+            User user = new User(DEFAULT_FIRST_NAME, DEFAULT_LAST_NAME, DEFAULT_EMAIL, DEFAULT_PASSWORD);
             DB.createNewUser(user);
 
             LOGGER.info(String.format("Initial Staff Created. ID: \"%d\"", DEFAULT_ID));
@@ -54,14 +56,21 @@ public class Init implements ServletContextListener {
         }
         try {
             String envDisable = System.getenv("MS_SYNC_DISABLE");
-            if (Boolean.parseBoolean(Vault.getParam("syncEnable")) && !(envDisable != null && envDisable.toUpperCase().equals("TRUE")))
-                SyncRecorderDB.schedule(Schedule.getScheduler(), Integer.parseInt(DB.getPreference("sync-frequency")));
-            else if (envDisable != null && envDisable.toUpperCase().equals("TRUE"))
-                LOGGER.warn("User Sync has been DISABLED via Environment Variable (MS_SYNC_DISABLE)");
+            if (Boolean.parseBoolean(Vault.getParam("syncEnable")) && !(envDisable != null && envDisable.toUpperCase().equals("TRUE"))) {
+                final int syncInterval = Integer.parseInt(DB.getPreference("sync-frequency"));
+                SyncRecorderDB.schedule(Schedule.getScheduler(), syncInterval);
+
+                for (Recorder recorder : DB.getRecorder("")) {
+                    LOGGER.info(String.format("Scheduling Sync for Recorder with ID %s - Interval %d", recorder.getId(), syncInterval));
+                    new SyncRecorderStatus(recorder.getId()).schedule(Schedule.getScheduler(), syncInterval);
+                }
+
+            } else if (envDisable != null && envDisable.toUpperCase().equals("TRUE"))
+                LOGGER.warn("Sync has been DISABLED via Environment Variable (MS_SYNC_DISABLE)");
             else
-                LOGGER.warn("User Sync has been DISABLED - Check Vault Config to Enable");
+                LOGGER.warn("Sync has been DISABLED - Check Vault Config to Enable");
         } catch (SchedulerException e) {
-            LOGGER.error("Problem Scheduling User Sync Job", e);
+            LOGGER.error("Problem Scheduling Sync Jobs", e);
         }
     }
 

@@ -10,6 +10,7 @@ function getRecorders() {
             for (var r = 0; r < payload.length; r++) {
                 var recorder = payload[r];
                 var row = table.insertRow();
+                // TODO Update Status Display (API Changed - Now has status rather than bool)
                 row.insertCell(0).className = recorder.Online ? 'status-ok' : 'status-bad';
                 row.insertCell(1).innerHTML = recorder.Name;
                 row.insertCell(2).innerHTML = recorder.Version;

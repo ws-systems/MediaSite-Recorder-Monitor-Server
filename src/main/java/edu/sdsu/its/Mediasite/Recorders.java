@@ -48,6 +48,34 @@ public class Recorders {
         return recorders;
     }
 
+    public static String getRecorderStatus(final String recorderId) {
+        String msURL = DB.getPreference("ms-url");
+        msURL = msURL.endsWith("/") ? msURL : msURL + '/';
+        HttpResponse<com.mashape.unirest.http.JsonNode> recorderStatusRequest = null;
+
+        try {
+            recorderStatusRequest = Unirest
+                    .get(msURL + "api/v1/Recorders('" + recorderId + "')/Status")
+                    .header("sfapikey", msAPI)
+                    .basicAuth(msUser, msPass)
+                    .asJson();
+        } catch (UnirestException e) {
+            LOGGER.error("Problem retrieving recorder status from MS API - ID: " + recorderId, e);
+            return null;
+        }
+
+        if (recorderStatusRequest.getStatus() != 200) {
+            LOGGER.error(String.format("Problem retrieving recorder status from MS API. HTTP Status: %d", recorderStatusRequest.getStatus()));
+            LOGGER.info(recorderStatusRequest.getBody());
+            return null;
+        }
+
+        Gson gson = new Gson();
+        //noinspection unchecked
+        RecorderStatusResponse statusResponse = gson.fromJson(recorderStatusRequest.getBody().toString(), RecorderStatusResponse.class);
+        return statusResponse.getRecorderState();
+    }
+
     private static class RecorderResponse {
         Recorder[] value;
     }
@@ -118,6 +146,14 @@ public class Recorders {
 
         public String getImageVersion() {
             return ImageVersion;
+        }
+    }
+
+    private static final class RecorderStatusResponse {
+        String RecorderState;
+
+        public String getRecorderState() {
+            return RecorderState;
         }
     }
 }
