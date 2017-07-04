@@ -58,7 +58,4 @@ public class User {
         this.notify = notify;
     }
 
-    public User login() {
-        return DB.login(this.email, this.password);
-    }
 }

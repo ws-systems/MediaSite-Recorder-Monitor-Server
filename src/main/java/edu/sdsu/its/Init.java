@@ -38,17 +38,7 @@ public class Init implements ServletContextListener {
      */
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        User[] users = DB.getUser("");
-        LOGGER.info(String.format("Starting Webapp. Found %d staff in DB", users.length));
-        if (users.length == 0) {
-            LOGGER.info("No users were found in the DB. Creating default User.");
-            User user = new User(DEFAULT_FIRST_NAME, DEFAULT_LAST_NAME, DEFAULT_EMAIL, DEFAULT_PASSWORD);
-            DB.createNewUser(user);
-
-            LOGGER.info(String.format("Initial Staff Created. ID: \"%d\"", DEFAULT_ID));
-        }
-
-        try {
+         try {
             Schedule.getScheduler().clear();
             Schedule.getScheduler().startDelayed(30);
         } catch (SchedulerException e) {

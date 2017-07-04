@@ -3,7 +3,6 @@ package edu.sdsu.its;
 import edu.sdsu.its.API.Models.Recorder;
 import edu.sdsu.its.API.Models.User;
 import org.apache.log4j.Logger;
-import org.jasypt.util.password.StrongPasswordEncryptor;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,7 +14,6 @@ import java.util.List;
  */
 public class DB {
     private static final Logger LOGGER = Logger.getLogger(DB.class);
-    private static final StrongPasswordEncryptor PASSWORD_ENCRYPTOR = new StrongPasswordEncryptor();
 
     /**
      * Create and return a new DB Connection
@@ -106,6 +104,16 @@ public class DB {
         return preference;
     }
 
+    public static void setPreference(final String name, final String value) {
+        final String sql = String.format("INSERT INTO preferences (setting, value) \n" +
+                "    VALUES \n" +
+                "      ('%s',\n" +
+                "      '%s')\n" +
+                "ON DUPLICATE KEY UPDATE \n" +
+                "  `setting` = '%s';", name, value, value);
+        executeStatement(sql);
+    }
+
     /**
      * Get an Array of Users who match the specified criteria.
      * id is the Internal Identifier
@@ -153,63 +161,7 @@ public class DB {
         return users.toArray(new User[]{});
     }
 
-    /**
-     * Login a Provided User. The User is fetched, and their saved password is compared to the supplied password.
-     *
-     * @param email    {@link String} Email (Equivalent to Username)
-     * @param password {@link String} Password, plaintext
-     * @return {@link User} User if username exists and password valid, else null.
-     */
-    public static User login(String email, String password) {
-        Connection connection = getConnection();
-        Statement statement = null;
-        User user = null;
-        String passHash = "";
 
-        try {
-            statement = connection.createStatement();
-            final String sql = "SELECT * FROM users WHERE email='" + sanitize(email.toLowerCase()) + "';";
-            LOGGER.info(String.format("Executing SQL Query - \"%s\"", sql));
-            ResultSet resultSet = statement.executeQuery(sql);
-
-            if (resultSet.next()) {
-                user = new User(
-                        resultSet.getString("first_name"),
-                        resultSet.getString("last_name"),
-                        resultSet.getString("email"),
-                        resultSet.getBoolean("notify"));
-
-                passHash = resultSet.getString("password");
-            }
-            resultSet.close();
-        } catch (SQLException e) {
-            LOGGER.error("Problem querying DB for User by Username", e);
-        } finally {
-            if (statement != null) {
-                try {
-                    statement.close();
-                    connection.close();
-                } catch (SQLException e) {
-                    LOGGER.warn("Problem Closing Statement", e);
-                }
-            }
-        }
-
-
-        return password != null && !passHash.isEmpty() && PASSWORD_ENCRYPTOR.checkPassword(password, passHash) ? user : null;
-    }
-
-    public static boolean createNewUser(User user) {
-        if (DB.getUser("email = '" + sanitize(user.getEmail().toLowerCase()) + "'").length > 0)
-            return false;
-
-        final String sql = "INSERT INTO users(email, first_name, last_name, password, notify) VALUES ( '" + sanitize(user.getEmail().toLowerCase()) +
-                "', '" + sanitize(user.getFirstName()) + "', '" + sanitize(user.getLastName()) + "', " +
-                "'" + PASSWORD_ENCRYPTOR.encryptPassword(user.getPassword()) + "', " + (user.getNotify() ? 1 : 0) + ");";
-
-        executeStatement(sql);
-        return true;
-    }
 
     /**
      * Get an Array of Recorders who match the specified criteria.
