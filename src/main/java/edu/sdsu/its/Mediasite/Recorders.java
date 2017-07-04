@@ -1,11 +1,18 @@
 package edu.sdsu.its.Mediasite;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import edu.sdsu.its.API.Models.Status;
 import edu.sdsu.its.DB;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.log4j.Logger;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Tom Paulus
@@ -18,6 +25,8 @@ public class Recorders {
     private static final String msUser = DB.getPreference("ms-api-user");
     private static final String msAPI = DB.getPreference("ms-api-key");
 
+    private static final String RECORDER_WEB_SERVICE_PORT = "8090";
+
     public static Recorder[] getRecorders() {
         String msURL = DB.getPreference("ms-url");
         msURL = msURL.endsWith("/") ? msURL : msURL + '/';
@@ -25,7 +34,7 @@ public class Recorders {
 
         try {
             recorderRequest = Unirest
-                    .get(msURL + "api/v1/Recorders")
+                    .get(msURL + "Api/v1/Recorders")
                     .header("sfapikey", msAPI)
                     .basicAuth(msUser, msPass)
                     .asJson();
@@ -35,7 +44,8 @@ public class Recorders {
         }
 
         if (recorderRequest.getStatus() != 200) {
-            LOGGER.error(String.format("Problem retrieving recorder list from MS API. HTTP Status: %d", recorderRequest.getStatus()));
+            LOGGER.error(String.format("Problem retrieving recorder list from MS API. HTTP Status: %d",
+                    recorderRequest.getStatus()));
             LOGGER.info(recorderRequest.getBody());
             return null;
         }
@@ -48,47 +58,114 @@ public class Recorders {
         return recorders;
     }
 
-    public static String getRecorderStatus(final String recorderId) {
+    public static String getRecorderIP(final String recorderId) {
         String msURL = DB.getPreference("ms-url");
         msURL = msURL.endsWith("/") ? msURL : msURL + '/';
-        HttpResponse<com.mashape.unirest.http.JsonNode> recorderStatusRequest = null;
+        HttpResponse<String> recorderInfoRequest;
 
         try {
-            recorderStatusRequest = Unirest
-                    .get(msURL + "api/v1/Recorders('" + recorderId + "')/Status")
+            recorderInfoRequest = Unirest
+                    .get(msURL + "Api/v1/Recorders('" + recorderId + "')")
                     .header("sfapikey", msAPI)
                     .basicAuth(msUser, msPass)
-                    .asJson();
+                    .asString();
         } catch (UnirestException e) {
-            LOGGER.error("Problem retrieving recorder status from MS API - ID: " + recorderId, e);
-            return null;
-        }
-
-        if (recorderStatusRequest.getStatus() != 200) {
-            LOGGER.error(String.format("Problem retrieving recorder status from MS API. HTTP Status: %d", recorderStatusRequest.getStatus()));
-            LOGGER.info(recorderStatusRequest.getBody());
+            LOGGER.error("Problem retrieving recorder info from MS API - ID: " + recorderId, e);
             return null;
         }
 
         Gson gson = new Gson();
-        //noinspection unchecked
-        RecorderStatusResponse statusResponse = gson.fromJson(recorderStatusRequest.getBody().toString(), RecorderStatusResponse.class);
-        return statusResponse.getRecorderState();
+        Recorder recorder = gson.fromJson(recorderInfoRequest.getBody(), Recorder.class);
+
+        return recorder.getIP();
     }
 
+    public static Status getRecorderStatus(final String recorderIP) {
+        HttpResponse<String> recorderInfoRequest;
+
+        try {
+            recorderInfoRequest = Unirest
+                    .get("http://" + recorderIP + ":" +
+                            RECORDER_WEB_SERVICE_PORT +
+                            "/recorderwebapi/v1/action/service/RecorderStateJson")
+                    .header("sfapikey", msAPI)
+                    .basicAuth(msUser, msPass)
+                    .asString();
+        } catch (UnirestException e) {
+            LOGGER.error("Problem retrieving recorder status from Recorder - IP: " + recorderIP, e);
+            return null;
+        }
+
+        Gson gson = new Gson();
+        RecorderStatusResponse recorderStatus = gson.fromJson(recorderInfoRequest.getBody().substring(
+                recorderInfoRequest.getBody().indexOf('{'),
+                recorderInfoRequest.getBody().lastIndexOf('}') + 1),
+                RecorderStatusResponse.class);
+
+        return Status.getByCode(recorderStatus.recorderState);
+    }
+
+    @SuppressWarnings("unused")
     private static class RecorderResponse {
-        Recorder[] value;
+        private Recorder[] value;
     }
 
-    public static class Recorder {
-        String Id;
-        String Name;
-        String Description;
-        String SerialNumber;
-        String Version;
-        String LastVersionUpdateDate;
-        String PhysicalAddress;
-        String ImageVersion;
+    @SuppressWarnings("unused")
+    private static class RecorderStatusResponse {
+        @SerializedName("RecorderState")
+        private Integer recorderState;
+
+        @SerializedName("RecorderStateString")
+        private String recorderStateString;
+
+        @SerializedName("SystemState")
+        private Integer systemState;
+
+        @SerializedName("SystemStateString")
+        private String systemStateString;
+
+        @SerializedName("RemoteAccessEnabled")
+        private Boolean remoteAccessEnabled;
+
+        @SerializedName("RecorderRemoteWebAddress")
+        private String recorderRemoteWebAddress;
+
+        @SerializedName("ShellSecurityMode")
+        private Integer shellSecurityMode;
+
+        @SerializedName("ShellSecurityModeString")
+        private String shellSecurityModeString;
+
+        @SerializedName("IsCertificateVerified")
+        private Boolean isCertificateVerified;
+
+        @SerializedName("RecorderTicket")
+        private String recorderTicket;
+
+        @SerializedName("RecorderCode")
+        private String recorderCode;
+
+        @SerializedName("IsPowerControlEnabled")
+        private Boolean isPowerControlEnabled;
+
+        @SerializedName("IsUpdateServiceInstalled")
+        private Boolean isUpdateServiceInstalled;
+
+        @SerializedName("IsUpdateServiceRunning")
+        private Boolean isUpdateServiceRunning;
+    }
+
+
+    public static @AllArgsConstructor class Recorder {
+        @Getter private String Id;
+        @Getter private String Name;
+        @Getter private String Description;
+        @Getter private String SerialNumber;
+        @Getter private String Version;
+        @Getter private String WebServiceUrl;
+        @Getter private String LastVersionUpdateDate;
+        @Getter private String PhysicalAddress;
+        @Getter private String ImageVersion;
 
         @Override
         public String toString() {
@@ -104,8 +181,7 @@ public class Recorders {
                     '}';
         }
 
-        public Recorder(String id, String name, String description, String serialNumber, String version,
-                        String lastVersionUpdateDate, String physicalAddress, String imageVersion) {
+        public Recorder(String id, String name, String description, String serialNumber, String version, String lastVersionUpdateDate, String physicalAddress, String imageVersion) {
             Id = id;
             Name = name;
             Description = description;
@@ -116,44 +192,17 @@ public class Recorders {
             ImageVersion = imageVersion;
         }
 
-        public String getId() {
-            return Id;
-        }
+        String getIP() throws RuntimeException {
+            if (this.getWebServiceUrl() == null || this.getWebServiceUrl().isEmpty()) {
+                throw new RuntimeException("WebService URL not Defined");
+            }
 
-        public String getName() {
-            return Name;
-        }
-
-        public String getDescription() {
-            return Description != null ? Description : "";
-        }
-
-        public String getSerialNumber() {
-            return SerialNumber;
-        }
-
-        public String getVersion() {
-            return Version;
-        }
-
-        public String getLastVersionUpdateDate() {
-            return LastVersionUpdateDate;
-        }
-
-        public String getPhysicalAddress() {
-            return PhysicalAddress;
-        }
-
-        public String getImageVersion() {
-            return ImageVersion;
-        }
-    }
-
-    private static final class RecorderStatusResponse {
-        String RecorderState;
-
-        public String getRecorderState() {
-            return RecorderState;
+            Pattern pattern = Pattern.compile("\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3}");
+            Matcher matcher = pattern.matcher(this.getWebServiceUrl());
+            if (!matcher.find()) {
+                throw new RuntimeException("No IP defined in WebService URL");
+            }
+            return matcher.group();
         }
     }
 }

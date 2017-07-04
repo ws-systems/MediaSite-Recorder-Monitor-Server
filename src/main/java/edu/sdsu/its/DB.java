@@ -191,7 +191,7 @@ public class DB {
                         resultSet.getString("last_version_update_date"),
                         resultSet.getString("physical_address"),
                         resultSet.getString("image_version"),
-                        resultSet.getBoolean("online"),
+                        resultSet.getString("status"),
                         resultSet.getTimestamp("last_seen"));
                 recorders.add(recorder);
             }

@@ -1,3 +1,7 @@
+plugins {
+    id 'io.franzbecker.gradle-lombok' version '1.8'
+}
+
 group 'edu.sdsu.its'
 version '1.0'
 
@@ -11,6 +15,11 @@ repositories {
 war {
     archiveName 'ms-monitor.war'
 }
+
+lombok {
+    sha256 = "" // skip verify Lombok task
+}
+
 dependencies {
     // Logging
     compile 'log4j:log4j:1.2.17'

@@ -1,5 +1,6 @@
 package edu.sdsu.its.Jobs;
 
+import edu.sdsu.its.API.Models.Status;
 import edu.sdsu.its.DB;
 import edu.sdsu.its.Mediasite.Recorders;
 import org.apache.log4j.Logger;
@@ -18,11 +19,18 @@ import static org.quartz.TriggerBuilder.newTrigger;
  *         Created on 5/14/17.
  */
 public class SyncRecorderStatus implements Job {
-    private static final Logger LOGGER = Logger.getLogger(SyncRecorderDB.class);
-    private final String RECORDER_ID;
+    private static final Logger LOGGER = Logger.getLogger(SyncRecorderStatus.class);
+    private String mRecorderID;
+    static final String JOB_GROUP = "recorder_status";
+    static final String TRIGGER_NAME_STEM = "SyncTrigger";
+    static final String JOB_NAME_STEM = "SyncRecorderStatus";
 
     public SyncRecorderStatus(String RECORDER_ID) {
-        this.RECORDER_ID = RECORDER_ID;
+        this.mRecorderID = RECORDER_ID;
+    }
+
+    @SuppressWarnings("unused") public SyncRecorderStatus() {
+        // Intentionally Empty
     }
 
     /**
@@ -33,37 +41,47 @@ public class SyncRecorderStatus implements Job {
      * @throws SchedulerException Something went wrong scheduling the job
      */
     public void schedule(Scheduler scheduler, int intervalInMinutes) throws SchedulerException {
-        JobDetail job = newJob(SyncRecorderDB.class)
-                .withIdentity("SyncRecorderStatus-" + RECORDER_ID, "recorder_status")
+        JobDetail job = newJob(this.getClass())
+                .withIdentity(JOB_NAME_STEM + "-" + mRecorderID, JOB_GROUP)
+                .withDescription(mRecorderID)
                 .build();
 
-        // Trigger the job to run now, and then repeat every X Seconds
+        // Trigger the job to run now, and then repeat every X Minutes
         Trigger trigger = newTrigger()
-                .withIdentity("SyncTrigger", "recorder_status")
+                .withIdentity(TRIGGER_NAME_STEM + "-" + mRecorderID, JOB_GROUP)
                 .withSchedule(simpleSchedule()
                         .withIntervalInMinutes(intervalInMinutes)
                         .repeatForever())
+                .startNow()
                 .build();
 
         // Tell quartz to schedule the job using our trigger
         scheduler.scheduleJob(job, trigger);
+        LOGGER.debug("Scheduled Sync for Recorder with ID - " + this.mRecorderID);
     }
 
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        LOGGER.info("Fetching Recorder Status for Recorder with ID: " + this.RECORDER_ID);
+        this.mRecorderID = context.getJobDetail().getDescription();
+        LOGGER.info("Fetching Recorder Status for Recorder with ID: " + this.mRecorderID);
 
-        String status = Recorders.getRecorderStatus(this.RECORDER_ID);
-        if (status == null || status.isEmpty()) {
-            LOGGER.fatal("Problem retrieving recorder status from API");
-            return;
+        Status status = null;
+        try {
+            status = Recorders.getRecorderStatus(Recorders.getRecorderIP(this.mRecorderID));
+        } catch (RuntimeException e) {
+            LOGGER.error("Problem retrieving recorder status from API - Invalid IP", e);
+        }
+
+        if (status == null) {
+            LOGGER.error("Problem retrieving recorder status from API/Recorder");
+            status = Status.UNAVAILABLE;
         }
 
         LOGGER.debug(String.format("Recorder Status is \"%s\"", status));
-        writeStatusToDB(this.RECORDER_ID, status);
-        LOGGER.info("Finished Updating Recorder Status for Recorder with ID: " + this.RECORDER_ID);
+        writeStatusToDB(this.mRecorderID, status);
+        LOGGER.info("Finished Updating Recorder Status for Recorder with ID: " + this.mRecorderID);
     }
 
-    private static void writeStatusToDB(String recorderId, String status) {
+    private static void writeStatusToDB(String recorderId, Status status) {
         Statement statement = null;
         Connection connection = DB.getConnection();
 
@@ -71,7 +89,7 @@ public class SyncRecorderStatus implements Job {
             statement = connection.createStatement();
             //language=SQL
             final String updateSQL = "UPDATE recorders\n" +
-                    "SET status =  '" + status + "'\n" +
+                    "SET status =  '" + status.getStateString() + "'\n" +
                     "WHERE id='" + recorderId + "';";
 
             LOGGER.info(String.format("Updating Recorder Status - \"%s\"", updateSQL));

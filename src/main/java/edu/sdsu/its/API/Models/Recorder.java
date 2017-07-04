@@ -1,6 +1,7 @@
 package edu.sdsu.its.API.Models;
 
 import edu.sdsu.its.Mediasite.Recorders;
+import lombok.Getter;
 
 import java.sql.Timestamp;
 
@@ -9,14 +10,12 @@ import java.sql.Timestamp;
  *         Created on 5/10/17.
  */
 public class Recorder extends Recorders.Recorder {
-    Boolean Online;
-    Timestamp LastSeen;
+    @Getter private String Status;
+    @Getter private Timestamp LastSeen;
 
-    public Recorder(String id, String name, String description, String serialNumber, String version,
-                    String lastVersionUpdateDate, String physicalAddress, String imageVersion,
-                    Boolean online, Timestamp lastSeen) {
+    public Recorder(String id, String name, String description, String serialNumber, String version, String lastVersionUpdateDate, String physicalAddress, String imageVersion, String status, Timestamp lastSeen) {
         super(id, name, description, serialNumber, version, lastVersionUpdateDate, physicalAddress, imageVersion);
-        this.Online = online;
-        this.LastSeen = lastSeen;
+        Status = status;
+        LastSeen = lastSeen;
     }
 }

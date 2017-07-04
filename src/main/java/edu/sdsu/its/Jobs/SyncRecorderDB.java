@@ -35,15 +35,16 @@ public class SyncRecorderDB implements Job {
      */
     public static void schedule(Scheduler scheduler, int intervalInMinutes) throws SchedulerException {
         JobDetail job = newJob(SyncRecorderDB.class)
-                .withIdentity("SyncUserListJob", "group1")
+                .withIdentity("SyncRecorderList", "list_update")
                 .build();
 
-        // Trigger the job to run now, and then repeat every X Seconds
+        // Trigger the job to run now, and then repeat every X Minutes
         Trigger trigger = newTrigger()
-                .withIdentity("SyncTrigger", "group1")
+                .withIdentity("SyncRecorderListTrigger", "list_update")
                 .withSchedule(simpleSchedule()
                         .withIntervalInMinutes(intervalInMinutes)
                         .repeatForever())
+                .startNow()
                 .build();
 
         // Tell quartz to schedule the job using our trigger
@@ -63,12 +64,15 @@ public class SyncRecorderDB implements Job {
 
         for (Recorders.Recorder recorder : recorders) {
             try {
-                if (!context.getScheduler().checkExists(new JobKey("SyncRecorderStatus-" + recorder.getId()))) {
+                if (!context.getScheduler().checkExists(new JobKey(SyncRecorderStatus.TRIGGER_NAME_STEM + "-" + recorder.getId(), SyncRecorderStatus.JOB_GROUP))) {
                     LOGGER.info("Creating New Status Sync Job for Recorder ID: " + recorder.getId());
-                    new SyncRecorderStatus(recorder.getId()).schedule(Schedule.getScheduler(), Integer.parseInt(DB.getPreference("sync-frequency")));
+                    new SyncRecorderStatus(recorder.getId())
+                            .schedule(Schedule.getScheduler(), Integer.parseInt(DB.getPreference("sync-frequency")));
                 }
+            } catch (ObjectAlreadyExistsException e) {
+                LOGGER.debug("Recorder already has sync scheduled");
             } catch (SchedulerException e) {
-                LOGGER.warn("Problem Adding new Recorders to Sync Scheduler");
+                LOGGER.warn("Problem Adding new Recorders to Sync Scheduler", e);
             }
         }
 
