@@ -18,14 +18,14 @@ public class TestRecorders {
         assertNotNull(recorders);
         for (Recorders.Recorder recorder : recorders) {
             LOGGER.debug(recorder.toString());
-            assertNotNull(recorder.Id);
-            assertNotNull(recorder.Name);
+            assertNotNull(recorder.getId());
+            assertNotNull(recorder.getName());
             // recorder.Description can be null
-            assertNotNull(recorder.SerialNumber);
-            assertNotNull(recorder.Version);
-            assertNotNull(recorder.LastVersionUpdateDate);
-            assertNotNull(recorder.PhysicalAddress);
-            assertNotNull(recorder.ImageVersion);
+            assertNotNull(recorder.getSerialNumber());
+            assertNotNull(recorder.getVersion());
+            assertNotNull(recorder.getLastVersionUpdateDate());
+            assertNotNull(recorder.getPhysicalAddress());
+            assertNotNull(recorder.getImageVersion());
         }
     }
 }
