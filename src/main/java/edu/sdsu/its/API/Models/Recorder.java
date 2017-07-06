@@ -10,12 +10,12 @@ import java.sql.Timestamp;
  *         Created on 5/10/17.
  */
 public class Recorder extends Recorders.Recorder {
-    @Getter private String Status;
-    @Getter private Timestamp LastSeen;
+    @Getter private Status status;
+    @Getter private Timestamp lastSeen;
 
-    public Recorder(String id, String name, String description, String serialNumber, String version, String lastVersionUpdateDate, String physicalAddress, String imageVersion, String status, Timestamp lastSeen) {
+    public Recorder(String id, String name, String description, String serialNumber, String version, String lastVersionUpdateDate, String physicalAddress, String imageVersion, Status status, Timestamp lastSeen) {
         super(id, name, description, serialNumber, version, lastVersionUpdateDate, physicalAddress, imageVersion);
-        Status = status;
-        LastSeen = lastSeen;
+        this.status = status;
+        this.lastSeen = lastSeen;
     }
 }

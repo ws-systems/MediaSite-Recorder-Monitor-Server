@@ -29,7 +29,6 @@ CREATE TABLE recorders (
   physical_address         TEXT,
   image_version            TEXT,
   last_seen                TIMESTAMP  DEFAULT NOW(),
-  online                   TINYINT(1) DEFAULT 1,
-  strikes                  INT        DEFAULT 0
+  status                   INT
 );
 ```

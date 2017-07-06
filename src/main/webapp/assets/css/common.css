@@ -49,3 +49,47 @@ th.sorttable_sorted::after {
 th.sorttable_sorted_reverse::after {
     content: "\f0d7";
 }
+
+/* Footer Styles*/
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 40px;
+    line-height: 35px; /* Vertically center the text there */
+    font-size: .75rem;
+}
+
+.footer .container {
+    border-top: solid #E0E0E0 1px;
+    color: #666666;
+    cursor: default;
+}
+
+.footer .container a, .footer.container a:hover {
+    text-decoration: none;
+    color: inherit;
+    cursor: default;
+}
+
+
+footer.footer a:not(.icon):hover,
+footer.footer a:visited:not(.icon):hover {
+    border-bottom-color: #1166BB;
+}
+
+footer.footer a:not(.icon),
+footer.footer a:visited:not(.icon) {
+    border-bottom: 1px solid #d3d6db;
+}
+
+footer.footer a:hover,
+footer.footer a:visited:hover {
+    color: #222324;
+}
+
+footer.footer a,
+footer.footer a:visited {
+    color: #69707a;
+}

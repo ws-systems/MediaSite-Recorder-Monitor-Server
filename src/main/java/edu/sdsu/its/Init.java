@@ -1,7 +1,6 @@
 package edu.sdsu.its;
 
 import edu.sdsu.its.API.Models.Recorder;
-import edu.sdsu.its.API.Models.User;
 import edu.sdsu.its.Jobs.SyncRecorderDB;
 import edu.sdsu.its.Jobs.SyncRecorderStatus;
 import org.apache.log4j.Logger;
@@ -34,11 +33,13 @@ public class Init implements ServletContextListener {
     private static final String DEFAULT_PASSWORD = "changeme";
 
     /**
-     * Initialize the Webapp with the Default User if no users exist.
+     * Initialize the WebApp with the Default User if no users exist.
+     * <p>
+     * Also, Start the DB Sync Job, as well as schedule Recorder Sync Jobs for the already existent recorders
      */
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-         try {
+        try {
             Schedule.getScheduler().clear();
             Schedule.getScheduler().startDelayed(30);
         } catch (SchedulerException e) {

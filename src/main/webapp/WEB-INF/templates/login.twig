@@ -1,0 +1,52 @@
+{% include 'header.twig' with { active: 'login' } %}
+
+<div class="login-container">
+
+    <div class="logo">
+        <a href="https://its.sdsu.edu" target="_blank">
+            <img src="assets/images/logo.png">
+        </a>
+        <hr>
+        <span class="appName">Media Site Monitor</span>
+    </div>
+
+    <noscript>
+        <div class="alert alert-danger" role="alert" id="noScriptAlert">You do not have JavaScript Enabled! Checkout
+            will not work properly with out it.
+            <br>
+            Here are the <a class="alert-link"
+                            href="http://www.enable-javascript.com/"
+                            target="_blank">
+                instructions how to enable JavaScript in your web browser</a>.
+        </div>
+    </noscript>
+
+    {% if login_status == 'error' %}
+        <div class="alert alert-info" role="alert" id="loginErrorAlert">
+            Something went wrong trying to log you in!
+            Trying again may or may not fix the issue. ¯\_(ツ)_/¯
+        </div>
+        {% elseif login_status == 'logged out' %}
+        <div class="alert alert-info" role="alert" id="logoutAlert">
+            You have been logged out. See you again soon!
+        </div>
+    {% endif %}
+
+    <form class="form-signin" method="post" action="/api/login" onsubmit="doSubmit();" name="loginForm">
+        <h2 class="form-signin-heading">Please sign in</h2>
+        <div class="form-group {% if login_status == 'failed' %}has-danger{% endif %}">
+            <label for="inputUsername" class="sr-only">Username</label>
+            <input type="text" id="inputUsername" class="form-control" placeholder="Username" required autofocus
+                   name="username">
+            <label for="inputPassword" class="sr-only">Password</label>
+            <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+            {% if login_status == 'failed' %}
+                <div class="form-control-feedback">Incorrect Username or Password.</div>
+            {% endif %}
+        </div>
+        <input type="hidden" name="password">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    </form>
+</div>
+
+{% include 'footer.twig' with { hidden : true } %}

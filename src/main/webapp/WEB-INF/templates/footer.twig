@@ -1,0 +1,27 @@
+{% if not hidden %}
+    <footer class="footer">
+        <div class="container">
+            Mediasite Recorder Monitor - Version <span id="ms-mon-version">{{ app_version }}</span>
+            (Build: <span title="{{ app_build_time }}">{{ app_build }}</span>)
+            {% if defined(issue_link) and not hide_issue_link %}
+                <span style="float: right"><a href="{{ issue_link }}" target="_blank">Report an issue!</a></span>
+            {% endif %}
+        </div>
+    </footer>
+{% endif %}
+
+<script type="application/javascript"
+        src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="application/javascript"
+        src="assets/lib/teather.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"
+        integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
+        crossorigin="anonymous"></script>
+<script type="text/javascript"
+        src="assets/js/lib/sweetalert.min.js"></script>
+<script type="application/javascript"
+        src="assets/lib/sorttable.js"></script>
+<script type="application/javascript"
+        src="assets/js/navbar.js"></script>
+</body>
+</html>

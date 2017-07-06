@@ -1,9 +1,14 @@
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+
 plugins {
     id 'io.franzbecker.gradle-lombok' version '1.8'
 }
 
 group 'edu.sdsu.its'
 version '1.0'
+final def versionCode = "${project.version}"
+final def buildCode = "${buildNumber()}"
 
 apply plugin: 'java'
 apply plugin: 'war'
@@ -11,7 +16,9 @@ apply plugin: 'war'
 
 repositories {
     mavenCentral()
+    jcenter()
 }
+
 war {
     archiveName 'ms-monitor.war'
 }
@@ -37,6 +44,8 @@ dependencies {
     compile 'com.google.code.gson:gson:2.5'
     compile 'org.apache.httpcomponents:httpclient:4.4'
 
+    // Twig
+    compile "org.jtwig:jtwig-web:5.85.3.RELEASE"
 
     // Vault
     compile group: 'com.mashape.unirest', name: 'unirest-java', version: '1.4.9'
@@ -49,4 +58,33 @@ dependencies {
 
     // Unit Tests
     testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+static def buildNumber() {
+    return Long.toString(System.currentTimeMillis(), 36).toUpperCase()
+}
+
+static def getHost() {
+    return InetAddress.getLocalHost().getHostName()
+}
+
+def makeBuildInfoFile(versionCode, buildCode) {
+    println 'Saving Build Info to src/main/resources/build_info.properties'
+    def configFile = new File('src/main/resources/build_info.properties')
+    def config = new Properties()
+    config.setProperty("version", versionCode as String)
+    config.setProperty("build", buildCode as String)
+    config.setProperty("time", "${ZonedDateTime.now().format(DateTimeFormatter.ISO_INSTANT)}")
+    config.setProperty("host", getHost())
+    config.setProperty("user", "${System.getProperty("user.name")}")
+    config.store(new FileOutputStream(configFile), null)
+}
+
+clean.doLast {
+    // Delete Build Info File
+    new File('src/main/resources/build_info.properties').delete()
+}
+
+processResources.doFirst {
+    makeBuildInfoFile(versionCode, buildCode)
 }

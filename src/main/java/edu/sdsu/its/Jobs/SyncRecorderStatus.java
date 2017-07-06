@@ -89,7 +89,7 @@ public class SyncRecorderStatus implements Job {
             statement = connection.createStatement();
             //language=SQL
             final String updateSQL = "UPDATE recorders\n" +
-                    "SET status =  '" + status.getStateString() + "'\n" +
+                    "SET status =  " + status.getStateCode() + "\n" +
                     "WHERE id='" + recorderId + "';";
 
             LOGGER.info(String.format("Updating Recorder Status - \"%s\"", updateSQL));
