@@ -21,16 +21,16 @@ import java.util.regex.Pattern;
 public class Recorders {
     private static final Logger LOGGER = Logger.getLogger(Recorders.class);
 
-    private static final String msPass = DB.getPreference("ms-api-pass");
-    private static final String msUser = DB.getPreference("ms-api-user");
-    private static final String msAPI = DB.getPreference("ms-api-key");
+    private static final String msPass = DB.getPreference("ms.api-pass");
+    private static final String msUser = DB.getPreference("ms.api-user");
+    private static final String msAPI = DB.getPreference("ms.api-key");
+    private static String msURL = DB.getPreference("ms.url");
 
     private static final String RECORDER_WEB_SERVICE_PORT = "8090";
 
     public static Recorder[] getRecorders() {
-        String msURL = DB.getPreference("ms-url");
         msURL = msURL.endsWith("/") ? msURL : msURL + '/';
-        HttpResponse<com.mashape.unirest.http.JsonNode> recorderRequest = null;
+        HttpResponse<com.mashape.unirest.http.JsonNode> recorderRequest;
 
         try {
             recorderRequest = Unirest
@@ -59,7 +59,6 @@ public class Recorders {
     }
 
     public static String getRecorderIP(final String recorderId) {
-        String msURL = DB.getPreference("ms-url");
         msURL = msURL.endsWith("/") ? msURL : msURL + '/';
         HttpResponse<String> recorderInfoRequest;
 

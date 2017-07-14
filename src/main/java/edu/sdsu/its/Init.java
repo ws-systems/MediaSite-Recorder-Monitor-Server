@@ -11,11 +11,14 @@ import org.quartz.SchedulerException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+import java.io.IOException;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Initialize and Teardown the WebApp and DB
@@ -39,30 +42,18 @@ public class Init implements ServletContextListener {
      */
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        try {
-            Schedule.getScheduler().clear();
-            Schedule.getScheduler().startDelayed(30);
-        } catch (SchedulerException e) {
-            LOGGER.error("Problem Starting Scheduler", e);
-        }
-        try {
-            String envDisable = System.getenv("MS_SYNC_DISABLE");
-            if (Boolean.parseBoolean(Vault.getParam("syncEnable")) && !(envDisable != null && envDisable.toUpperCase().equals("TRUE"))) {
-                final int syncInterval = Integer.parseInt(DB.getPreference("sync-frequency"));
-                SyncRecorderDB.schedule(Schedule.getScheduler(), syncInterval);
+        // Create Default User
+        // TODO Check for Users and Create if necessary
 
-                for (Recorder recorder : DB.getRecorder("")) {
-                    LOGGER.info(String.format("Scheduling Sync for Recorder with ID %s - Interval %d", recorder.getId(), syncInterval));
-                    new SyncRecorderStatus(recorder.getId()).schedule(Schedule.getScheduler(), syncInterval);
-                }
-
-            } else if (envDisable != null && envDisable.toUpperCase().equals("TRUE"))
-                LOGGER.warn("Sync has been DISABLED via Environment Variable (MS_SYNC_DISABLE)");
-            else
-                LOGGER.warn("Sync has been DISABLED - Check Vault Config to Enable");
-        } catch (SchedulerException e) {
-            LOGGER.error("Problem Scheduling Sync Jobs", e);
+        // Set Defaults in Preferences table in DB
+        try {
+            setPreferenceDefaults();
+        } catch (IOException e) {
+            LOGGER.error("Problem Updating Preferences Table via Defaults", e);
         }
+
+        // Setup Sync Jobs
+        startSyncAgents();
     }
 
     /**
@@ -107,6 +98,63 @@ public class Init implements ServletContextListener {
                 // driver was not registered by the webapp's ClassLoader and may be in use elsewhere
                 LOGGER.info(String.format("Not deregistering JDBC driver %s as it does not belong to this webapp's ClassLoader", driver));
             }
+        }
+    }
+
+    private void setPreferenceDefaults() throws IOException {
+        LOGGER.info("Updating Preferences Table with Default Values if necessary");
+
+        Properties properties = new Properties();
+        properties.load(this.getClass().getClassLoader().getResourceAsStream("defaults.properties"));
+
+        for (Map.Entry<Object, Object> preference : properties.entrySet()) {
+            if (DB.getPreference(String.valueOf(preference.getKey())) == null) {
+                LOGGER.info("No value in DB for " + String.valueOf(preference.getKey()) + "; Setting to Default Value of " + String.valueOf(preference.getValue()));
+                DB.setPreference(String.valueOf(preference.getKey()),
+                        String.valueOf(preference.getValue()));
+            } else {
+                LOGGER.debug("Value " + String.valueOf(preference.getKey()) + " is already set in DB. Skipping!");
+            }
+        }
+    }
+
+    private void startSyncAgents() {
+        try {
+            Schedule.getScheduler().clear();
+            Schedule.getScheduler().startDelayed(30);
+        } catch (SchedulerException e) {
+            LOGGER.error("Problem Starting Scheduler", e);
+        }
+        String envDisable = System.getenv("MS_SYNC_DISABLE");
+
+        try {
+            if (Boolean.parseBoolean(DB.getPreference("sync_db.enable")) &&
+                    !(envDisable != null && envDisable.toUpperCase().equals("TRUE"))) {
+                final int syncInterval = Integer.parseInt(DB.getPreference("sync_db.frequency"));
+                LOGGER.info(String.format("Scheduling Recorder DB Sync - Interval %d", syncInterval));
+                SyncRecorderDB.schedule(Schedule.getScheduler(), syncInterval);
+            } else if (envDisable != null && envDisable.toUpperCase().equals("TRUE"))
+                LOGGER.warn("DB Sync has been DISABLED via Environment Variable (MS_SYNC_DISABLE)");
+            else
+                LOGGER.warn("DB Sync has been DISABLED - Check Monitor Preferences to Enable");
+        } catch (SchedulerException e) {
+            LOGGER.error("Problem Scheduling DB Sync Job", e);
+        }
+
+        try {
+            if (Boolean.parseBoolean(DB.getPreference("sync_recorder.enable")) &&
+                    !(envDisable != null && envDisable.toUpperCase().equals("TRUE"))) {
+                final int syncInterval = Integer.parseInt(DB.getPreference("sync_recorder.frequency"));
+                for (Recorder recorder : DB.getRecorder("")) {
+                    LOGGER.info(String.format("Scheduling Sync for Recorder with ID %s - Interval %d", recorder.getId(), syncInterval));
+                    new SyncRecorderStatus(recorder.getId()).schedule(Schedule.getScheduler(), syncInterval);
+                }
+            } else if (envDisable != null && envDisable.toUpperCase().equals("TRUE"))
+                LOGGER.warn("Recorder Sync has been DISABLED via Environment Variable (MS_SYNC_DISABLE)");
+            else
+                LOGGER.warn("Recorder Sync has been DISABLED - Check Monitor Preferences to Enable");
+        } catch (SchedulerException e) {
+            LOGGER.error("Problem Scheduling Recorder Sync Job(s)", e);
         }
     }
 }
