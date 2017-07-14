@@ -3,6 +3,8 @@ package edu.sdsu.its.API.Models;
 import lombok.Getter;
 
 /**
+ * Mediasite Recorder Status Codes Mapping
+ *
  * @author Tom Paulus
  *         Created on 7/3/17.
  */
@@ -36,11 +38,19 @@ public enum Status {
     }
 
     public static Status getByCode(int statusCode) {
-        for (Status s: values()) {
+        for (Status s : values()) {
             if (s.stateCode == statusCode) {
                 return s;
             }
         }
         return null;
+    }
+
+    public boolean okay() {
+        return 1 <= this.getStateCode() && this.getStateCode() <= 6;
+    }
+
+    public boolean inAlarm() {
+        return !okay();
     }
 }

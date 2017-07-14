@@ -106,8 +106,7 @@ public class SyncRecorderDB implements Job {
                                 "  `version`                  = '" + recorder.getVersion() + "',\n" +
                                 "  `last_version_update_date` = '" + recorder.getLastVersionUpdateDate() + "',\n" +
                                 "  `physical_address`         = '" + recorder.getPhysicalAddress() + "',\n" +
-                                "  `image_version`            = '" + recorder.getImageVersion() + "',\n" +
-                                "  `last_seen`                = NOW();";
+                                "  `image_version`            = '" + recorder.getImageVersion() + "';";
                 LOGGER.debug(String.format("Inserting/Updating Recorder %s - \"%s\"", recorder.getName(), insertUpdateSQL));
                 statement.addBatch(insertUpdateSQL);
             }
