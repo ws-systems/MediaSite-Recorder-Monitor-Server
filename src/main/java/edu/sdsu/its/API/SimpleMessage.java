@@ -1,6 +1,11 @@
 package edu.sdsu.its.API;
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Simple JSON Object that can be used to send a message when a JSON object is expected by the Client.
@@ -9,18 +14,16 @@ import com.google.gson.annotations.Expose;
  *         Created on 7/29/16.
  */
 @SuppressWarnings("WeakerAccess")
+@AllArgsConstructor
+@RequiredArgsConstructor
+@Getter
 public class SimpleMessage {
     @Expose
     private String status = null;
     @Expose
-    private String message;
+    private @NonNull String message;
 
-    public SimpleMessage(String message) {
-        this.message = message;
-    }
-
-    public SimpleMessage(String status, String message) {
-        this.status = status;
-        this.message = message;
+    public String asJson() {
+        return new Gson().toJson(this);
     }
 }

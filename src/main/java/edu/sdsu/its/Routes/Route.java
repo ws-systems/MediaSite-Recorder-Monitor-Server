@@ -24,7 +24,7 @@ public class Route {
      * @throws IOException If an input or output exception occurs
      */
     static boolean checkAuth(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (request.getSession().getAttribute("request") == null) {
+        if (request.getSession().getAttribute("user") == null) {
             // User is not logged in - redirect to login page
             request.getSession(true).setAttribute("post-login-redirect", request.getRequestURI());
             response.sendRedirect("login");
@@ -57,16 +57,6 @@ public class Route {
      */
     static void setUserData(HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("user");
-        if (user != null) {
-            request.setAttribute("loggedIn", true);
-            request.setAttribute("displayName", user.getFirstName());
-
-            request.setAttribute("update_info_url", null); // TODO
-            request.setAttribute("logout_url", null); // TODO
-
-        } else {
-            request.setAttribute("loggedIn", false);
-        }
-
+        request.setAttribute("user", user);
     }
 }

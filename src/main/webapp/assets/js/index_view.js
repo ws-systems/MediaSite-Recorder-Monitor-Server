@@ -13,13 +13,18 @@ function showRecorderByID(recorderID) {
             $RecorderInfo.find('.modal-recorder-updated').text(recorder.LastVersionUpdateDate);
             $RecorderInfo.find('.modal-recorder-address').text(recorder.PhysicalAddress);
             $RecorderInfo.find('.modal-recorder-img-version').text(recorder.ImageVersion);
-            $RecorderInfo.find('.modal-recorder-last-seen').text(recorder.LastSeen);
+            $RecorderInfo.find('.modal-recorder-last-seen').text(recorder.lastSeen);
 
             $RecorderInfo.modal('show');
         },
         error: function (e) {
-            console.warn(e);
-            sweetAlert("Oops...", "Something went wrong!", "error");
+            if (e.status === 401) {
+                // Redirect when login is required
+                window.location.replace("login");
+            } else {
+                console.warn(e);
+                sweetAlert("Oops...", "Something went wrong!", "error");
+            }
         }
     });
 }

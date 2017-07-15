@@ -4,6 +4,7 @@ import edu.sdsu.its.API.Models.Recorder;
 import edu.sdsu.its.API.Models.Status;
 import edu.sdsu.its.API.Models.User;
 import org.apache.log4j.Logger;
+import org.jasypt.util.password.StrongPasswordEncryptor;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,6 +16,8 @@ import java.util.List;
  */
 public class DB {
     private static final Logger LOGGER = Logger.getLogger(DB.class);
+    private static final StrongPasswordEncryptor PASSWORD_ENCRYPTOR = new StrongPasswordEncryptor();
+
 
     /**
      * Create and return a new DB Connection
@@ -116,6 +119,23 @@ public class DB {
     }
 
     /**
+     * Add a new User to the DB
+     *
+     * @param user {@link User} User to Create
+     * @return {@link boolean} If user was created successfully
+     */
+    public static boolean createUser(final User user) {
+        if (DB.getUser("email = '" + sanitize(user.getEmail().toLowerCase()) + "'").length > 0)
+            return false;
+
+        final String sql = "INSERT INTO users(email, first_name, last_name, notify, password) VALUES ( '" + sanitize(user.getEmail().toLowerCase()) +
+                "', '" + sanitize(user.getFirstName()) + "', '" + sanitize(user.getLastName()) + "', " + (user.getNotify() ? 1 : 0) + "," +
+                "'" + PASSWORD_ENCRYPTOR.encryptPassword(user.getPassword()) + "');";
+        executeStatement(sql);
+        return true;
+    }
+
+    /**
      * Get an Array of Users who match the specified criteria.
      * id is the Internal Identifier
      * Username is the Public Identifier
@@ -162,7 +182,74 @@ public class DB {
         return users.toArray(new User[]{});
     }
 
+    /**
+     * Verify and retrieve a user based on their email address/password pair.
+     *
+     * @param email    {@link String} User's Email Address
+     * @param password {@link String} User's Password
+     * @return {@link User} User, Null if non existent or password incorrect
+     */
+    public static User loginUser(final String email, final String password) {
+        Connection connection = getConnection();
+        Statement statement = null;
+        User user = null;
+        String passHash = "";
 
+        try {
+            statement = connection.createStatement();
+            final String sql = "SELECT * FROM users WHERE email='" + sanitize(email.toLowerCase()) + "';";
+            LOGGER.info(String.format("Executing SQL Query - \"%s\"", sql));
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            if (resultSet.next()) {
+                user = new User(
+                        resultSet.getString("first_name"),
+                        resultSet.getString("last_name"),
+                        resultSet.getString("email"),
+                        resultSet.getBoolean("notify"));
+
+                passHash = resultSet.getString("password");
+            }
+            resultSet.close();
+        } catch (SQLException e) {
+            LOGGER.error("Problem querying DB for User by Username", e);
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                    connection.close();
+                } catch (SQLException e) {
+                    LOGGER.warn("Problem Closing Statement", e);
+                }
+            }
+        }
+
+
+        return password != null && !passHash.isEmpty() && PASSWORD_ENCRYPTOR.checkPassword(password, passHash) ? user : null;
+    }
+
+    /**
+     * Update a Users Password. No verification of the password is done, and the statement will silently fail if the
+     * user's email does not exist.
+     *
+     * @param email    {@link String} User's Email
+     * @param password {@link String} User's new Password
+     */
+    public static void updateUserPassword(final String email, final String password) {
+        //language=SQL
+        final String sql = "UPDATE users SET password='" + PASSWORD_ENCRYPTOR.encryptPassword(password) + "'' WHERE email='" + email + "'';";
+
+        executeStatement(sql);
+    }
+
+    // TODO Update User
+
+    public static void deleteUser(final String email) {
+        LOGGER.warn(String.format("Deleting User with Email: %s",email));
+        //language=SQL
+        final String sql = "DELETE FROM users WHERE email = '" + email + "';";
+        executeStatement(sql);
+    }
 
     /**
      * Get an Array of Recorders who match the specified criteria.

@@ -44,6 +44,14 @@
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
 
+    <filter-mapping>
+        <filter-name>AuthFilter</filter-name>
+        <url-pattern>/api/*</url-pattern>
+    </filter-mapping>
+    <filter>
+        <filter-name>AuthFilter</filter-name>
+        <filter-class>edu.sdsu.its.API.APIFilter</filter-class>
+    </filter>
 
     <listener>
         <listener-class>edu.sdsu.its.Init</listener-class>

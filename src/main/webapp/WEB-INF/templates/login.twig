@@ -1,4 +1,8 @@
-{% include 'header.twig' with { active: 'login' } %}
+{% embed 'header.twig' with { active: 'login' } %}
+    {% block page_assets %}
+        <link rel="stylesheet" href="assets/css/login.css">
+    {% endblock %}
+{% endembed %}
 
 <div class="login-container">
 
@@ -26,22 +30,33 @@
             Something went wrong trying to log you in!
             Trying again may or may not fix the issue. ¯\_(ツ)_/¯
         </div>
-        {% elseif login_status == 'logged out' %}
+    {% elseif login_status == 'logged out' %}
         <div class="alert alert-info" role="alert" id="logoutAlert">
             You have been logged out. See you again soon!
         </div>
     {% endif %}
 
-    <form class="form-signin" method="post" action="/api/login" onsubmit="doSubmit();" name="loginForm">
+    <form class="form-signin" method="post" action="api/login" onsubmit="doSubmit();" name="loginForm">
         <h2 class="form-signin-heading">Please sign in</h2>
         <div class="form-group {% if login_status == 'failed' %}has-danger{% endif %}">
-            <label for="inputUsername" class="sr-only">Username</label>
-            <input type="text" id="inputUsername" class="form-control" placeholder="Username" required autofocus
-                   name="username">
-            <label for="inputPassword" class="sr-only">Password</label>
-            <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+            <label for="inputEmail"
+                   class="sr-only">Email Address</label>
+            <input type="email"
+                   name="email"
+                   id="inputEmail"
+                   class="form-control"
+                   placeholder="jdoe@sdsu.edu"
+                   required
+                   autofocus>
+            <label for="inputPassword"
+                   class="sr-only">Password</label>
+            <input type="password"
+                   id="inputPassword"
+                   class="form-control"
+                   placeholder="Password"
+                   required>
             {% if login_status == 'failed' %}
-                <div class="form-control-feedback">Incorrect Username or Password.</div>
+                <div class="form-control-feedback">Incorrect Email Address or Password.</div>
             {% endif %}
         </div>
         <input type="hidden" name="password">
@@ -49,4 +64,8 @@
     </form>
 </div>
 
-{% include 'footer.twig' with { hidden : true } %}
+{% embed 'footer.twig' with { hidden : true } %}
+    {% block page_assets %}
+        <script src="assets/js/login.js" type="application/javascript"></script>
+    {% endblock %}
+{% endembed %}

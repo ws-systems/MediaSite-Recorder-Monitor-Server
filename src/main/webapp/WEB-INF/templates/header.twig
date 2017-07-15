@@ -12,12 +12,9 @@
 
     {% if (active != 'login') %}
         <link rel="stylesheet" href="assets/css/common.css">
-    {% else %}
-        <link rel="stylesheet" href="assets/css/login.css">
     {% endif %}
 
-    {% if (active == 'index') %}
-        <link rel="stylesheet" href="assets/css/index.css">
-    {% endif %}
+    {% block page_assets %}
+    {% endblock %}
 </head>
 <body>

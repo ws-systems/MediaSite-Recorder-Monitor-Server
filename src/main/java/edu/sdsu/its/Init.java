@@ -1,6 +1,7 @@
 package edu.sdsu.its;
 
 import edu.sdsu.its.API.Models.Recorder;
+import edu.sdsu.its.API.Models.User;
 import edu.sdsu.its.Jobs.SyncRecorderDB;
 import edu.sdsu.its.Jobs.SyncRecorderStatus;
 import org.apache.log4j.Logger;
@@ -29,10 +30,9 @@ import java.util.Properties;
 @WebListener
 public class Init implements ServletContextListener {
     private static final Logger LOGGER = Logger.getLogger(Init.class);
-    private static final int DEFAULT_ID = 550046348;
     private static final String DEFAULT_FIRST_NAME = "Administrator";
     private static final String DEFAULT_LAST_NAME = "User";
-    private static final String DEFAULT_EMAIL = "admin";
+    private static final String DEFAULT_EMAIL = "admin@its.sdsu.edu";
     private static final String DEFAULT_PASSWORD = "changeme";
 
     /**
@@ -43,7 +43,7 @@ public class Init implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         // Create Default User
-        // TODO Check for Users and Create if necessary
+        createInitialUser();
 
         // Set Defaults in Preferences table in DB
         try {
@@ -98,6 +98,21 @@ public class Init implements ServletContextListener {
                 // driver was not registered by the webapp's ClassLoader and may be in use elsewhere
                 LOGGER.info(String.format("Not deregistering JDBC driver %s as it does not belong to this webapp's ClassLoader", driver));
             }
+        }
+    }
+
+    private void createInitialUser() {
+        User[] users = DB.getUser("");
+        LOGGER.info(String.format("Starting Webapp. Found %d users in DB", users.length));
+        if (users.length == 0) {
+            LOGGER.info("No users were found in the DB. Creating default User.");
+            User user = new User(DEFAULT_FIRST_NAME, DEFAULT_LAST_NAME, DEFAULT_EMAIL, true);
+            user.setPassword(DEFAULT_PASSWORD);
+            DB.createUser(user);
+
+            LOGGER.info(String.format("Initial Staff Created.\n " +
+                    "Username: \"%s\"\n" +
+                    "Password: \"%s\"", DEFAULT_EMAIL, DEFAULT_PASSWORD));
         }
     }
 
