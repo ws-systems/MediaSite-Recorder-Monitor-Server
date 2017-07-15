@@ -14,7 +14,7 @@ public enum Status {
     BUSY(2, "Busy"),
     RECORDING(3, "Recording"),
     PRE_RECORD(4, "Before Record"),
-    POST_RECORD(5, "AfterRecord"),
+    POST_RECORD(5, "After Record"),
     PAUSED(6, "Paused"),
     INCOMPATIBLE(7, "Incompatible"),
     ERROR(8, "Unknown Error"),
