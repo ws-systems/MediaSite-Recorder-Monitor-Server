@@ -80,9 +80,6 @@ public class SyncRecorderStatus implements Job {
             currentStatus = Status.UNAVAILABLE;
         }
 
-        if (mRecorderID.equals("120727ddce774057b2107c9e90df58e14e")){
-            currentStatus = Status.INCOMPATIBLE;
-        }
 
         LOGGER.debug(String.format("Recorder Status is \"%s\"", currentStatus));
         writeStatusToDB(this.mRecorderID, currentStatus);
