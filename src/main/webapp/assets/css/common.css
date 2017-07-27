@@ -61,13 +61,12 @@ th.sorttable_sorted_reverse::after {
 /* Footer Styles*/
 .footer {
     position: absolute;
-    bottom: 0;
+    bottom: .5rem;
     width: 100%;
     /* Set the fixed height of the footer here */
     height: 40px;
     line-height: 35px; /* Vertically center the text there */
     font-size: .75rem;
-    padding-top: 1rem;
 }
 
 .footer .container {
