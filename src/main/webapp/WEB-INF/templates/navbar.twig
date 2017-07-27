@@ -5,7 +5,7 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <a class="navbar-brand" href="#">
-        <img src="assets/images/logo-bug.jpg" width="30" height="30" class="d-inline-block align-top" alt="">
+        <img src="/assets/images/logo-bug.jpg" width="30" height="30" class="d-inline-block align-top" alt="">
         MS Recorder Monitor
     </a>
     <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -13,21 +13,21 @@
             <li class="nav-item {% if (active == 'index') %} active {% endif %}">
                 <a class="nav-link" href="{% if (active == 'index') %}#{% else %}/{% endif %}">Overview</a>
             </li>
-            {% if (loggedIn == true) %}
+            {% if defined(user) and user != null %}
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle disabled" href="#" id="manageDropdownMenuLink"
+                    <a class="nav-link dropdown-toggle" href="#" id="manageDropdownMenuLink"
                        data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false">
                         Manage
                     </a>
                     <div class="dropdown-menu" aria-labelledby="manageDropdownMenuLink">
-                        <a class="dropdown-item {% if (active == 'users') %} active {% endif %}"
-                           href="{% if (active == 'users') %}#{% else %}manage/users{% endif %}">Users</a>
-                        <a class="dropdown-item {% if (active == 'msi') %} active {% endif %}"
-                           href="{% if (active == 'ms-integ') %}#{% else %}manage/integration{% endif %}">Mediasite
+                        <a class="dropdown-item {% if (active == 'manage-users') %} active {% endif %}"
+                           href="{% if (active == 'manage-users') %}#{% else %}manage/users{% endif %}">Users</a>
+                        <a class="dropdown-item {% if (active == 'manage-integrations') %} active {% endif %}"
+                           href="{% if (active == 'manage-integrations') %}#{% else %}manage/integration{% endif %}">Mediasite
                             Integration</a>
-                        <a class="dropdown-item {% if (active == 'rates') %} active {% endif %}"
-                           href="{% if (active == 'rates') %}#{% else %}manage/rates{% endif %}">Rates</a>
+                        <a class="dropdown-item {% if (active == 'manage-rates') %} active {% endif %}"
+                           href="{% if (active == 'manage-rates') %}#{% else %}manage/rates{% endif %}">Rates</a>
                     </div>
                 </li>
             {% endif %}

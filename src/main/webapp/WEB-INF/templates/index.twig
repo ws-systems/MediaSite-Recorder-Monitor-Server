@@ -1,6 +1,6 @@
 {% embed "header.twig" with { active: "index"} %}
     {% block page_assets %}
-        <link rel="stylesheet" href="assets/css/index.css">
+        <link rel="stylesheet" href="/assets/css/index.css">
     {% endblock %}
 {% endembed %}
 {% include "navbar.twig" with { active: "index"} %}
@@ -19,14 +19,14 @@
 
     <div class="container" style="padding-top: 1em">
         <h2>Recorder Status</h2>
-        <table class="table table-hover" id="recorder-table table-responsive">
+        <table class="table table-hover" id="recorder-table table-responsive sortable">
             <thead>
             <tr>
-                <th></th>
+                <th>Status</th>
                 <th>Recorder</th>
                 <th>Version</th>
                 <th>Last Seen</th>
-                <th></th>
+                <th class="sorttable_nosort">{# Info Button #}</th>
             </tr>
             </thead>
             <tbody>
@@ -49,6 +49,6 @@
 
 {% embed "footer.twig" %}
     {% block page_assets %}
-        <script src="assets/js/index_view.js" type="text/javascript"></script>
+        <script src="/assets/js/index.js" type="text/javascript"></script>
     {% endblock %}
 {% endembed %}

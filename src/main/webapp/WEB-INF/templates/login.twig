@@ -1,6 +1,6 @@
 {% embed 'header.twig' with { active: 'login' } %}
     {% block page_assets %}
-        <link rel="stylesheet" href="assets/css/login.css">
+        <link rel="stylesheet" href="/assets/css/login.css">
     {% endblock %}
 {% endembed %}
 
@@ -8,7 +8,7 @@
 
     <div class="logo">
         <a href="https://its.sdsu.edu" target="_blank">
-            <img src="assets/images/logo.png">
+            <img src="/assets/images/logo.png">
         </a>
         <hr>
         <span class="appName">Media Site Monitor</span>
@@ -66,6 +66,6 @@
 
 {% embed 'footer.twig' with { hidden : true } %}
     {% block page_assets %}
-        <script src="assets/js/login.js" type="application/javascript"></script>
+        <script src="/assets/js/login.js" type="application/javascript"></script>
     {% endblock %}
 {% endembed %}
