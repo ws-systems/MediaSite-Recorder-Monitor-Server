@@ -13,7 +13,7 @@ import static org.junit.Assert.assertTrue;
  *         Created on 11/3/16.
  */
 public class TestVault {
-    final static Logger LOGGER = Logger.getLogger(TestVault.class);
+    private final static Logger LOGGER = Logger.getLogger(TestVault.class);
 
     /**
      * Check that the environment variables that are used by the Key Server are set.

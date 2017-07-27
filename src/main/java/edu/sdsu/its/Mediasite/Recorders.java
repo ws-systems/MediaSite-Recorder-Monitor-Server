@@ -9,6 +9,7 @@ import edu.sdsu.its.API.Models.Status;
 import edu.sdsu.its.DB;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.log4j.Logger;
 
 import java.util.regex.Matcher;
@@ -91,6 +92,10 @@ public class Recorders {
                     .basicAuth(msUser, msPass)
                     .asString();
         } catch (UnirestException e) {
+            if (e.getCause() instanceof ConnectTimeoutException) {
+                LOGGER.warn(String.format("Could not connect to Recorder at IP %s - Connection Timeout", recorderIP));
+            }
+
             LOGGER.error("Problem retrieving recorder status from Recorder - IP: " + recorderIP, e);
             return null;
         }
@@ -189,6 +194,10 @@ public class Recorders {
             LastVersionUpdateDate = lastVersionUpdateDate;
             PhysicalAddress = physicalAddress;
             ImageVersion = imageVersion;
+        }
+
+        public Recorder(String id) {
+            Id = id;
         }
 
         String getIP() throws RuntimeException {

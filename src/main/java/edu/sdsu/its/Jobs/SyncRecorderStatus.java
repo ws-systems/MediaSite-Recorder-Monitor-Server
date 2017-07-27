@@ -1,8 +1,10 @@
 package edu.sdsu.its.Jobs;
 
+import edu.sdsu.its.API.Models.Recorder;
 import edu.sdsu.its.API.Models.Status;
 import edu.sdsu.its.API.Models.User;
 import edu.sdsu.its.DB;
+import edu.sdsu.its.Hooks.Hook;
 import edu.sdsu.its.Mediasite.Recorders;
 import edu.sdsu.its.Notify;
 import lombok.AllArgsConstructor;
@@ -26,12 +28,11 @@ import static org.quartz.TriggerBuilder.newTrigger;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SyncRecorderStatus implements Job {
-    private static final String ALERT_TEMPLATE_PATH = "email_templates/recorder_in_alarm.twig";
     private static final Logger LOGGER = Logger.getLogger(SyncRecorderStatus.class);
 
-    static final String JOB_GROUP = "recorder_status";
-    static final String TRIGGER_NAME_STEM = "SyncTrigger";
-    static final String JOB_NAME_STEM = "SyncRecorderStatus";
+    public static final String JOB_GROUP = "recorder_status";
+    public static final String TRIGGER_NAME_STEM = "SyncTrigger";
+    public static final String JOB_NAME_STEM = "SyncRecorderStatus";
 
     private String mRecorderID;
 
@@ -77,48 +78,29 @@ public class SyncRecorderStatus implements Job {
 
         if (currentStatus == null) {
             LOGGER.error("Problem retrieving recorder status from API/Recorder");
-            currentStatus = Status.UNAVAILABLE;
+            currentStatus = Status.UNKNOWN;
         }
-
 
         LOGGER.debug(String.format("Recorder Status is \"%s\"", currentStatus));
         writeStatusToDB(this.mRecorderID, currentStatus);
         LOGGER.info("Finished Updating Recorder Status for Recorder with ID: " + this.mRecorderID);
 
-        if (previousStatus.okay() && currentStatus.inAlarm()) {
-            LOGGER.warn("Recorder " + mRecorderID + "has entered ALARM state - Email Notifications will be sent");
-            sendAlarmEmail();
-        } else if (previousStatus.inAlarm() && currentStatus.okay()) {
-            LOGGER.info("Recorder" + mRecorderID + " has cleared ALARM state and is now OKAY.");
-        }
-    }
-
-    private void sendAlarmEmail() {
-        User[] usersToNotify = DB.getUser("notify=1");
-        Notify.Recipient[] recipients = new Notify.Recipient[usersToNotify.length];
-        for (int i = 0; i < usersToNotify.length; i++) {
-            User user = usersToNotify[i];
-            recipients[i] = new Notify.Recipient(user.getFirstName() + " " + user.getLastName(),
-                    user.getEmail());
+        try {
+            if (previousStatus.okay() && currentStatus.inAlarm()) {
+                LOGGER.warn("Recorder " + mRecorderID + "has entered ALARM state!");
+                Hook.fire(Hook.RECORDER_ALARM_ACTIVATE, new Recorder(mRecorderID, currentStatus));
+            } else if (previousStatus.inAlarm() && currentStatus.okay()) {
+                LOGGER.info("Recorder" + mRecorderID + " has cleared ALARM state and is now OKAY.");
+                Hook.fire(Hook.RECORDER_ALARM_CLEAR, new Recorder(mRecorderID, currentStatus));
+            }
+        } catch (IOException e) {
+            LOGGER.error("Problem firing Alarm Status Update Hook", e);
         }
 
         try {
-            Notify notification = Notify.builder()
-                    .subject("[MS Monitor] Recorder in ALARM")
-                    .recipients(recipients)
-                    .message(Notify.messageFromTemplate(ALERT_TEMPLATE_PATH, new HashMap<String, Object>() {{
-                        put("recorder", DB.getRecorder("id='" + mRecorderID + "'")[0]);
-                        put("url_base", "http://example.com"); // TODO Add to Vault - shouldn't end with '/'
-                        put("generated_on_date_footer", new Timestamp(new java.util.Date().getTime()).toString());
-                    }}))
-                    .build();
-            String confirmation = notification.send();
-            LOGGER.debug("Sent Notification Email - " + confirmation);
+            Hook.fire(Hook.RECORDER_STATUS_UPDATE, DB.getRecorder("id='" + mRecorderID + "'"));
         } catch (IOException e) {
-            LOGGER.error("Problem making Alert Message", e);
-            LOGGER.info("Check Template - " + ALERT_TEMPLATE_PATH);
-        } catch (EmailException e) {
-            LOGGER.error("Problem sending Alert Email", e);
+            LOGGER.error("Problem firing Recorder Status Update Hook", e);
         }
     }
 
@@ -167,10 +149,9 @@ public class SyncRecorderStatus implements Job {
         try {
             statement = connection.createStatement();
             //language=SQL
-            final String updateSQL = "UPDATE recorders\n" +
-                    "SET status =  " + status.getStateCode() + ",\n" +
-                    "last_seen = NOW() \n" +
-                    "WHERE id='" + recorderId + "';";
+            String updateSQL = "UPDATE recorders SET status =  " + status.getStateCode() + ",";
+            if (status != Status.UNKNOWN) updateSQL += "last_seen = NOW() ";
+            updateSQL += "WHERE id='" + recorderId + "';";
 
             LOGGER.info(String.format("Updating Recorder Status - \"%s\"", updateSQL));
             statement.execute(updateSQL);

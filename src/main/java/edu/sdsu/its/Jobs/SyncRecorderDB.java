@@ -1,11 +1,14 @@
 package edu.sdsu.its.Jobs;
 
 import edu.sdsu.its.DB;
+import edu.sdsu.its.Hooks.Hook;
 import edu.sdsu.its.Mediasite.Recorders;
 import edu.sdsu.its.Schedule;
+import lombok.NoArgsConstructor;
 import org.apache.log4j.Logger;
 import org.quartz.*;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -20,11 +23,9 @@ import static org.quartz.TriggerBuilder.newTrigger;
  * @author Tom Paulus
  *         Created on 5/10/17.
  */
+@NoArgsConstructor
 public class SyncRecorderDB implements Job {
     private static final Logger LOGGER = Logger.getLogger(SyncRecorderDB.class);
-
-    public SyncRecorderDB() {
-    }
 
     /**
      * Schedule the Sync Job
@@ -61,19 +62,10 @@ public class SyncRecorderDB implements Job {
         }
         LOGGER.debug(String.format("Retrieved %d recorders from MS API", recorders.length));
         syncDB(recorders);
-
-        for (Recorders.Recorder recorder : recorders) {
-            try {
-                if (!context.getScheduler().checkExists(new JobKey(SyncRecorderStatus.TRIGGER_NAME_STEM + "-" + recorder.getId(), SyncRecorderStatus.JOB_GROUP))) {
-                    LOGGER.info("Creating New Status Sync Job for Recorder ID: " + recorder.getId());
-                    new SyncRecorderStatus(recorder.getId())
-                            .schedule(Schedule.getScheduler(), Integer.parseInt(DB.getPreference("sync-frequency")));
-                }
-            } catch (ObjectAlreadyExistsException e) {
-                LOGGER.debug("Recorder already has sync scheduled");
-            } catch (SchedulerException e) {
-                LOGGER.warn("Problem Adding new Recorders to Sync Scheduler", e);
-            }
+        try {
+            Hook.fire(Hook.RECORDER_RECORD_UPDATE, recorders);
+        } catch (IOException e) {
+            LOGGER.error("Problem firing Recorder DB Update Hook", e);
         }
 
         LOGGER.info("Finished Recorder Sync Job");

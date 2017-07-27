@@ -9,6 +9,7 @@ import lombok.Getter;
  *         Created on 7/3/17.
  */
 public enum Status {
+    UNKNOWN(-1, "Unknown"),
     UNAVAILABLE(0, "Unavailable"),
     IDLE(1, "Idle"),
     BUSY(2, "Busy"),

@@ -14,7 +14,7 @@ import static org.junit.Assert.fail;
  *         Created on 5/5/17.
  */
 public class TestDB {
-    final static Logger LOGGER = Logger.getLogger(TestDB.class);
+    private final static Logger LOGGER = Logger.getLogger(TestDB.class);
 
     /**
      * Check if the KeyServer has access to the correct credentials

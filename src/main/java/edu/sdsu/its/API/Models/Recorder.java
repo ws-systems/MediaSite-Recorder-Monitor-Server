@@ -18,4 +18,9 @@ public class Recorder extends Recorders.Recorder {
         this.status = status;
         this.lastSeen = lastSeen;
     }
+
+    public Recorder(String id, Status status) {
+        super(id);
+        this.status = status;
+    }
 }

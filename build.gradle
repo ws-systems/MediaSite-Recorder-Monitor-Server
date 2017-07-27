@@ -61,6 +61,7 @@ dependencies {
 
     // Commons
     compile group: 'commons-io', name: 'commons-io', version: '2.5'
+    compile group: 'com.google.guava', name: 'guava', version: '22.0'
 
     // Unit Tests
     testCompile group: 'junit', name: 'junit', version: '4.11'
