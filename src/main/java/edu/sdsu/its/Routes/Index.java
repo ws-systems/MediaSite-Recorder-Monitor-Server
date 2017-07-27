@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static edu.sdsu.its.Routes.Route.addMeta;
-import static edu.sdsu.its.Routes.Route.checkAuth;
 import static edu.sdsu.its.Routes.Route.setUserData;
 
 /**
@@ -25,7 +24,6 @@ public class Index extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-//        if (!checkAuth(request, response)) return;  // TODO Enable after Auth and Such has been setup
         addMeta(request);
         setUserData(request);
 

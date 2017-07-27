@@ -29,7 +29,7 @@ public class APIFilter implements Filter {
         if (!isLoginRequest && session == null) {
             // Session not included in request
 
-            LOGGER.warn("Unauthorized Request to " + ((HttpServletRequest) request).getContextPath() + "- session not included in request");
+            LOGGER.warn("Unauthorized Request to " + ((HttpServletRequest) request).getRequestURI() + "- session not included in request");
             ((HttpServletResponse) response).setStatus(401);
             ((HttpServletResponse) response).setHeader("Content-Type", MediaType.APPLICATION_JSON);
 
@@ -41,7 +41,7 @@ public class APIFilter implements Filter {
         } else if (!isLoginRequest && !Login.authCheck(session)) {
             // Session is not valid
 
-            LOGGER.warn("Unauthorized Request to " + ((HttpServletRequest) request).getContextPath() + "- invalid session");
+            LOGGER.warn("Unauthorized Request to " + ((HttpServletRequest) request).getRequestURI() + "- invalid session");
             ((HttpServletResponse) response).setStatus(401);
             ((HttpServletResponse) response).setHeader("Content-Type", MediaType.APPLICATION_JSON);
 

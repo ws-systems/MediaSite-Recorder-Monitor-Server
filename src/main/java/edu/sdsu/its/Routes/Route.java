@@ -27,7 +27,7 @@ public class Route {
         if (request.getSession().getAttribute("user") == null) {
             // User is not logged in - redirect to login page
             request.getSession(true).setAttribute("post-login-redirect", request.getRequestURI());
-            response.sendRedirect("login");
+            response.sendRedirect("/login");
             return false;
         }
         return true;
