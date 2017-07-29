@@ -1,6 +1,7 @@
 package edu.sdsu.its.API;
 
 import com.google.gson.Gson;
+import edu.sdsu.its.API.Models.SimpleMessage;
 import edu.sdsu.its.API.Models.User;
 import edu.sdsu.its.DB;
 import org.apache.log4j.Logger;

@@ -1,5 +1,6 @@
 package edu.sdsu.its.API;
 
+import edu.sdsu.its.API.Models.SimpleMessage;
 import org.apache.log4j.Logger;
 
 import javax.servlet.*;

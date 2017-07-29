@@ -1,4 +1,4 @@
-package edu.sdsu.its.API;
+package edu.sdsu.its.API.Models;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
