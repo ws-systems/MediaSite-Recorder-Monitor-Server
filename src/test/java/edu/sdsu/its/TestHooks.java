@@ -12,7 +12,7 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Tests that all Hooks are firing as they should and that all of the necessary hooks are being found via reflection.
- * 
+ *
  * @author Tom Paulus
  * Created on 7/26/17.
  */

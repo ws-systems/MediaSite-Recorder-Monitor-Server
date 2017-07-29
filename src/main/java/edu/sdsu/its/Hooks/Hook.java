@@ -58,7 +58,7 @@ public enum Hook {
             final Method[] methods = clazz.load().getDeclaredMethods();
             LOGGER.debug(String.format("Found %d methods for Hook Listener Class %s", methods.length, clazz.getName()));
 
-            for (Method method : methods) {
+            for (final Method method : methods) {
                 final boolean isAbstract = Modifier.isAbstract(method.getModifiers());
                 if (method.getName().equals(hook.getName()) && !isAbstract) {
                     new Thread(() -> {
