@@ -9,6 +9,7 @@ import org.jasypt.util.password.StrongPasswordEncryptor;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import java.util.List;
 import java.util.Properties;
@@ -53,16 +54,22 @@ public class DB {
     }
 
     public static String getPreference(final String name) {
-        EntityManager entityManager = sessionFactory.createEntityManager();
-        entityManager.getTransaction().begin();
+        try {
+            EntityManager entityManager = sessionFactory.createEntityManager();
+            entityManager.getTransaction().begin();
 
-        Preference preference = (Preference) entityManager.createQuery("select p from Preference p where p.setting = '" + name + "'").getSingleResult();
-        LOGGER.debug(preference);
+            Preference preference = (Preference) entityManager.createQuery("select p from Preference p where p.setting = '" + name + "'").getSingleResult();
+            LOGGER.debug(preference);
 
-        entityManager.getTransaction().commit();
-        entityManager.close();
+            entityManager.getTransaction().commit();
+            entityManager.close();
 
-        return preference.getValue();
+            return preference.getValue();
+        } catch (NoResultException e) {
+            LOGGER.warn("No Setting found with name - " + name);
+        }
+
+        return null;
     }
 
     public static void setPreference(final String name, final String value) {

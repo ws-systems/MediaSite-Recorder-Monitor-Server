@@ -107,7 +107,7 @@ public class SyncRecorderStatus implements Job {
         }
 
         try {
-            Hook.fire(Hook.RECORDER_STATUS_UPDATE, DB.getRecorder("id='" + mRecorderID + "'"));
+            Hook.fire(Hook.RECORDER_STATUS_UPDATE, DB.getRecorder("id='" + mRecorderID + "'")[0]);
         } catch (IOException e) {
             LOGGER.error("Problem firing Recorder Status Update Hook", e);
         }

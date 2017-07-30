@@ -30,9 +30,14 @@ class JobSchedulerHook extends EventHook {
             try {
                 if (!Schedule.getScheduler().checkExists(new JobKey(SyncRecorderStatus.TRIGGER_NAME_STEM + "-" + recorder.getId(), SyncRecorderStatus.JOB_GROUP))) {
                     log.info("Creating New Status Sync Job for Recorder ID: " + recorder.getId());
-                    new SyncRecorderStatus(recorder.getId())
-                            .schedule(Schedule.getScheduler(), Integer.parseInt(DB.getPreference("sync-frequency")));
-                    scheduled++;
+                    final String syncFrequency = DB.getPreference("sync_recorder.frequency");
+                    if (syncFrequency != null) {
+                        new SyncRecorderStatus(recorder.getId())
+                                .schedule(Schedule.getScheduler(), Integer.parseInt(syncFrequency));
+                        scheduled++;
+                    } else {
+                        log.error("Sync Frequency is not defined - cannot schedule job");
+                    }
                 }
             } catch (ObjectAlreadyExistsException e) {
                 log.debug("Recorder already has sync scheduled");
