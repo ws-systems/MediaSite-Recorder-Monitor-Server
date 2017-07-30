@@ -1,0 +1,71 @@
+{% embed "header.twig" with { active: "manage-users"} %}
+    {% block page_assets %}
+        <link rel="stylesheet" href="/assets/css/index.css">
+    {% endblock %}
+{% endembed %}
+{% include "navbar.twig" with { active: "manage-users"} %}
+
+{% include "modal-create-user.twig" %}
+{% include "modal-update-user-info.twig" %}
+
+<div class="container">
+    <div class="header row justify-content-between pt-2">
+        <div class="col">
+            <h1>Manage - Users</h1>
+        </div>
+        <div class="col my-auto">
+            <button type="button" class="btn btn-success float-right" data-toggle="modal" data-target="#createUserModal">Create User
+            </button>
+        </div>
+    </div>
+
+    <div class="row pt-3">
+        <div class="col mx-auto">
+            <table class="table table-hover sortable mx-auto" id="users">
+                <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email Address</th>
+                    <th>Notify</th>
+                    <th class="sorttable_nosort">{# Edit Button#}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for u in users %}
+                    <tr id="user-{{ u.PK }}"
+                        data-email="{{ u.email }}"
+                        data-fname="{{ u.firstName }}"
+                        data-lname="{{ u.lastName }}"
+                        data-notify="{{ u.notify }}">
+                        <td>{{ u.firstName }}</td>
+                        <td>{{ u.lastName }}</td>
+                        <td>{{ u.email }}</td>
+                        <td class="text-justify">{% if u.notify -%}
+                                <i class="fa fa-check" aria-hidden="true"></i>
+                                <span class="sr-only">Subscribed to notifications</span>
+                            {%- else -%}
+                                <i class="fa fa-times" aria-hidden="true"></i>
+                                <span class="sr-only">Not subscribed to notifications</span>
+                            {%- endif %}
+                        </td>
+                        <td class="text-right">
+                            <button type="button"
+                                    class="btn btn-secondary btn-sm"
+                                    onclick="showEditModal(this)">
+                                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit User
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% embed "footer.twig" %}
+    {% block page_assets %}
+        <script src="/assets/js/manage-users.js" type="text/javascript"></script>
+    {% endblock %}
+{% endembed %}

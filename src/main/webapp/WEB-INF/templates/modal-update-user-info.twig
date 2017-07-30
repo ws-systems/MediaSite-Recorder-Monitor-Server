@@ -1,0 +1,66 @@
+<div class="modal fade" id="updateUserModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Monitor User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="#" onsubmit="updateUser(); return false;" class="form-horizontal">
+                    <input type="hidden" id="updatePreviousEmail">
+                    <input type="hidden" id="userPK">
+                    <div class="form-group row">
+                        <label for="updateEmail" class="col-sm-3 col-form-label">Email: </label>
+                        <div class="col-sm-9">
+                            <input class="form-control" title="Email" type="email" id="updateEmail" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="updateFirstName" class="col-sm-3 col-form-label">First Name: </label>
+                        <div class="col-sm-9">
+                            <input class="form-control" title="First Name" type="text" id="updateFirstName" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="updateLastName" class="col-sm-3 col-form-label">Last Name: </label>
+                        <div class="col-sm-9">
+                            <input class="form-control" title="Last Name" type="text" id="updateLastName" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="updatePassword1" class="col-sm-3 col-form-label">Password: </label>
+                        <div class="col-sm-9 passwordInput">
+                            <input class="form-control" title="Password" type="password" id="updatePassword1">
+                            <small class="text-muted">Leave blank to not change password.</small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="updatePassword2" class="col-sm-3 col-form-label">Confirm: </label>
+                        <div class="col-sm-9 passwordInput">
+                            <input class="form-control" title="Confirm Password" type="password" id="updatePassword2">
+                            <div class="form-control-feedback passwordMismatchErr" style="display: none">Please make
+                                sure that the passwords match.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label mr-2">
+                            <input class="form-check-input" type="checkbox" value="" id="updateNotifyCheckbox">
+                            Notify User via Email on Recorder Alarms
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger float-left mr-auto" onclick="deleteUser()" id="deleteUserBtn">Delete User
+                </button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="$('#updateUserModal').find('form').submit()">Update
+                    User
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

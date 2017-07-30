@@ -1,0 +1,61 @@
+<div class="modal fade" id="createUserModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create New Monitor User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="#" onsubmit="createUser(); return false;" class="form-horizontal">
+                    <div class="form-group row">
+                        <label for="createEmail" class="col-sm-3 col-form-label">Email: </label>
+                        <div class="col-sm-9">
+                            <input class="form-control" title="Email" type="email" id="createEmail" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="createFirstName" class="col-sm-3 col-form-label">First Name: </label>
+                        <div class="col-sm-9">
+                            <input class="form-control" title="First Name" type="text" id="createFirstName" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="createLastName" class="col-sm-3 col-form-label">Last Name: </label>
+                        <div class="col-sm-9">
+                            <input class="form-control" title="Last Name" type="text" id="createLastName" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="createPassword1" class="col-sm-3 col-form-label">Password: </label>
+                        <div class="col-sm-9 passwordInput">
+                            <input class="form-control" title="Password" type="password" id="createPassword1">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="createPassword2" class="col-sm-3 col-form-label">Confirm: </label>
+                        <div class="col-sm-9 passwordInput">
+                            <input class="form-control" title="Confirm Password" type="password" id="createPassword2">
+                            <div class="form-control-feedback passwordMismatchErr" style="display: none">Please make
+                                sure that the passwords match.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input mr-2" type="checkbox" value="" id="createNotifyCheckbox" checked>
+                            Notify User via Email on Recorder Alarms
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary float-left mr-auto" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="$('#createUserModal').find('form').submit()">Create
+                    User
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

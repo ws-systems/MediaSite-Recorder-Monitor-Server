@@ -37,6 +37,12 @@ li.nav-item {
     color: #999 !important;
 }
 
+@media (min-width: 992px) {
+    [aria-labelledby="userDropdownMenuLink"] {
+        margin-left: -75px;
+    }
+}
+
 /* Sorting and related Icons */
 #sorttable_sortfwdind,
 #sorttable_sortrevind {
@@ -99,4 +105,9 @@ footer.footer a:visited:hover {
 footer.footer a,
 footer.footer a:visited {
     color: #69707a;
+}
+
+/* Modal Styles */
+.modal form label.col-form-label {
+    font-weight: 600;
 }

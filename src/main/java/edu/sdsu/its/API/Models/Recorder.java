@@ -1,5 +1,6 @@
 package edu.sdsu.its.API.Models;
 
+import com.google.gson.Gson;
 import lombok.*;
 
 import javax.persistence.Column;
@@ -86,5 +87,9 @@ public class Recorder {
             throw new RuntimeException("No IP defined in WebService URL");
         }
         return matcher.group();
+    }
+
+    public String asJson() {
+        return new Gson().toJson(this);
     }
 }

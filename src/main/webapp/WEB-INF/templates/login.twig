@@ -46,6 +46,7 @@
                    id="inputEmail"
                    class="form-control"
                    placeholder="jdoe@sdsu.edu"
+                   title="Email"
                    required
                    autofocus>
             <label for="inputPassword"
@@ -54,6 +55,7 @@
                    id="inputPassword"
                    class="form-control"
                    placeholder="Password"
+                   title="Password"
                    required>
             {% if login_status == 'failed' %}
                 <div class="form-control-feedback">Incorrect Email Address or Password.</div>
