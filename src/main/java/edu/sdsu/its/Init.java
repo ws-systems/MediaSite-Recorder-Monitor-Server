@@ -164,10 +164,15 @@ public class Init implements ServletContextListener {
         try {
             if (Boolean.parseBoolean(DB.getPreference("sync_recorder.enable")) &&
                     !(envDisable != null && envDisable.toUpperCase().equals("TRUE"))) {
-                final int syncInterval = Integer.parseInt(DB.getPreference("sync_recorder.frequency"));
-                for (Recorder recorder : DB.getRecorder("")) {
-                    LOGGER.info(String.format("Scheduling Sync for Recorder with ID %s - Interval %d", recorder.getId(), syncInterval));
-                    new SyncRecorderStatus(recorder.getId()).schedule(Schedule.getScheduler(), syncInterval);
+                final String syncFrequencyStr = DB.getPreference("sync_recorder.frequency");
+                if (syncFrequencyStr != null) {
+                    final int syncInterval = Integer.parseInt(syncFrequencyStr);
+                    for (Recorder recorder : DB.getRecorder("")) {
+                        LOGGER.info(String.format("Scheduling Sync for Recorder with ID %s - Interval %d", recorder.getId(), syncInterval));
+                        new SyncRecorderStatus(recorder.getId()).schedule(Schedule.getScheduler(), syncInterval);
+                    }
+                } else {
+                    LOGGER.error("Recorder Sync Frequency is not defined - cannot schedule job");
                 }
             } else if (envDisable != null && envDisable.toUpperCase().equals("TRUE"))
                 LOGGER.warn("Recorder Sync has been DISABLED via Environment Variable (MS_SYNC_DISABLE)");

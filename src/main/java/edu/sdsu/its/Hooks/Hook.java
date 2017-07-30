@@ -34,7 +34,8 @@ public enum Hook {
 
     private static final Logger LOGGER = Logger.getLogger(Hook.class);
 
-    private @Getter String name;
+    private @Getter
+    String name;
 
     Hook(String name) {
         this.name = name;
@@ -69,9 +70,8 @@ public enum Hook {
                             LOGGER.debug("Hook Context - " + context.toString());
                         }
                         try {
-                            statuses.add(new HookEvent(
-                                    method, method.invoke(clazz.load().newInstance(), context)));
-                        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+                            statuses.add(new HookEvent(method, method.invoke(clazz.load().newInstance(), context)));
+                        } catch (IllegalAccessException | InvocationTargetException | InstantiationException | IllegalArgumentException e) {
                             LOGGER.error("Problem firing Hook - " + hook, e);
                             statuses.add(new HookEvent(method, false));
                         }

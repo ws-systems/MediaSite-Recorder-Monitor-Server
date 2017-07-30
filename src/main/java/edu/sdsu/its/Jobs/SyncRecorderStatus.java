@@ -75,7 +75,7 @@ public class SyncRecorderStatus implements Job {
             return;
         }
 
-        Status previousStatus = Status.getByCode(recorder.getStatus());
+        Status previousStatus = recorder.getStatus();
         Status currentStatus = null;
 
         try {
@@ -91,14 +91,15 @@ public class SyncRecorderStatus implements Job {
 
         LOGGER.debug(String.format("Recorder Status is \"%s\"", currentStatus));
         recorder.setStatus(currentStatus);
+        recorder.setLastSeen(new Timestamp(System.currentTimeMillis()));
         DB.updateRecorder(recorder);
         LOGGER.info("Finished Updating Recorder Status for Recorder with ID: " + this.mRecorderID);
 
         try {
-            if (previousStatus.okay() && currentStatus.inAlarm()) {
+            if ((previousStatus == null || previousStatus.okay()) && currentStatus.inAlarm()) {
                 LOGGER.warn("Recorder " + mRecorderID + "has entered ALARM state!");
                 Hook.fire(Hook.RECORDER_ALARM_ACTIVATE, new Recorder(mRecorderID, currentStatus));
-            } else if (previousStatus.inAlarm() && currentStatus.okay()) {
+            } else if ((previousStatus == null || previousStatus.inAlarm()) && currentStatus.okay()) {
                 LOGGER.info("Recorder" + mRecorderID + " has cleared ALARM state and is now OKAY.");
                 Hook.fire(Hook.RECORDER_ALARM_CLEAR, new Recorder(mRecorderID, currentStatus));
             }

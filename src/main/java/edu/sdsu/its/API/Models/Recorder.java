@@ -57,6 +57,7 @@ public class Recorder {
     @Column(name = "image_version")
     private String ImageVersion;
 
+    @Column(name = "status")
     private Status status;
 
     @Column(name = "last_seen")
@@ -70,14 +71,6 @@ public class Recorder {
     public Recorder(String id, Status status) {
         Id = id;
         this.status = status;
-    }
-
-    public int getStatus() {
-        if (status != null) {
-            return status.getStateCode();
-        }
-
-        return -1;
     }
 
     public String getIP() throws RuntimeException {
