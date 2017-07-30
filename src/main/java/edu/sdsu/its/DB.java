@@ -66,9 +66,11 @@ public class DB {
     }
 
     public static void setPreference(final String name, final String value) {
+        final Preference preference = new Preference(name, value);
+
         EntityManager entityManager = sessionFactory.createEntityManager();
         entityManager.getTransaction().begin();
-        entityManager.persist(new Preference(name, value));
+        entityManager.persist(entityManager.contains(preference) ? preference : entityManager.merge(preference));
         entityManager.getTransaction().commit();
         entityManager.close();
     }
@@ -82,7 +84,7 @@ public class DB {
     public static boolean updateUser(final User user) {
         EntityManager entityManager = sessionFactory.createEntityManager();
         entityManager.getTransaction().begin();
-        entityManager.persist(user);
+        entityManager.persist(entityManager.contains(user) ? user : entityManager.merge(user));
         entityManager.getTransaction().commit();
         entityManager.close();
 
@@ -101,7 +103,7 @@ public class DB {
         EntityManager entityManager = sessionFactory.createEntityManager();
         entityManager.getTransaction().begin();
 
-        List<User> users = entityManager.createQuery("select u from User u" + (restriction != null ? " where " + restriction : "")).getResultList();
+        List<User> users = entityManager.createQuery("select u from User u" + (restriction != null && !restriction.isEmpty() ? " where " + restriction : "")).getResultList();
         LOGGER.debug(String.format("Found %d users in DB that match restriction \"%s\"", users.size(), restriction));
 
         entityManager.getTransaction().commit();
@@ -120,7 +122,7 @@ public class DB {
     public static User loginUser(final String email, final String password) {
         try {
             User user = DB.getUser("email = '" + email + "'")[0];
-            String passHash = user.getRawPassword();
+            String passHash = user.getPassword();
 
             return password != null && !passHash.isEmpty() && PASSWORD_ENCRYPTOR.checkPassword(password, passHash) ? user : null;
         } catch (IndexOutOfBoundsException e) {
@@ -133,7 +135,7 @@ public class DB {
         LOGGER.warn(String.format("Deleting User with Email: %s", user.getEmail()));
         EntityManager entityManager = sessionFactory.createEntityManager();
         entityManager.getTransaction().begin();
-        entityManager.remove(user);
+        entityManager.remove(entityManager.contains(user) ? user : entityManager.merge(user));
         entityManager.getTransaction().commit();
         entityManager.close();
 
@@ -149,7 +151,7 @@ public class DB {
         EntityManager entityManager = sessionFactory.createEntityManager();
         entityManager.getTransaction().begin();
 
-        List<Recorder> recorders = entityManager.createQuery("select r from Recorder r " + (restriction != null ? " where " + restriction : "")).getResultList();
+        List<Recorder> recorders = entityManager.createQuery("select r from Recorder r " + (restriction != null && !restriction.isEmpty() ? " where " + restriction : "")).getResultList();
         LOGGER.debug(String.format("Found %d Recorders in DB that match restriction \"%s\"", recorders.size(), restriction));
 
         entityManager.getTransaction().commit();
@@ -166,7 +168,7 @@ public class DB {
     public static void updateRecorder(final Recorder recorder) {
         EntityManager entityManager = sessionFactory.createEntityManager();
         entityManager.getTransaction().begin();
-        entityManager.persist(recorder);
+        entityManager.persist(entityManager.contains(recorder) ? recorder : entityManager.merge(recorder));
         entityManager.getTransaction().commit();
         entityManager.close();
     }
