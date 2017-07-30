@@ -119,7 +119,8 @@ public class Login {
                 }})).build();
             }
 
-            DB.updateUserPassword(sessionUser.getEmail(), newPassword);
+            sessionUser.setPassword(newPassword);
+            DB.updateUser(sessionUser);
 
             return Response.status(Response.Status.OK).entity(new SimpleMessage("OK", "Password Updated").asJson()).build();
         } catch (Exception e) {

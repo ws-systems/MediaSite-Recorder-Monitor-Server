@@ -44,7 +44,7 @@ public enum Status {
                 return s;
             }
         }
-        return null;
+        return Status.UNKNOWN;
     }
 
     public boolean okay() {

@@ -25,7 +25,7 @@ import java.util.Properties;
  * Initialize and Teardown the WebApp and DB
  *
  * @author Tom Paulus
- *         Created on 10/21/2016.
+ * Created on 10/21/2016.
  */
 @WebListener
 public class Init implements ServletContextListener {
@@ -42,6 +42,9 @@ public class Init implements ServletContextListener {
      */
     @Override
     public void contextInitialized(ServletContextEvent sce) {
+        // Setup Hibernate ORM Connector
+        DB.setup();
+
         // Create Default User
         createInitialUser();
 
@@ -81,6 +84,8 @@ public class Init implements ServletContextListener {
             LOGGER.error("Problem shutting down scheduler", e);
         }
 
+        DB.shutdown();
+
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         // Loop through all drivers
         Enumeration<Driver> drivers = DriverManager.getDrivers();
@@ -108,7 +113,7 @@ public class Init implements ServletContextListener {
             LOGGER.info("No users were found in the DB. Creating default User.");
             User user = new User(DEFAULT_FIRST_NAME, DEFAULT_LAST_NAME, DEFAULT_EMAIL, true);
             user.setPassword(DEFAULT_PASSWORD);
-            DB.createUser(user);
+            DB.updateUser(user);
 
             LOGGER.info(String.format("Initial Staff Created.\n " +
                     "Username: \"%s\"\n" +

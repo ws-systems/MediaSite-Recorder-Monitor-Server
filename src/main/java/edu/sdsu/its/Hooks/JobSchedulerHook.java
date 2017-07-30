@@ -26,7 +26,7 @@ class JobSchedulerHook extends EventHook {
 
         int scheduled = 0;
 
-        for (Recorders.Recorder recorder : recorders) {
+        for (Recorder recorder : recorders) {
             try {
                 if (!Schedule.getScheduler().checkExists(new JobKey(SyncRecorderStatus.TRIGGER_NAME_STEM + "-" + recorder.getId(), SyncRecorderStatus.JOB_GROUP))) {
                     log.info("Creating New Status Sync Job for Recorder ID: " + recorder.getId());

@@ -5,19 +5,15 @@ import com.google.gson.annotations.SerializedName;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import edu.sdsu.its.API.Models.Recorder;
 import edu.sdsu.its.API.Models.Status;
 import edu.sdsu.its.DB;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.log4j.Logger;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * @author Tom Paulus
- *         Created on 5/5/17.
+ * Created on 5/5/17.
  */
 public class Recorders {
     private static final Logger LOGGER = Logger.getLogger(Recorders.class);
@@ -157,60 +153,5 @@ public class Recorders {
 
         @SerializedName("IsUpdateServiceRunning")
         private Boolean isUpdateServiceRunning;
-    }
-
-
-    public static @AllArgsConstructor class Recorder {
-        @Getter private String Id;
-        @Getter private String Name;
-        @Getter private String Description;
-        @Getter private String SerialNumber;
-        @Getter private String Version;
-        @Getter private String WebServiceUrl;
-        @Getter private String LastVersionUpdateDate;
-        @Getter private String PhysicalAddress;
-        @Getter private String ImageVersion;
-
-        @Override
-        public String toString() {
-            return "Recorder{" +
-                    "Id='" + Id + '\'' +
-                    ", Name='" + Name + '\'' +
-                    ", Description='" + Description + '\'' +
-                    ", SerialNumber='" + SerialNumber + '\'' +
-                    ", Version='" + Version + '\'' +
-                    ", LastVersionUpdateDate='" + LastVersionUpdateDate + '\'' +
-                    ", PhysicalAddress='" + PhysicalAddress + '\'' +
-                    ", ImageVersion='" + ImageVersion + '\'' +
-                    '}';
-        }
-
-        public Recorder(String id, String name, String description, String serialNumber, String version, String lastVersionUpdateDate, String physicalAddress, String imageVersion) {
-            Id = id;
-            Name = name;
-            Description = description;
-            SerialNumber = serialNumber;
-            Version = version;
-            LastVersionUpdateDate = lastVersionUpdateDate;
-            PhysicalAddress = physicalAddress;
-            ImageVersion = imageVersion;
-        }
-
-        public Recorder(String id) {
-            Id = id;
-        }
-
-        String getIP() throws RuntimeException {
-            if (this.getWebServiceUrl() == null || this.getWebServiceUrl().isEmpty()) {
-                throw new RuntimeException("WebService URL not Defined");
-            }
-
-            Pattern pattern = Pattern.compile("\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3}");
-            Matcher matcher = pattern.matcher(this.getWebServiceUrl());
-            if (!matcher.find()) {
-                throw new RuntimeException("No IP defined in WebService URL");
-            }
-            return matcher.group();
-        }
     }
 }

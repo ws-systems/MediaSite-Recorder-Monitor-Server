@@ -67,9 +67,17 @@ public class SyncRecorderStatus implements Job {
         this.mRecorderID = context.getJobDetail().getDescription();
         LOGGER.info("Fetching Recorder Status for Recorder with ID: " + this.mRecorderID);
 
-        Status previousStatus = getPreviousStatus(mRecorderID);
+        Recorder recorder;
+        try {
+            recorder = DB.getRecorder("id = '" + this.mRecorderID + "'")[0];
+        } catch (IndexOutOfBoundsException e) {
+            LOGGER.error("Could not locate Recorder Record in DB for recorder ID - " + this.mRecorderID);
+            return;
+        }
 
+        Status previousStatus = Status.getByCode(recorder.getStatus());
         Status currentStatus = null;
+
         try {
             currentStatus = Recorders.getRecorderStatus(Recorders.getRecorderIP(this.mRecorderID));
         } catch (RuntimeException e) {
@@ -82,7 +90,8 @@ public class SyncRecorderStatus implements Job {
         }
 
         LOGGER.debug(String.format("Recorder Status is \"%s\"", currentStatus));
-        writeStatusToDB(this.mRecorderID, currentStatus);
+        recorder.setStatus(currentStatus);
+        DB.updateRecorder(recorder);
         LOGGER.info("Finished Updating Recorder Status for Recorder with ID: " + this.mRecorderID);
 
         try {
@@ -101,72 +110,6 @@ public class SyncRecorderStatus implements Job {
             Hook.fire(Hook.RECORDER_STATUS_UPDATE, DB.getRecorder("id='" + mRecorderID + "'"));
         } catch (IOException e) {
             LOGGER.error("Problem firing Recorder Status Update Hook", e);
-        }
-    }
-
-    private static Status getPreviousStatus(final String recorderId) {
-        Connection connection = DB.getConnection();
-        Statement statement = null;
-        Status status = null;
-
-        try {
-            statement = connection.createStatement();
-            final String sql = "SELECT `status` FROM recorders WHERE id='" + recorderId + "' LIMIT 1;";
-            LOGGER.info(String.format("Executing SQL Query - \"%s\"", sql));
-            ResultSet resultSet = statement.executeQuery(sql);
-
-            if (resultSet.next()) {
-                status = Status.getByCode(resultSet.getInt(1));
-                if (status == null) {
-                    LOGGER.error("Failed to get Recorder Status");
-                    status = Status.UNAVAILABLE;
-                }
-
-                LOGGER.debug(String.format("Recorder Status for Recorder %s is %s (%d)", recorderId, status.getStateString(), status.getStateCode()));
-            }
-
-            resultSet.close();
-        } catch (SQLException e) {
-            LOGGER.error("Problem querying DB for Recorders", e);
-        } finally {
-            if (statement != null) {
-                try {
-                    statement.close();
-                    connection.close();
-                } catch (SQLException e) {
-                    LOGGER.warn("Problem Closing Statement", e);
-                }
-            }
-        }
-
-        return status;
-    }
-
-    private static void writeStatusToDB(final String recorderId, final Status status) {
-        Statement statement = null;
-        Connection connection = DB.getConnection();
-
-        try {
-            statement = connection.createStatement();
-            //language=SQL
-            String updateSQL = "UPDATE recorders SET status =  " + status.getStateCode() + ",";
-            if (status != Status.UNKNOWN) updateSQL += "last_seen = NOW() ";
-            updateSQL += "WHERE id='" + recorderId + "';";
-
-            LOGGER.info(String.format("Updating Recorder Status - \"%s\"", updateSQL));
-            statement.execute(updateSQL);
-
-        } catch (SQLException e) {
-            LOGGER.error("Problem Updating Recorder Status - ID: " + recorderId, e);
-        } finally {
-            if (statement != null) {
-                try {
-                    statement.close();
-                    connection.close();
-                } catch (SQLException e) {
-                    LOGGER.warn("Problem Closing Statement", e);
-                }
-            }
         }
     }
 }

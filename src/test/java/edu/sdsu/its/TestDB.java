@@ -1,20 +1,24 @@
 package edu.sdsu.its;
 
 import org.apache.log4j.Logger;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  * @author Tom Paulus
- *         Created on 5/5/17.
+ * Created on 5/5/17.
  */
 public class TestDB {
     private final static Logger LOGGER = Logger.getLogger(TestDB.class);
+
+    @Before
+    public void setUp() throws Exception {
+        DB.setup();
+    }
 
     /**
      * Check if the KeyServer has access to the correct credentials
@@ -41,24 +45,14 @@ public class TestDB {
      */
     @Test
     public void connect() {
-        Connection connection = null;
-        try {
-            LOGGER.debug("Attempting to connect to the DB Server");
-            connection = DB.getConnection();
-            LOGGER.info("DB Connection established");
-            assertTrue(connection.isValid(5));
-        } catch (SQLException e) {
-            LOGGER.error("Problem connecting to the DB Server", e);
-            fail("SQL Exception thrown while trying to connect to the DB - " + e.getMessage());
-        } finally {
-            try {
-                if (connection != null && !connection.isClosed()) {
-                    connection.close();
-                    LOGGER.debug("DB Connection Closed");
-                }
-            } catch (SQLException e) {
-                LOGGER.error("Problem closing the DB Connection", e);
-            }
-        }
+        LOGGER.debug("Attempting to connect to the DB Server");
+        assertNotNull(DB.getSessionFactory());
+        LOGGER.info("DB Connection established");
+        assertTrue(DB.getSessionFactory().isOpen());
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        DB.shutdown();
     }
 }

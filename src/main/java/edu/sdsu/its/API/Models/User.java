@@ -1,61 +1,64 @@
 package edu.sdsu.its.API.Models;
 
 import com.google.gson.annotations.Expose;
-import edu.sdsu.its.DB;
+import lombok.*;
+
+import javax.persistence.*;
+
+import static edu.sdsu.its.DB.PASSWORD_ENCRYPTOR;
 
 /**
  * @author Tom Paulus
- *         Created on 5/5/17.
+ * Created on 5/5/17.
  */
+@Entity
+@Table(name = "users")
+@NoArgsConstructor
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class User {
+    @Id
+    @Getter
+    @Column(name = "PK")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    int PK;
+
     @Expose
-    String first_name;
+    @NonNull
+    @Getter
+    @Setter
+    @Column(name = "first_name")
+    String firstName;
+
     @Expose
-    String last_name;
+    @NonNull
+    @Getter
+    @Setter
+    @Column(name = "last_name")
+    String lastName;
+
     @Expose
+    @NonNull
+    @Getter
+    @Setter
     String email;
+
     @Expose(serialize = false)
+    @Setter
+    @Access(AccessType.PROPERTY)
     String password;
+
     @Expose
+    @NonNull
+    @Getter
+    @Setter
     Boolean notify;
 
-    public String getEmail() {
-        return email;
-    }
-
-    public String getFirstName() {
-        return first_name;
-    }
-
-    public String getLastName() {
-        return last_name;
-    }
-
     public String getPassword() {
+        return PASSWORD_ENCRYPTOR.encryptPassword(password);
+    }
+
+    public String getRawPassword() {
         return password;
     }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Boolean getNotify() {
-        return notify;
-    }
-
-    public User(String first_name, String last_name, String email, String password) {
-        this.first_name = first_name;
-        this.last_name = last_name;
-        this.email = email;
-        this.password = password;
-        this.notify = false;
-    }
-
-    public User(String first_name, String last_name, String email, Boolean notify) {
-        this.first_name = first_name;
-        this.last_name = last_name;
-        this.email = email;
-        this.notify = notify;
-    }
-
 }
