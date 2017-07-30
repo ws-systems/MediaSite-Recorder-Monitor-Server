@@ -46,7 +46,7 @@ dependencies {
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.3'
 
     // Twig
-    compile "org.jtwig:jtwig-web:5.85.3.RELEASE"
+    compile "org.jtwig:jtwig-web:5.86.0.RELEASE"
 
     // Vault
     compile group: 'com.mashape.unirest', name: 'unirest-java', version: '1.4.9'
