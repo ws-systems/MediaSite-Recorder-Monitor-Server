@@ -73,7 +73,11 @@ public class Recorder {
     }
 
     public int getStatus() {
-        return status.getStateCode();
+        if (status != null) {
+            return status.getStateCode();
+        }
+
+        return -1;
     }
 
     public String getIP() throws RuntimeException {
