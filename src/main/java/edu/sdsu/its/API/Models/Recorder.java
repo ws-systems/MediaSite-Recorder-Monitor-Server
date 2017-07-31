@@ -89,4 +89,42 @@ public class Recorder {
     public String asJson() {
         return new Gson().toJson(this);
     }
+
+    public static Recorder merge(final Recorder existing, final Recorder newRecorder) {
+        if (newRecorder.getId() != null && !newRecorder.getId().isEmpty()) {
+            existing.Id = newRecorder.getId();
+        }
+        if (newRecorder.getName() != null && !newRecorder.getName().isEmpty()) {
+            existing.Name = newRecorder.getName();
+        }
+        if (newRecorder.getDescription() != null && !newRecorder.getDescription().isEmpty()) {
+            existing.Description = newRecorder.getDescription();
+        }
+        if (newRecorder.getSerialNumber() != null && !newRecorder.getSerialNumber().isEmpty()) {
+            existing.SerialNumber = newRecorder.getSerialNumber();
+        }
+        if (newRecorder.getVersion() != null && !newRecorder.getVersion().isEmpty()) {
+            existing.Version = newRecorder.getVersion();
+        }
+        if (newRecorder.getWebServiceUrl() != null && !newRecorder.getWebServiceUrl().isEmpty()) {
+            existing.WebServiceUrl = newRecorder.getWebServiceUrl();
+        }
+        if (newRecorder.getLastVersionUpdateDate() != null && !newRecorder.getLastVersionUpdateDate().isEmpty()) {
+            existing.LastVersionUpdateDate = newRecorder.getLastVersionUpdateDate();
+        }
+        if (newRecorder.getPhysicalAddress() != null && !newRecorder.getPhysicalAddress().isEmpty()) {
+            existing.PhysicalAddress = newRecorder.getPhysicalAddress();
+        }
+        if (newRecorder.getImageVersion() != null && !newRecorder.getImageVersion().isEmpty()) {
+            existing.ImageVersion = newRecorder.getImageVersion();
+        }
+        if (newRecorder.getLastSeen() != null ) {
+            existing.lastSeen = newRecorder.getLastSeen();
+        }
+        if (newRecorder.getStatus() != null) {
+            existing.status = newRecorder.getStatus();
+        }
+
+        return existing;
+    }
 }

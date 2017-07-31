@@ -60,7 +60,12 @@ public class SyncRecorderDB implements Job {
         LOGGER.debug("Updating Recorder DB");
         for (Recorder recorder : recorders) {
             LOGGER.debug(String.format("Inserting/Updating Recorder %s - \"%s\"", recorder.getName(), recorder.toString()));
-            DB.updateRecorder(recorder);
+            try {
+                DB.updateRecorder(Recorder.merge(DB.getRecorder("id = '" + recorder.getId() + "'")[0], recorder));
+            } catch (IndexOutOfBoundsException e) {
+                LOGGER.debug("New Recorder - Cannot execute Update, Inserting new record.");
+                DB.updateRecorder(recorder);
+            }
         }
         LOGGER.debug("Updated Recorder DB");
 
