@@ -1,0 +1,172 @@
+{% include "header.twig" with { active: "manage-integrations"} %}
+{% include "navbar.twig" with { active: "manage-integrations"} %}
+
+<div class="container">
+    <div class="header row justify-content-between pt-2">
+        <div class="col">
+            <h1>Manage - Integrations</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-7 mx-auto mt-3">
+            <form action="#" onsubmit="updateSettings(); return false;">
+                {# MEDIASITE Settings #}
+                <h2 class="mb-2">Mediasite</h2>
+                <div class="form-group row">
+                    <label for="ms.url"
+                           class="col-sm-3 col-form-label">Server URL: </label>
+                    <div class="col-sm-9 passwordInput">
+                        <input class="form-control mutable-setting"
+                               title="Mediasite URL"
+                               type="url"
+                               id="ms.url"
+                               required
+                               value="{{ ms_api_url }}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="ms.api-key"
+                           class="col-sm-3 col-form-label">API Key: </label>
+                    <div class="col-sm-9">
+                        <input class="form-control mutable-setting"
+                               title="Mediasite API Key"
+                               id="ms.api-key"
+                               required
+                               value="{{ ms_api_key }}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="ms.api-user"
+                           class="col-sm-3 col-form-label">API User: </label>
+                    <div class="col-sm-9">
+                        <input class="form-control mutable-setting"
+                               title="Mediasite API Username"
+                               id="ms.api-user"
+                               required
+                               value="{{ ms_api_user }}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="ms.api-pass"
+                           class="col-sm-3 col-form-label">API Password: </label>
+                    <div class="col-sm-9">
+                        <input class="form-control mutable-setting"
+                               title="Mediasite API Password"
+                               type="password"
+                               id="ms.api-pass">
+                        <small class="text-muted">Leave blank to not change password.</small>
+                    </div>
+                </div>
+
+                {# EMAIl Settings #}
+                <h2 class="mt-3 mb-2">Email (SMTP)</h2>
+                <div class="form-group row">
+                    <label for="email.host"
+                           class="col-sm-3 col-form-label">Host: </label>
+                    <div class="col-sm-9">
+                        <input class="form-control mutable-setting"
+                               title="SMTP Host"
+                               id="email.host"
+                               required
+                               value="{{ email_host }}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="email.port"
+                           class="col-sm-3 col-form-label">Port: </label>
+                    <div class="col-sm-9">
+                        <input class="form-control mutable-setting"
+                               title="SMTP Port"
+                               id="email.port"
+                               required
+                               type="number"
+                               value="{{ email_port }}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="email.ssl"
+                           class="col-sm-3 col-form-label">SSL: </label>
+                    <div class="col-sm-9">
+                        <select class="form-control mutable-setting"
+                                title="SMTP Use SSL"
+                                id="email.ssl"
+                                required>
+                            <option value="true" {% if(email_ssl) %}selected{% endif %}>True</option>
+                            <option value="false" {% if(not(email_ssl)) %}selected{% endif %}>False</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="email.username"
+                           class="col-sm-3 col-form-label">Username: </label>
+                    <div class="col-sm-9">
+                        <input class="form-control mutable-setting"
+                               title="SMTP Username"
+                               id="email.username"
+                               required
+                               value="{{ email_username }}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="email.password"
+                           class="col-sm-3 col-form-label">Password: </label>
+                    <div class="col-sm-9">
+                        <input class="form-control mutable-setting"
+                               title="SMTP Password"
+                               id="email.password"
+                               type="password">
+                        <small class="text-muted">Leave blank to not change password.</small>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="email.from_name"
+                           class="col-sm-3 col-form-label">From Name: </label>
+                    <div class="col-sm-9">
+                        <input class="form-control mutable-setting"
+                               title="SMTP From Name"
+                               id="email.from_name"
+                               required
+                               value="{{ email_from_name }}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="email.from_email"
+                           class="col-sm-3 col-form-label">From Email: </label>
+                    <div class="col-sm-9">
+                        <input class="form-control mutable-setting"
+                               title="SMTP From Email"
+                               id="email.from_email"
+                               type="email"
+                               required
+                               value="{{ email_from_email }}">
+                    </div>
+                </div>
+
+                {#SUBMIT/RESET Buttons#}
+                <div class="row justify-content-between mt-5">
+                    <div class="col mx-auto">
+                        <button class="btn btn-default float-left"
+                                type="reset">
+                            Reset to Saved
+                        </button>
+                    </div>
+                    <div class="col mx-auto">
+                        <button class="btn btn-success float-right">
+                            Update Settings
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% embed "footer.twig" %}
+    {% block page_assets %}
+        <script src="/assets/lib/loadingoverlay.min.js"
+                type="application/javascript"></script>
+        <script src="/assets/js/manage-integrations.js"
+                type="text/javascript"></script>
+    {% endblock %}
+{% endembed %}
