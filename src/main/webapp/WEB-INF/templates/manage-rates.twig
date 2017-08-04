@@ -1,0 +1,104 @@
+{% include "header.twig" with { active: "manage-rates"} %}
+{% include "navbar.twig" with { active: "manage-rates"} %}
+
+<div class="container">
+    <div class="header row justify-content-between pt-2">
+        <div class="col">
+            <h1>Manage - Sync Rates</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-7 mx-auto mt-3">
+            <div class="alert alert-warning" role="alert">
+                <strong><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp; Warning!</strong>
+                Updates to the Job Frequencies can cause jobs to have their trigger timers reset, causing delays
+                in job execution. Avoid changing the job frequency to often in a given period.
+            </div>
+
+            <form action="#" onsubmit="updateRates(); return false;">
+                {# List DB Settings #}
+                <h2 class="mt-2 mb-2">Recorder List</h2>
+                <div class="form-group row">
+                    <label for="sync_db.enable"
+                           class="col-sm-3 col-form-label">Enabled: </label>
+                    <div class="col-sm-9">
+                        <select class="form-control mutable-setting"
+                                title="Sync Recorder List"
+                                id="sync_db.enable"
+                                required>
+                            <option value="true" {% if(list_sync) %}selected{% endif %}>Yes</option>
+                            <option value="false" {% if(not(list_sync)) %}selected{% endif %}>No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="sync_db.frequency"
+                           class="col-sm-3 col-form-label">Frequency: </label>
+                    <div class="col-sm-9">
+                        <input class="form-control mutable-setting"
+                               title="List Sync Frequency"
+                               id="sync_db.frequency"
+                               required
+                               value="{{ list_frequency }}">
+                        <small class="text-muted">In minutes.</small>
+                    </div>
+                </div>
+
+                {# Status Settings #}
+                <h2 class="mb-2">Recorder Status</h2>
+                <div class="form-group row">
+                    <label for="sync_recorder.enable"
+                           class="col-sm-3 col-form-label">Enabled: </label>
+                    <div class="col-sm-9">
+                        <select class="form-control mutable-setting"
+                                title="Sync Recorder Status"
+                                id="sync_recorder.enable"
+                                required>
+                            <option value="true" {% if(status_sync) %}selected{% endif %}>Yes</option>
+                            <option value="false" {% if(not(status_sync)) %}selected{% endif %}>No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="sync_recorder.frequency"
+                           class="col-sm-3 col-form-label">Frequency: </label>
+                    <div class="col-sm-9">
+                        <input class="form-control mutable-setting"
+                               title="Status Sync Frequency"
+                               id="sync_recorder.frequency"
+                               required
+                               value="{{ status_frequency }}">
+                        <small class="text-muted">In minutes.</small>
+                    </div>
+                </div>
+
+                {#SUBMIT/RESET Buttons#}
+                <div class="row justify-content-between mt-5">
+                    <div class="col mx-auto">
+                        <button class="btn btn-default float-left"
+                                type="reset">
+                            Reset to Saved
+                        </button>
+                    </div>
+                    <div class="col mx-auto">
+                        <button class="btn btn-success float-right">
+                            Update Settings
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% embed "footer.twig" %}
+    {% block page_assets %}
+        <script src="/assets/lib/loadingoverlay.min.js"
+                type="application/javascript"></script>
+        <script src="/assets/js/manage-rates.js"
+                type="text/javascript"></script>
+    {% endblock %}
+{% endembed %}

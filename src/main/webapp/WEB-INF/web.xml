@@ -34,6 +34,15 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>Manage-Rates</servlet-name>
+        <servlet-class>edu.sdsu.its.Routes.ManageRates</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Manage-Rates</servlet-name>
+        <url-pattern>/manage/rates</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>Manage-Users</servlet-name>
         <servlet-class>edu.sdsu.its.Routes.ManageUsers</servlet-class>
     </servlet>

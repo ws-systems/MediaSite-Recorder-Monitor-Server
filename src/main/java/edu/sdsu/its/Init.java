@@ -7,7 +7,9 @@ import edu.sdsu.its.Jobs.SyncRecorderStatus;
 import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobKey;
+import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
+import org.quartz.impl.matchers.GroupMatcher;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -139,45 +141,63 @@ public class Init implements ServletContextListener {
     }
 
     private void startSyncAgents() {
+        final Scheduler scheduler = Schedule.getScheduler();
+
         try {
-            Schedule.getScheduler().clear();
-            Schedule.getScheduler().startDelayed(30);
+            scheduler.clear();
+            scheduler.startDelayed(60);
         } catch (SchedulerException e) {
             LOGGER.error("Problem Starting Scheduler", e);
         }
         String envDisable = System.getenv("MS_SYNC_DISABLE");
 
         try {
-            if (Boolean.parseBoolean(DB.getPreference("sync_db.enable")) &&
-                    !(envDisable != null && envDisable.toUpperCase().equals("TRUE"))) {
-                final int syncInterval = Integer.parseInt(DB.getPreference("sync_db.frequency"));
-                LOGGER.info(String.format("Scheduling Recorder DB Sync - Interval %d", syncInterval));
-                SyncRecorderDB.schedule(Schedule.getScheduler(), syncInterval);
-            } else if (envDisable != null && envDisable.toUpperCase().equals("TRUE"))
+            if (!(envDisable != null && envDisable.toUpperCase().equals("TRUE"))) {
+                LOGGER.info("Scheduling Recorder DB Sync");
+                if (!Boolean.parseBoolean(DB.getPreference("sync_db.enable"))) {
+                    LOGGER.info("Pausing Sync Recorder DB Trigger Group");
+                    LOGGER.debug("Trigger Group: " + SyncRecorderDB.JOB_GROUP);
+                    scheduler.pauseTriggers(GroupMatcher.groupEquals(SyncRecorderDB.JOB_GROUP));
+                }
+
+                final String syncDBFreq = DB.getPreference("sync_db.frequency");
+                if (syncDBFreq != null) {
+                    SyncRecorderDB.schedule(scheduler, Integer.parseInt(syncDBFreq));
+                    LOGGER.debug("DB Sync Frequency: " + syncDBFreq);
+                } else {
+                    LOGGER.warn("DB Sync Frequency has not been set - aborting");
+                    throw new SchedulerException("Trigger Frequency not set");
+                }
+            } else
                 LOGGER.warn("DB Sync has been DISABLED via Environment Variable (MS_SYNC_DISABLE)");
-            else
-                LOGGER.warn("DB Sync has been DISABLED - Check Monitor Preferences to Enable");
         } catch (SchedulerException e) {
             LOGGER.error("Problem Scheduling DB Sync Job", e);
         }
 
         try {
-            if (Boolean.parseBoolean(DB.getPreference("sync_recorder.enable")) &&
-                    !(envDisable != null && envDisable.toUpperCase().equals("TRUE"))) {
-                final String syncFrequencyStr = DB.getPreference("sync_recorder.frequency");
-                if (syncFrequencyStr != null) {
-                    final int syncInterval = Integer.parseInt(syncFrequencyStr);
-                    for (Recorder recorder : DB.getRecorder("")) {
-                        LOGGER.info(String.format("Scheduling Sync for Recorder with ID %s - Interval %d", recorder.getId(), syncInterval));
-                        new SyncRecorderStatus(recorder.getId()).schedule(Schedule.getScheduler(), syncInterval);
-                    }
+            if (!(envDisable != null && envDisable.toUpperCase().equals("TRUE"))) {
+                final String statusSyncFreq = DB.getPreference("sync_recorder.frequency");
+                final int syncRate;
+                if (statusSyncFreq != null) {
+                    syncRate = Integer.parseInt(statusSyncFreq);
+                    LOGGER.debug("Status Sync Frequency: " + statusSyncFreq);
                 } else {
-                    LOGGER.error("Recorder Sync Frequency is not defined - cannot schedule job");
+                    LOGGER.warn("Status Sync Frequency has not been set - aborting");
+                    throw new SchedulerException("Trigger Frequency not set");
                 }
-            } else if (envDisable != null && envDisable.toUpperCase().equals("TRUE"))
+
+                if (!Boolean.parseBoolean(DB.getPreference("sync_recorder.enable"))) {
+                    LOGGER.info("Pausing Sync Recorder Status Trigger Group");
+                    LOGGER.debug("Trigger Group: " + SyncRecorderStatus.JOB_GROUP);
+                    scheduler.pauseTriggers(GroupMatcher.groupEquals(SyncRecorderStatus.JOB_GROUP));
+                }
+
+                for (Recorder recorder : DB.getRecorder("")) {
+                    LOGGER.info(String.format("Scheduling Sync for Recorder with ID %s ", recorder.getId()));
+                    new SyncRecorderStatus(recorder.getId()).schedule(scheduler, syncRate);
+                }
+            } else
                 LOGGER.warn("Recorder Sync has been DISABLED via Environment Variable (MS_SYNC_DISABLE)");
-            else
-                LOGGER.warn("Recorder Sync has been DISABLED - Check Monitor Preferences to Enable");
         } catch (SchedulerException e) {
             LOGGER.error("Problem Scheduling Recorder Sync Job(s)", e);
         }

@@ -22,6 +22,10 @@ import static org.quartz.TriggerBuilder.newTrigger;
 public class SyncRecorderDB implements Job {
     private static final Logger LOGGER = Logger.getLogger(SyncRecorderDB.class);
 
+    public static final String JOB_GROUP = "list_update";
+    public static final String TRIGGER_NAME = "SyncRecorderListTrigger";
+    public static final String JOB_NAME = "SyncRecorderList";
+
     /**
      * Schedule the Sync Job
      *
@@ -31,12 +35,12 @@ public class SyncRecorderDB implements Job {
      */
     public static void schedule(Scheduler scheduler, int intervalInMinutes) throws SchedulerException {
         JobDetail job = newJob(SyncRecorderDB.class)
-                .withIdentity("SyncRecorderList", "list_update")
+                .withIdentity(JOB_NAME, JOB_GROUP)
                 .build();
 
         // Trigger the job to run now, and then repeat every X Minutes
         Trigger trigger = newTrigger()
-                .withIdentity("SyncRecorderListTrigger", "list_update")
+                .withIdentity(TRIGGER_NAME, JOB_GROUP)
                 .withSchedule(simpleSchedule()
                         .withIntervalInMinutes(intervalInMinutes)
                         .repeatForever())

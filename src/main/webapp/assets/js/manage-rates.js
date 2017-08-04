@@ -1,4 +1,4 @@
-function updateSettings() {
+function updateRates() {
     $.LoadingOverlay("show", {
         image       : "",
         fontawesome : "fa fa-spinner fa-spin"
@@ -17,9 +17,10 @@ function updateSettings() {
         }
     }
 
+
     $.ajax({
         method: "PUT",
-        url: "/api/integrations/",
+        url: "/api/rates/",
         data: JSON.stringify(payload),
         contentType: "application/json; charset=utf-8",
         dataType: "json"
@@ -28,7 +29,7 @@ function updateSettings() {
             const loadDelay = 5000;
 
             swal({
-                title: "Settings Updated!",
+                title: "Rates Updated!",
                 text: "Please wait a moment while they are being applied.<br>" +
                 "This page will refresh automatically when done.",
                 timer: loadDelay,

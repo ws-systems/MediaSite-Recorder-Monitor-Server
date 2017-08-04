@@ -2,20 +2,16 @@ package edu.sdsu.its.Jobs;
 
 import edu.sdsu.its.API.Models.Recorder;
 import edu.sdsu.its.API.Models.Status;
-import edu.sdsu.its.API.Models.User;
 import edu.sdsu.its.DB;
 import edu.sdsu.its.Hooks.Hook;
 import edu.sdsu.its.Mediasite.Recorders;
-import edu.sdsu.its.Notify;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.apache.commons.mail.EmailException;
 import org.apache.log4j.Logger;
 import org.quartz.*;
 
 import java.io.IOException;
-import java.sql.*;
-import java.util.HashMap;
+import java.sql.Timestamp;
 
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
@@ -23,7 +19,7 @@ import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
  * @author Tom Paulus
- *         Created on 5/14/17.
+ * Created on 5/14/17.
  */
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,7 +27,7 @@ public class SyncRecorderStatus implements Job {
     private static final Logger LOGGER = Logger.getLogger(SyncRecorderStatus.class);
 
     public static final String JOB_GROUP = "recorder_status";
-    public static final String TRIGGER_NAME_STEM = "SyncTrigger";
+    public static final String TRIGGER_NAME_STEM = "SyncRecorderStatusTrigger";
     public static final String JOB_NAME_STEM = "SyncRecorderStatus";
 
     private String mRecorderID;

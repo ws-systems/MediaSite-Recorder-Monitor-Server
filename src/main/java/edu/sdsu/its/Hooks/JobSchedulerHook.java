@@ -4,7 +4,6 @@ import edu.sdsu.its.API.Models.Recorder;
 import edu.sdsu.its.API.Models.User;
 import edu.sdsu.its.DB;
 import edu.sdsu.its.Jobs.SyncRecorderStatus;
-import edu.sdsu.its.Mediasite.Recorders;
 import edu.sdsu.its.Schedule;
 import lombok.extern.log4j.Log4j;
 import org.quartz.JobKey;
@@ -28,7 +27,7 @@ class JobSchedulerHook extends EventHook {
 
         for (Recorder recorder : recorders) {
             try {
-                if (!Schedule.getScheduler().checkExists(new JobKey(SyncRecorderStatus.TRIGGER_NAME_STEM + "-" + recorder.getId(), SyncRecorderStatus.JOB_GROUP))) {
+                if (!Schedule.getScheduler().checkExists(new JobKey(SyncRecorderStatus.JOB_NAME_STEM + "-" + recorder.getId(), SyncRecorderStatus.JOB_GROUP))) {
                     log.info("Creating New Status Sync Job for Recorder ID: " + recorder.getId());
                     final String syncFrequency = DB.getPreference("sync_recorder.frequency");
                     if (syncFrequency != null) {
