@@ -7,10 +7,7 @@ import lombok.Setter;
 import org.apache.log4j.Logger;
 import org.jasypt.util.password.StrongPasswordEncryptor;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.NoResultException;
-import javax.persistence.Persistence;
+import javax.persistence.*;
 import java.util.List;
 import java.util.Properties;
 
@@ -86,16 +83,29 @@ public class DB {
      * Add a new User to the DB or Update an existing User Record
      *
      * @param user {@link User} User to Create or Update
-     * @return {@link boolean} If user was created or updated successfully
+     * @return {@link User} Updated User, Null if Update Failed
+     * @throws PersistenceException Thrown if there is a violation to the Constraints of the DB, like a duplicate Email
      */
-    public static boolean updateUser(final User user) {
+    public static User updateUser(final User user) throws PersistenceException {
+        User updatedUser = null;
+
         EntityManager entityManager = sessionFactory.createEntityManager();
         entityManager.getTransaction().begin();
         entityManager.persist(entityManager.contains(user) ? user : entityManager.merge(user));
-        entityManager.getTransaction().commit();
+        List<User> users = entityManager.createQuery("select u from User u where u.email = '" + user.getEmail() + "'").getResultList();
+
+        if (users.size() == 1) {
+            updatedUser = users.get(0);
+            entityManager.getTransaction().commit();
+        } else {
+            LOGGER.warn("Failed to Update User - Rolling Back");
+            LOGGER.debug(user.toString());
+            entityManager.getTransaction().rollback();
+        }
+
         entityManager.close();
 
-        return true;
+        return updatedUser;
     }
 
     /**

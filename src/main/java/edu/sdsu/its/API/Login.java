@@ -6,6 +6,7 @@ import edu.sdsu.its.API.Models.User;
 import edu.sdsu.its.DB;
 import org.apache.log4j.Logger;
 
+import javax.persistence.PersistenceException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.*;
@@ -19,7 +20,7 @@ import java.util.HashMap;
 
 /**
  * @author Tom Paulus
- *         Created on 7/14/17.
+ * Created on 7/14/17.
  */
 @Path("/")
 public class Login {
@@ -120,7 +121,12 @@ public class Login {
             }
 
             sessionUser.setPassword(newPassword);
-            DB.updateUser(sessionUser);
+            try {
+                DB.updateUser(sessionUser);
+            } catch (PersistenceException e) {
+                return Response.status(Response.Status.PRECONDITION_FAILED).entity(new SimpleMessage("error",
+                        "Could not update User, Precondition Failed. This may be caused by a duplicate email").asJson()).build();
+            }
 
             return Response.status(Response.Status.OK).entity(new SimpleMessage("OK", "Password Updated").asJson()).build();
         } catch (Exception e) {

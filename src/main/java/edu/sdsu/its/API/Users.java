@@ -7,6 +7,7 @@ import edu.sdsu.its.DB;
 import edu.sdsu.its.Hooks.Hook;
 import org.apache.log4j.Logger;
 
+import javax.persistence.PersistenceException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -82,7 +83,12 @@ public class Users {
         }
         user.setPassword(user.getPassword()); // Hash Password for DB;
 
-        DB.updateUser(user);
+        try {
+            DB.updateUser(user);
+        } catch (PersistenceException e) {
+            return Response.status(Response.Status.PRECONDITION_FAILED).entity(new SimpleMessage("error",
+                    "Could not create User, Precondition Failed. This may be caused by a duplicate email").asJson()).build();
+        }
         try {
             Hook.fire(Hook.USER_CREATE, user);
         } catch (IOException e) {
@@ -117,7 +123,12 @@ public class Users {
         User newUser = new Gson().fromJson(payload, User.class);
 
         final User mergedUser = User.merge(existingUser, newUser);
-        DB.updateUser(mergedUser);
+        try {
+            DB.updateUser(mergedUser);
+        } catch (PersistenceException e) {
+            return Response.status(Response.Status.PRECONDITION_FAILED).entity(new SimpleMessage("error",
+                    "Could not update User, Precondition Failed. This may be caused by a duplicate email").asJson()).build();
+        }
         try {
             Hook.fire(Hook.USER_UPDATE, mergedUser);
         } catch (IOException e) {

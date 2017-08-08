@@ -1,0 +1,94 @@
+{# TODO Update IDs to not conflict with Update User Modal IDs #}
+{# TODO Uncomment out Navbar Include for Update Self Modal #}
+
+<div class="modal fade" id="updateSelfModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update My Info</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="#" onsubmit="updateOwnInfo(); return false;">
+                    <input type="hidden" id="userPK" value="{{ user.PK }}">
+                    <div class="form-group row">
+                        <label for="updateEmail"
+                               class="col-sm-3 col-form-label">Email: </label>
+                        <div class="col-sm-9">
+                            <input class="form-control"
+                                   title="Email"
+                                   type="email"
+                                   id="updateEmail"
+                                   value="{{ user.email }}"
+                                   required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="updateFirstName"
+                               class="col-sm-3 col-form-label">First Name: </label>
+                        <div class="col-sm-9">
+                            <input class="form-control"
+                                   title="First Name"
+                                   id="updateFirstName"
+                                   value="{{ user.firstName }}"
+                                   required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="updateLastName"
+                               class="col-sm-3 col-form-label">Last Name: </label>
+                        <div class="col-sm-9">
+                            <input class="form-control"
+                                   title="Last Name"
+                                   id="updateLastName"
+                                   value="{{ user.lastName }}"
+                                   required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="updatePassword1"
+                               class="col-sm-3 col-form-label">Password: </label>
+                        <div class="col-sm-9 passwordInput">
+                            <input class="form-control"
+                                   title="Password"
+                                   type="password"
+                                   id="updatePassword1">
+                            <small class="text-muted">Leave blank to not change password.</small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="updatePassword2" class="col-sm-3 col-form-label">Confirm: </label>
+                        <div class="col-sm-9 passwordInput">
+                            <input class="form-control"
+                                   title="Confirm Password"
+                                   type="password"
+                                   id="updatePassword2">
+                            <div class="form-control-feedback passwordMismatchErr" style="display: none">Please make
+                                sure that the passwords match.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label mr-2">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   value=""
+                                   id="updateNotifyCheckbox"
+                                   {% if user.notify %}checked{% endif %}>
+                            Notify Me on Recorder Alarms
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="$('#updateSelfModal').find('form').submit()">
+                    Update
+                    Info
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

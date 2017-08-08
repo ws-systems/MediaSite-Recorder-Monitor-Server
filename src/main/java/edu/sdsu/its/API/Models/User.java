@@ -14,10 +14,19 @@ import static edu.sdsu.its.DB.PASSWORD_ENCRYPTOR;
  * Created on 5/5/17.
  */
 @Entity
-@Table(name = "users")
+@Table(
+        name = "users",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "PK"),
+                @UniqueConstraint(columnNames = "email")
+        }
+)
+@ToString
+@EqualsAndHashCode
 @NoArgsConstructor
 @RequiredArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User {
     @Id
     @Getter

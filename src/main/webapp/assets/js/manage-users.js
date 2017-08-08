@@ -30,6 +30,7 @@ function showEditModal(elem) {
 }
 
 function createUser() {
+    const $createEmail = $('#createEmail');
     var password = $('#createPassword1').val();
 
     if (password !== $('#createPassword2').val()) {
@@ -43,10 +44,13 @@ function createUser() {
         $('.passwordMismatchErr').hide();
     }
 
+    $createEmail.parent().removeClass("has-danger");
+    $('#createDuplicateEmailWarning').hide();
+
     var payload = {};
     payload.firstName = $('#createFirstName').val();
     payload.lastName = $('#createLastName').val();
-    payload.email = $('#createEmail').val();
+    payload.email = $createEmail.val();
     payload.password = password;
     payload.notify = $('#createNotifyCheckbox')[0].checked;
 
@@ -89,18 +93,26 @@ function createUser() {
                 "                            </button>";
 
 
-            $('#createUserModal').find('form')[0].reset();
+            const $createUserModal = $('#createUserModal');
+            $createUserModal.find('form')[0].reset();
+            $createUserModal.modal('hide');
         })
         .fail(function (req) {
-            sweetAlert("Oops...", "Something went wrong!", "error");
-            console.log(req);
-        })
-        .always(function () {
-            $('#createUserModal').modal('hide');
-        })
+            if (req.status === 412) {
+                // Duplicate Email
+                $('#createEmail').parent().addClass("has-danger");
+                $('#createDuplicateEmailWarning').show();
+            } else {
+                sweetAlert("Oops...", "Something went wrong!", "error");
+                console.log(req);
+                $('#createUserModal').modal('hide');
+
+            }
+        });
 }
 
 function updateUser() {
+    const $updateEmail = $('#updateEmail');
     var password = $('#updatePassword1').val();
 
     if (password !== $('#updatePassword2').val()) {
@@ -114,10 +126,13 @@ function updateUser() {
         $('.passwordMismatchErr').hide();
     }
 
+    $updateEmail.parent().removeClass("has-danger");
+    $('#updateDuplicateEmailWarning').hide();
+
     var payload = {};
     payload.firstName = $('#updateFirstName').val();
     payload.lastName = $('#updateLastName').val();
-    payload.email = $('#updateEmail').val();
+    payload.email = $updateEmail.val();
     if (password !== "") payload.password = password;
     payload.notify = $('#updateNotifyCheckbox')[0].checked;
 
@@ -148,14 +163,20 @@ function updateUser() {
             }
 
             swal("Okay!", "User has been updated.", "success");
-            $('#updateUserModal').find('form')[0].reset();
+            const $updateUserModal = $('#updateUserModal');
+            $updateUserModal.find('form')[0].reset();
+            $updateUserModal.modal('hide');
         })
         .fail(function (req) {
-            sweetAlert("Oops...", "Something went wrong!", "error");
-            console.log(req);
-        })
-        .always(function () {
-            $('#updateUserModal').modal('hide');
+            if (req.status === 412) {
+                // Duplicate Email
+                $('#updateEmail').parent().addClass("has-danger");
+                $('#updateDuplicateEmailWarning').show();
+            } else {
+                sweetAlert("Oops...", "Something went wrong!", "error");
+                console.log(req);
+                $('#updateUserModal').modal('hide');
+            }
         });
 }
 
