@@ -1,6 +1,7 @@
 package edu.sdsu.its.Mediasite;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
@@ -10,6 +11,10 @@ import edu.sdsu.its.API.Models.Status;
 import edu.sdsu.its.DB;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Tom Paulus
@@ -26,33 +31,41 @@ public class Recorders {
     private static final String RECORDER_WEB_SERVICE_PORT = "8090";
 
     public static Recorder[] getRecorders() {
+        final List<Recorder> recorderList = new ArrayList<>();
         msURL = msURL.endsWith("/") ? msURL : msURL + '/';
-        HttpResponse<com.mashape.unirest.http.JsonNode> recorderRequest;
+        String nextPageURL = msURL + "Api/v1/Recorders";
 
-        try {
-            recorderRequest = Unirest
-                    .get(msURL + "Api/v1/Recorders")
-                    .header("sfapikey", msAPI)
-                    .basicAuth(msUser, msPass)
-                    .asJson();
-        } catch (UnirestException e) {
-            LOGGER.error("Problem retrieving recorder list from MS API", e);
-            return null;
-        }
+        do {
+            HttpResponse<com.mashape.unirest.http.JsonNode> recorderRequest;
 
-        if (recorderRequest.getStatus() != 200) {
-            LOGGER.error(String.format("Problem retrieving recorder list from MS API. HTTP Status: %d",
-                    recorderRequest.getStatus()));
-            LOGGER.info(recorderRequest.getBody());
-            return null;
-        }
+            try {
+                recorderRequest = Unirest
+                        .get(nextPageURL)
+                        .header("sfapikey", msAPI)
+                        .basicAuth(msUser, msPass)
+                        .asJson();
+            } catch (UnirestException e) {
+                LOGGER.error("Problem retrieving recorder list from MS API", e);
+                return null;
+            }
 
-        Gson gson = new Gson();
-        //noinspection unchecked
-        Recorder[] recorders = gson.fromJson(recorderRequest.getBody().toString(), RecorderResponse.class).value;
-        LOGGER.debug(String.format("Got %d recorders from API", recorders.length));
+            if (recorderRequest.getStatus() != 200) {
+                LOGGER.error(String.format("Problem retrieving recorder list from MS API. HTTP Status: %d",
+                        recorderRequest.getStatus()));
+                LOGGER.info(recorderRequest.getBody());
+                return null;
+            }
 
-        return recorders;
+            Gson gson = new Gson();
+            //noinspection unchecked
+            RecorderResponse response = gson.fromJson(recorderRequest.getBody().toString(), RecorderResponse.class);
+            nextPageURL = response.nextLink;
+            Collections.addAll(recorderList, response.value);
+        } while (nextPageURL != null && !nextPageURL.isEmpty());
+
+        LOGGER.debug(String.format("Got %d recorders from API", recorderList.size()));
+
+        return recorderList.toArray(new Recorder[]{});
     }
 
     public static String getRecorderIP(final String recorderId) {
@@ -107,7 +120,11 @@ public class Recorders {
 
     @SuppressWarnings("unused")
     private static class RecorderResponse {
+        @Expose
         private Recorder[] value;
+        @SerializedName("odata.nextLink")
+        @Expose
+        public String nextLink;
     }
 
     @SuppressWarnings("unused")
