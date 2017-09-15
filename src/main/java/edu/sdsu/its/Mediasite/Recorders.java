@@ -115,7 +115,7 @@ public class Recorders {
                 recorderInfoRequest.getBody().lastIndexOf('}') + 1),
                 RecorderStatusResponse.class);
 
-        return Status.getByCode(recorderStatus.recorderState);
+        return Status.getByName(recorderStatus.recorderStateString);
     }
 
     @SuppressWarnings("unused")
