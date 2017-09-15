@@ -13,7 +13,7 @@ import java.io.PrintWriter;
 
 /**
  * @author Tom Paulus
- *         Created on 7/14/17.
+ * Created on 7/14/17.
  */
 public class APIFilter implements Filter {
     private static final Logger LOGGER = Logger.getLogger(APIFilter.class);
@@ -25,9 +25,10 @@ public class APIFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         boolean isLoginRequest = ((HttpServletRequest) request).getRequestURI().contains("login");
+        boolean isSSEStreamRequests = ((HttpServletRequest) request).getRequestURI().contains("stream");
 
         final HttpSession session = ((HttpServletRequest) request).getSession();
-        if (!isLoginRequest && session == null) {
+        if (!isLoginRequest && !isSSEStreamRequests && session == null) {
             // Session not included in request
 
             LOGGER.warn("Unauthorized Request to " + ((HttpServletRequest) request).getRequestURI() + "- session not included in request");
@@ -39,7 +40,7 @@ public class APIFilter implements Filter {
                     "No session token was included in your request. Make sure that the" +
                             "JSESSIONID in the cookies that are sent with your request.").asJson());
             writer.close();
-        } else if (!isLoginRequest && !Login.authCheck(session)) {
+        } else if (!isLoginRequest && !isSSEStreamRequests && !Login.authCheck(session)) {
             // Session is not valid
 
             LOGGER.warn("Unauthorized Request to " + ((HttpServletRequest) request).getRequestURI() + "- invalid session");

@@ -41,11 +41,11 @@
                                 id="header-user-name">{{ user.firstName }}</span>
                     </a>
                     <div class="dropdown-menu" aria-labelledby="userDropdownMenuLink">
-                        <a class="dropdown-item" href="#"><i class="fa fa-file-o" aria-hidden="true"></i>&nbsp;
+                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#updateSelfModal">
+                            <i class="fa fa-file-o" aria-hidden="true"></i>&nbsp;
                             Update Info</a>
-                        {# TODO add Update Self Modal #}
                         <a class="dropdown-item" href="/api/logout"><i class="fa fa-sign-out"
-                                                                      aria-hidden="true"></i>&nbsp; Log Out</a>
+                                                                       aria-hidden="true"></i>&nbsp; Log Out</a>
                     </div>
                 </li>
             {% else %}

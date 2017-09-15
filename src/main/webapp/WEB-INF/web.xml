@@ -65,6 +65,9 @@
             <param-name>jersey.config.server.provider.packages</param-name>
             <param-value>edu.sdsu.its</param-value>
         </init-param>
+
+        <load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>
     </servlet>
     <servlet-mapping>
         <servlet-name>API</servlet-name>
@@ -78,6 +81,7 @@
     <filter>
         <filter-name>AuthFilter</filter-name>
         <filter-class>edu.sdsu.its.API.APIFilter</filter-class>
+        <async-supported>true</async-supported>
     </filter>
 
     <listener>

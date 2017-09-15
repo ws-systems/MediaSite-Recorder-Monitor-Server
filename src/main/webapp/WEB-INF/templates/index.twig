@@ -19,7 +19,7 @@
 
     <div class="container" style="padding-top: 1em">
         <h2>Recorder Status</h2>
-        <table class="table table-hover" id="recorder-table table-responsive sortable">
+        <table class="table table-hover table-responsive sortable recorder-table" id="recorder-table">
             <thead>
             <tr>
                 <th>Status</th>
@@ -31,11 +31,11 @@
             </thead>
             <tbody>
             {% for recorder in recorders %}
-                <tr class="recorder-{{ recorder.Id }}">
+                <tr class="recorder recorder-{{ recorder.Id }}" id="recorder-{{ recorder.Id }}">
                     <td class="recorder-status status-{{ recorder.status.stateCode }}"> {{ recorder.status.stateString }}</td>
                     <td class="recorder-name">{{ recorder.Name }}</td>
                     <td class="recorder-version">{{ recorder.Version }}</td>
-                    <td class="recorder-last-seen">{{ recorder.lastSeen }}</td>
+                    <td class="recorder-last-seen">{{ recorder.lastSeen | date("MMM dd, yyyy h:mm:ss aa") }}</td>
                     <td class="recorder-more-info-button recorder-info">
                         <i class="fa fa-info-circle" aria-hidden="true"
                            onclick="showRecorderByID('{{ recorder.Id }}')"></i>
@@ -50,5 +50,6 @@
 {% embed "footer.twig" %}
     {% block page_assets %}
         <script src="/assets/js/index.js" type="text/javascript"></script>
+        <script src="/assets/js/event-stream.js" type="application/javascript"></script>
     {% endblock %}
 {% endembed %}

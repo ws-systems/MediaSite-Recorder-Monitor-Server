@@ -1,6 +1,14 @@
 package edu.sdsu.its.API.Models;
 
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import lombok.Getter;
+
+import java.io.IOException;
 
 /**
  * Mediasite Recorder Status Codes Mapping
@@ -65,5 +73,44 @@ public enum Status {
 
     public boolean inAlarm() {
         return !okay();
+    }
+
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
+    }
+
+    public static class StatusAdapterFactory implements TypeAdapterFactory {
+        @Override
+        public <T> TypeAdapter<T> create(final Gson gson, final TypeToken<T> type) {
+            Class<? super T> rawType = type.getRawType();
+            if (rawType == Status.class) {
+                return new StatusAdapter<>();
+            }
+            return null;
+        }
+
+        public class StatusAdapter<T> extends TypeAdapter<T> {
+
+            public void write(JsonWriter out, T value) throws IOException {
+                if (value == null) {
+                    out.nullValue();
+                    return;
+                }
+                Status status = (Status) value;
+                // Here write what you want to the JsonWriter.
+                out.beginObject();
+                out.name("string");
+                out.value(status.getStateString());
+                out.name("code");
+                out.value(status.getStateCode());
+                out.endObject();
+            }
+
+            public T read(JsonReader in) throws IOException {
+                // Properly deserialize the input (if you use deserialization)
+                return null;
+            }
+        }
     }
 }

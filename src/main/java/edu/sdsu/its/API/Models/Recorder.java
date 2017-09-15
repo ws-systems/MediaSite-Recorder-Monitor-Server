@@ -1,6 +1,7 @@
 package edu.sdsu.its.API.Models;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.*;
 
 import javax.persistence.Column;
@@ -87,7 +88,9 @@ public class Recorder {
     }
 
     public String asJson() {
-        return new Gson().toJson(this);
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapterFactory(new Status.StatusAdapterFactory());
+        return builder.create().toJson(this);
     }
 
     public static Recorder merge(final Recorder existing, final Recorder newRecorder) {
