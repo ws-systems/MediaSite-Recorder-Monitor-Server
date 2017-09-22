@@ -37,6 +37,12 @@ public class Users {
         return Response.status(Response.Status.OK).entity(new Gson().toJson(users)).build();
     }
 
+    /**
+     * Get a User from the DB
+     *
+     * @param userEmail {@link String} User's Email
+     * @return Serialized User Object, SimpleMessage JSON with error if not found
+     */
     @Path("{id}")
     @GET
     @Consumes(MediaType.WILDCARD)
@@ -64,6 +70,12 @@ public class Users {
         return Response.status(Response.Status.OK).entity(new Gson().toJson(user)).build();
     }
 
+    /**
+     * Create a new User. Email addresses must be unique per user.
+     *
+     * @param payload {@link String} Updated User Object JSON
+     * @return {@link Response} Status Message (SimpleMessage) JSON
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -97,6 +109,14 @@ public class Users {
         return Response.status(Response.Status.CREATED).entity(user.asJson()).build();
     }
 
+    /**
+     * Update a User.
+     * Only fields that have been defined will be updated. Fields that are null will not be updated.
+     *
+     * @param userEmail {@link String} User Email
+     * @param payload   {@link String} Updated User Object JSON
+     * @return {@link Response} Status Message (SimpleMessage) JSON
+     */
     @Path("{id}")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
@@ -140,6 +160,12 @@ public class Users {
         ).asJson()).build();
     }
 
+    /**
+     * Delete a User from the Database
+     *
+     * @param userEmail {@link String} User's Email Address
+     * @return {@link Response} Status Message (SimpleMessage) JSON
+     */
     @Path("{id}")
     @DELETE
     @Consumes(MediaType.WILDCARD)
