@@ -14,9 +14,9 @@
             Persistence unit for the Mediasite Monitor JPA
         </description>
 
-        <class>edu.sdsu.its.API.Models.Preference</class>
-        <class>edu.sdsu.its.API.Models.Recorder</class>
-        <class>edu.sdsu.its.API.Models.User</class>
+        <class>systems.whitestar.mediasite_monitor.API.Models.Preference</class>
+        <class>systems.whitestar.mediasite_monitor.API.Models.Recorder</class>
+        <class>systems.whitestar.mediasite_monitor.API.Models.User</class>
 
         <properties>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>

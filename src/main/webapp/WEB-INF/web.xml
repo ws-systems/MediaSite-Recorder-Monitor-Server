@@ -8,7 +8,7 @@
 
     <servlet>
         <servlet-name>Index</servlet-name>
-        <servlet-class>edu.sdsu.its.Routes.Index</servlet-class>
+        <servlet-class>systems.whitestar.mediasite_monitor.Routes.Index</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Index</servlet-name>
@@ -17,7 +17,7 @@
 
     <servlet>
         <servlet-name>Login</servlet-name>
-        <servlet-class>edu.sdsu.its.Routes.Login</servlet-class>
+        <servlet-class>systems.whitestar.mediasite_monitor.Routes.Login</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Login</servlet-name>
@@ -26,7 +26,7 @@
 
     <servlet>
         <servlet-name>Manage-Integrations</servlet-name>
-        <servlet-class>edu.sdsu.its.Routes.ManageIntegration</servlet-class>
+        <servlet-class>systems.whitestar.mediasite_monitor.Routes.ManageIntegration</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Manage-Integrations</servlet-name>
@@ -35,7 +35,7 @@
 
     <servlet>
         <servlet-name>Manage-Rates</servlet-name>
-        <servlet-class>edu.sdsu.its.Routes.ManageRates</servlet-class>
+        <servlet-class>systems.whitestar.mediasite_monitor.Routes.ManageRates</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Manage-Rates</servlet-name>
@@ -44,7 +44,7 @@
 
     <servlet>
         <servlet-name>Manage-Users</servlet-name>
-        <servlet-class>edu.sdsu.its.Routes.ManageUsers</servlet-class>
+        <servlet-class>systems.whitestar.mediasite_monitor.Routes.ManageUsers</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Manage-Users</servlet-name>
@@ -80,12 +80,12 @@
     </filter-mapping>
     <filter>
         <filter-name>AuthFilter</filter-name>
-        <filter-class>edu.sdsu.its.API.APIFilter</filter-class>
+        <filter-class>systems.whitestar.mediasite_monitor.API.APIFilter</filter-class>
         <async-supported>true</async-supported>
     </filter>
 
     <listener>
-        <listener-class>edu.sdsu.its.Init</listener-class>
+        <listener-class>systems.whitestar.mediasite_monitor.Init</listener-class>
     </listener>
     <session-config>
         <session-timeout>
