@@ -1,15 +1,15 @@
 package systems.whitestar.mediasite_monitor.API;
 
 import com.google.gson.GsonBuilder;
-import systems.whitestar.mediasite_monitor.API.Models.Recorder;
-import systems.whitestar.mediasite_monitor.API.Models.Status;
-import systems.whitestar.mediasite_monitor.Hooks.Hook;
 import lombok.ToString;
-import org.apache.log4j.Logger;
+import lombok.extern.log4j.Log4j;
 import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.OutboundEvent;
 import org.glassfish.jersey.media.sse.SseBroadcaster;
 import org.glassfish.jersey.media.sse.SseFeature;
+import systems.whitestar.mediasite_monitor.API.Models.Recorder;
+import systems.whitestar.mediasite_monitor.API.Models.Status;
+import systems.whitestar.mediasite_monitor.Hooks.Hook;
 
 import javax.inject.Singleton;
 import javax.ws.rs.GET;
@@ -22,10 +22,10 @@ import java.util.UUID;
  * @author Tom Paulus
  * Created on 9/15/17.
  */
+@Log4j
 @Singleton
 @Path("stream")
 public class BroadcastEvent {
-    private static final Logger LOGGER = Logger.getLogger(BroadcastEvent.class);
     private static SseBroadcaster broadcaster = new SseBroadcaster();
 
     static void broadcastEvent(Event event) {
@@ -34,12 +34,12 @@ public class BroadcastEvent {
                 .mediaType(MediaType.TEXT_PLAIN_TYPE)
                 .data(String.class, event.asJson())
                 .build();
-        LOGGER.info(String.format("Broadcasting new Message to Clients - Type: %s; Recorder ID: %s", event.cause.getName(), event.recorder.getId()));
-        LOGGER.debug(event);
+        log.info(String.format("Broadcasting new Message to Clients - Type: %s; Recorder ID: %s", event.cause.getName(), event.recorder.getId()));
+        log.debug(event);
         try {
             broadcaster.broadcast(outboundEvent);
         } catch (Exception e) {
-            LOGGER.warn(String.format("Problem Broadcasting Event - Type: %s; Recorder ID: %s", event.cause.getName(), event.recorder.getId()));
+            log.warn(String.format("Problem Broadcasting Event - Type: %s; Recorder ID: %s", event.cause.getName(), event.recorder.getId()));
         }
     }
 
@@ -66,7 +66,8 @@ public class BroadcastEvent {
         public String asJson() {
             GsonBuilder builder = new GsonBuilder();
             builder.registerTypeAdapterFactory(new Status.StatusAdapterFactory());
-            return builder.create().toJson(this);        }
+            return builder.create().toJson(this);
+        }
 
         public void broadcast() {
             broadcastEvent(this);

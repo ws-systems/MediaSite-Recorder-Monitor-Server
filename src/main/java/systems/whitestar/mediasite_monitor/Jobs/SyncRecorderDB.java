@@ -1,12 +1,12 @@
 package systems.whitestar.mediasite_monitor.Jobs;
 
+import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j;
+import org.quartz.*;
 import systems.whitestar.mediasite_monitor.API.Models.Recorder;
 import systems.whitestar.mediasite_monitor.DB;
 import systems.whitestar.mediasite_monitor.Hooks.Hook;
 import systems.whitestar.mediasite_monitor.Mediasite.Recorders;
-import lombok.NoArgsConstructor;
-import org.apache.log4j.Logger;
-import org.quartz.*;
 
 import java.io.IOException;
 
@@ -18,10 +18,9 @@ import static org.quartz.TriggerBuilder.newTrigger;
  * @author Tom Paulus
  * Created on 5/10/17.
  */
+@Log4j
 @NoArgsConstructor
 public class SyncRecorderDB implements Job {
-    private static final Logger LOGGER = Logger.getLogger(SyncRecorderDB.class);
-
     public static final String JOB_GROUP = "list_update";
     public static final String TRIGGER_NAME = "SyncRecorderListTrigger";
     public static final String JOB_NAME = "SyncRecorderList";
@@ -52,34 +51,34 @@ public class SyncRecorderDB implements Job {
     }
 
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        LOGGER.info("Starting Recorder Sync Job");
+        log.info("Starting Recorder Sync Job");
 
         Recorder[] recorders = Recorders.getRecorders();
         if (recorders == null) {
-            LOGGER.fatal("Problem retrieving recorder list from API");
+            log.fatal("Problem retrieving recorder list from API");
             return;
         }
-        LOGGER.debug(String.format("Retrieved %d recorders from MS API", recorders.length));
+        log.debug(String.format("Retrieved %d recorders from MS API", recorders.length));
 
-        LOGGER.debug("Updating Recorder DB");
+        log.debug("Updating Recorder DB");
         for (Recorder recorder : recorders) {
-            LOGGER.debug(String.format("Inserting/Updating Recorder %s - \"%s\"", recorder.getName(), recorder.toString()));
+            log.debug(String.format("Inserting/Updating Recorder %s - \"%s\"", recorder.getName(), recorder.toString()));
             try {
                 DB.updateRecorder(Recorder.merge(DB.getRecorder("id = '" + recorder.getId() + "'")[0], recorder));
             } catch (IndexOutOfBoundsException e) {
-                LOGGER.debug("New Recorder - Cannot execute Update, Inserting new record.");
+                log.debug("New Recorder - Cannot execute Update, Inserting new record.");
                 DB.updateRecorder(recorder);
             }
         }
-        LOGGER.debug("Updated Recorder DB");
+        log.debug("Updated Recorder DB");
 
 
         try {
             Hook.fire(Hook.RECORDER_RECORD_UPDATE, recorders);
         } catch (IOException e) {
-            LOGGER.error("Problem firing Recorder DB Update Hook", e);
+            log.error("Problem firing Recorder DB Update Hook", e);
         }
 
-        LOGGER.info("Finished Recorder Sync Job");
+        log.info("Finished Recorder Sync Job");
     }
 }

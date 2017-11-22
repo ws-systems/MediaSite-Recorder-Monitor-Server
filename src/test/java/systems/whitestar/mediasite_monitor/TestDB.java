@@ -25,16 +25,16 @@ public class TestDB {
      */
     @Test
     public void checkParams() {
-        final String db_url = Vault.getParam("db-url");
+        final String db_url = Secret.getInstance().getSecret("db-url");
         LOGGER.debug("Vault.db-url = " + db_url);
         assertTrue("URL is Empty", db_url != null && db_url.length() > 0);
         assertTrue("Invalid URL", db_url.startsWith("jdbc:mysql://"));
 
-        final String db_user = Vault.getParam("db-user");
+        final String db_user = Secret.getInstance().getSecret("db-user");
         LOGGER.debug("Vault.db-user = " + db_user);
         assertTrue("Username is Empty", db_user != null && db_user.length() > 0);
 
-        final String db_password = Vault.getParam("db-password");
+        final String db_password = Secret.getInstance().getSecret("db-password");
         LOGGER.debug("Vault.db-password = " + db_password);
         assertTrue("Password is Empty", db_password != null && db_password.length() > 0);
     }

@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.ClassPath;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.log4j.Logger;
+import lombok.extern.log4j.Log4j;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -24,6 +24,7 @@ import java.util.List;
  * @author Tom Paulus
  * Created on 7/21/17.
  */
+@Log4j
 public enum Hook {
     USER_CREATE("onUserCreate"),
     USER_UPDATE("onUserUpdate"),
@@ -31,8 +32,6 @@ public enum Hook {
     RECORDER_STATUS_UPDATE("onRecorderStatusUpdate"),
     RECORDER_ALARM_ACTIVATE("onRecorderAlarmActivate"),
     RECORDER_ALARM_CLEAR("onRecorderAlarmClear");
-
-    private static final Logger LOGGER = Logger.getLogger(Hook.class);
 
     private @Getter
     String name;
@@ -51,31 +50,31 @@ public enum Hook {
      */
     public static List<HookEvent> fire(final Hook hook, final Object context) throws IOException {
         ImmutableSet<ClassPath.ClassInfo> classes = ClassPath.from(Hook.class.getClassLoader()).getTopLevelClasses(Hook.class.getPackage().getName());
-        LOGGER.debug(String.format("Found %d classes of Event Hook Listeners", classes.size()));
+        log.debug(String.format("Found %d classes of Event Hook Listeners", classes.size()));
 
         final List<HookEvent> statuses = Collections.synchronizedList(new ArrayList<>(classes.size()));
 
         for (final ClassPath.ClassInfo clazz : classes) {
             final Method[] methods = clazz.load().getDeclaredMethods();
-            LOGGER.debug(String.format("Found %d methods for Hook Listener Class %s", methods.length, clazz.getName()));
+            log.debug(String.format("Found %d methods for Hook Listener Class %s", methods.length, clazz.getName()));
 
             for (final Method method : methods) {
                 final boolean isAbstract = Modifier.isAbstract(method.getModifiers());
                 if (method.getName().equals(hook.getName()) && !isAbstract) {
                     new Thread(() -> {
-                        LOGGER.debug(String.format("Starting new thread for Hook Method %s in class %s",
+                        log.debug(String.format("Starting new thread for Hook Method %s in class %s",
                                 method.getName(),
                                 clazz.getPackageName() + '.' + clazz.getName()));
                         if (context != null) {
-                            LOGGER.debug("Hook Context - " + context.toString());
+                            log.debug("Hook Context - " + context.toString());
                         }
                         try {
                             statuses.add(new HookEvent(method, method.invoke(clazz.load().newInstance(), context)));
                         } catch (IllegalAccessException | InvocationTargetException | InstantiationException | IllegalArgumentException e) {
-                            LOGGER.error("Problem firing Hook - " + hook, e);
+                            log.error("Problem firing Hook - " + hook, e);
                             statuses.add(new HookEvent(method, false));
                         }
-                        LOGGER.debug(String.format("Thread to fire Hook Method %s in class %s Completed",
+                        log.debug(String.format("Thread to fire Hook Method %s in class %s Completed",
                                 method.getName(),
                                 clazz.getPackageName() + '.' + clazz.getName()));
                     }).start();
@@ -83,7 +82,7 @@ public enum Hook {
                     break;
 
                 } else if (isAbstract) {
-                    LOGGER.debug(String.format("Implementation of hook %s in class %s is abstract, skipping!", hook.getName(), clazz.getName()));
+                    log.debug(String.format("Implementation of hook %s in class %s is abstract, skipping!", hook.getName(), clazz.getName()));
                 }
             }
         }

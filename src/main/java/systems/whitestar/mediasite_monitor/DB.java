@@ -25,9 +25,9 @@ public class DB {
 
     public static void setup() {
         Properties props = new Properties();
-        props.setProperty("javax.persistence.jdbc.url", Vault.getParam("db-url"));
-        props.setProperty("javax.persistence.jdbc.user", Vault.getParam("db-user"));
-        props.setProperty("javax.persistence.jdbc.password", Vault.getParam("db-password"));
+        props.setProperty("javax.persistence.jdbc.url", Secret.getInstance().getSecret("db-url"));
+        props.setProperty("javax.persistence.jdbc.user", Secret.getInstance().getSecret("db-user"));
+        props.setProperty("javax.persistence.jdbc.password", Secret.getInstance().getSecret("db-password"));
 
         try {
             sessionFactory = Persistence.createEntityManagerFactory("edu.sdsu.its.jpa", props);

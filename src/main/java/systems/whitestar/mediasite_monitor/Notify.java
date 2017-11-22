@@ -1,12 +1,12 @@
 package systems.whitestar.mediasite_monitor;
 
 import lombok.*;
+import lombok.extern.log4j.Log4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
-import org.apache.log4j.Logger;
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
 
@@ -19,12 +19,11 @@ import java.util.Map;
  * TODO Add Unit Tests that check that the Builder and Template Render work as intended
  *
  * @author Tom Paulus
- *         Created on 7/11/17.
+ * Created on 7/11/17.
  */
+@Log4j
 @Builder
 public class Notify {
-    private static final Logger LOGGER = Logger.getLogger(Notify.class);
-
     protected final HtmlEmail mEmail = new HtmlEmail();
 
     private Recipient[] recipients;
@@ -58,14 +57,8 @@ public class Notify {
             mEmail.setSubject(subject);
             mEmail.setHtmlMsg(message);
         } catch (EmailException e) {
-            LOGGER.error("Problem Making Email", e);
+            log.error("Problem Making Email", e);
         }
-    }
-
-    public String send() throws EmailException {
-        LOGGER.info("Sending Notification Email to - " + Arrays.toString(recipients));
-        LOGGER.info("Subject - " + subject);
-        return mEmail.send();
     }
 
     /**
@@ -88,6 +81,12 @@ public class Notify {
         template.render(model, out);
 
         return out.toString("utf-8");
+    }
+
+    public String send() throws EmailException {
+        log.info("Sending Notification Email to - " + Arrays.toString(recipients));
+        log.info("Subject - " + subject);
+        return mEmail.send();
     }
 
     @AllArgsConstructor

@@ -51,6 +51,9 @@ dependencies {
     compile "org.jtwig:jtwig-web:5.86.0.RELEASE"
 
     // Vault
+    compile group: 'com.bettercloud', name: 'vault-java-driver', version: '3.0.0'
+
+    // Web Requests
     compile group: 'com.mashape.unirest', name: 'unirest-java', version: '1.4.9'
 
     // Email and Reporting

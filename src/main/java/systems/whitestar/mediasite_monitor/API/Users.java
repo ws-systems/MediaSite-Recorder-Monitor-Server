@@ -1,11 +1,11 @@
 package systems.whitestar.mediasite_monitor.API;
 
 import com.google.gson.Gson;
+import lombok.extern.log4j.Log4j;
 import systems.whitestar.mediasite_monitor.API.Models.SimpleMessage;
 import systems.whitestar.mediasite_monitor.API.Models.User;
 import systems.whitestar.mediasite_monitor.DB;
 import systems.whitestar.mediasite_monitor.Hooks.Hook;
-import org.apache.log4j.Logger;
 
 import javax.persistence.PersistenceException;
 import javax.servlet.http.HttpServletRequest;
@@ -19,10 +19,9 @@ import java.io.IOException;
  * @author Tom Paulus
  * Created on 7/29/17.
  */
+@Log4j
 @Path("users")
 public class Users {
-    private static final Logger LOGGER = Logger.getLogger(Users.class);
-
     @Context
     private HttpServletRequest request;
 
@@ -30,9 +29,9 @@ public class Users {
     @Consumes(MediaType.WILDCARD)
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllUsers() {
-        LOGGER.debug("Getting All Users");
+        log.debug("Getting All Users");
         final User[] users = DB.getUser("");
-        LOGGER.debug(String.format("Found %d Users", users.length));
+        log.debug(String.format("Found %d Users", users.length));
 
         return Response.status(Response.Status.OK).entity(new Gson().toJson(users)).build();
     }
@@ -54,13 +53,13 @@ public class Users {
                             "No Email supplied in request").asJson())
                     .build();
 
-        LOGGER.debug("Getting User with Email - " + userEmail);
+        log.debug("Getting User with Email - " + userEmail);
         final User user;
 
         try {
             user = DB.getUser("email = '" + userEmail + "'")[0];
         } catch (IndexOutOfBoundsException e) {
-            LOGGER.info(String.format("Could not find a user with email \"%s\"", userEmail));
+            log.info(String.format("Could not find a user with email \"%s\"", userEmail));
             return Response.status(Response.Status.NOT_FOUND)
                     .entity(new SimpleMessage("Error",
                             "No user with that email could be found in the system").asJson())
@@ -104,7 +103,7 @@ public class Users {
         try {
             Hook.fire(Hook.USER_CREATE, user);
         } catch (IOException e) {
-            LOGGER.error("Problem firing User Create Hook", e);
+            log.error("Problem firing User Create Hook", e);
         }
         return Response.status(Response.Status.CREATED).entity(user.asJson()).build();
     }
@@ -133,7 +132,7 @@ public class Users {
         try {
             existingUser = DB.getUser("email = '" + userEmail + "'")[0];
         } catch (IndexOutOfBoundsException e) {
-            LOGGER.info(String.format("Could not find a user with email \"%s\"", userEmail));
+            log.info(String.format("Could not find a user with email \"%s\"", userEmail));
             return Response.status(Response.Status.NOT_FOUND)
                     .entity(new SimpleMessage("Error",
                             "No user with that email could be found in the system").asJson())
@@ -152,7 +151,7 @@ public class Users {
         try {
             Hook.fire(Hook.USER_UPDATE, mergedUser);
         } catch (IOException e) {
-            LOGGER.error("Problem firing User Update Hook", e);
+            log.error("Problem firing User Update Hook", e);
         }
         return Response.status(Response.Status.ACCEPTED).entity(new SimpleMessage(
                 "okay",
@@ -177,7 +176,7 @@ public class Users {
                             "No Email supplied in request").asJson())
                     .build();
 
-        LOGGER.warn(String.format("User \"%s\" is requesting to delete the User with Email \"%s\"",
+        log.warn(String.format("User \"%s\" is requesting to delete the User with Email \"%s\"",
                 ((User) request.getSession().getAttribute("user")).getEmail(),
                 userEmail));
 
@@ -188,10 +187,10 @@ public class Users {
             try {
                 Hook.fire(Hook.USER_UPDATE, user);
             } catch (IOException e) {
-                LOGGER.error("Problem firing User Update Hook", e);
+                log.error("Problem firing User Update Hook", e);
             }
         } catch (IndexOutOfBoundsException e) {
-            LOGGER.info(String.format("Could not find a user with email \"%s\"", userEmail));
+            log.info(String.format("Could not find a user with email \"%s\"", userEmail));
             return Response.status(Response.Status.NOT_FOUND)
                     .entity(new SimpleMessage("Error",
                             "No user with that email could be found in the system").asJson())
