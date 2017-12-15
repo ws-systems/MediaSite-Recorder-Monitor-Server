@@ -7,8 +7,6 @@ import lombok.*;
 
 import javax.persistence.*;
 
-import static systems.whitestar.mediasite_monitor.DB.PASSWORD_ENCRYPTOR;
-
 /**
  * @author Tom Paulus
  * Created on 5/5/17.
@@ -38,15 +36,8 @@ public class User {
     @NonNull
     @Getter
     @Setter
-    @Column(name = "first_name")
-    String firstName;
-
-    @Expose
-    @NonNull
-    @Getter
-    @Setter
-    @Column(name = "last_name")
-    String lastName;
+    @Column(name = "name")
+    String name;
 
     @Expose
     @NonNull
@@ -54,51 +45,42 @@ public class User {
     @Setter
     String email;
 
-    @Expose(serialize = false)
-    @Getter
-    String password;
-
     @Expose
-    @NonNull
     @Getter
     @Setter
     Boolean notify;
 
-
-    public void setPassword(String password) {
-        this.password = PASSWORD_ENCRYPTOR.encryptPassword(password);
-    }
-
-    public boolean complete() {
-        if (firstName == null || firstName.isEmpty()) return false;
-        if (lastName == null || lastName.isEmpty()) return false;
-        if (email == null || email.isEmpty()) return false;
-        if (password == null || password.isEmpty()) return false;
-        return notify != null;
-
-    }
+    @Expose(serialize = false)
+    @Getter
+    @Setter
+    @Column(name = "external_id")
+    String externalId;
 
     public static User merge(User existingUser, final User newUser) {
-        if (newUser.getPK() != 0 ) {
+        if (newUser.getPK() != 0) {
             existingUser.PK = newUser.getPK();
         }
         if (newUser.getEmail() != null && !newUser.getEmail().isEmpty()) {
             existingUser.setEmail(newUser.getEmail());
         }
-        if (newUser.getFirstName() != null && !newUser.getFirstName().isEmpty()) {
-            existingUser.setFirstName(newUser.getFirstName());
-        }
-        if (newUser.getLastName() != null && !newUser.getLastName().isEmpty()) {
-            existingUser.setLastName(newUser.getLastName());
-        }
-        if (newUser.getPassword() != null && !newUser.getPassword().isEmpty()) {
-            existingUser.setPassword(newUser.getPassword());
+        if (newUser.getName() != null && !newUser.getName().isEmpty()) {
+            existingUser.setName(newUser.getName());
         }
         if (newUser.getNotify() != null) {
             existingUser.setNotify(newUser.getNotify());
         }
+        if (newUser.getExternalId() != null) {
+            existingUser.setExternalId(newUser.getExternalId());
+        }
 
         return existingUser;
+    }
+
+    public boolean complete() {
+        if (name == null || name.isEmpty()) return false;
+        if (email == null || email.isEmpty()) return false;
+        return notify != null;
+
     }
 
     public String asJson() {

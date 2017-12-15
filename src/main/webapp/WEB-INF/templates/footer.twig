@@ -25,6 +25,21 @@
         src="/assets/lib/sorttable.js"></script>
 <script type="application/javascript"
         src="/assets/js/navbar.js"></script>
+
+{% if first_login %}
+    {% include "modal-welcome.twig" %}
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#welcomeModal").modal({
+                keyboard: false,
+                show: true,
+                focus: true
+            });
+        });
+    </script>
+{% endif %}
+
 {% block page_assets %}
 {% endblock %}
 </body>

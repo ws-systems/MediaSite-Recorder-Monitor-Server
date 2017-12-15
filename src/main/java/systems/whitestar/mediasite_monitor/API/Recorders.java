@@ -2,6 +2,7 @@ package systems.whitestar.mediasite_monitor.API;
 
 import com.google.gson.Gson;
 import lombok.extern.log4j.Log4j;
+import org.pac4j.jax.rs.annotations.Pac4JSecurity;
 import systems.whitestar.mediasite_monitor.API.Models.Recorder;
 import systems.whitestar.mediasite_monitor.API.Models.SimpleMessage;
 import systems.whitestar.mediasite_monitor.DB;
@@ -12,12 +13,12 @@ import javax.ws.rs.core.Response;
 
 /**
  * @author Tom Paulus
- *         Created on 5/10/17.
+ * Created on 5/10/17.
  */
 @Log4j
 @Path("recorders")
+@Pac4JSecurity(authorizers = "isAuthenticated")
 public class Recorders {
-
     /**
      * Get All recorders from the DB
      *

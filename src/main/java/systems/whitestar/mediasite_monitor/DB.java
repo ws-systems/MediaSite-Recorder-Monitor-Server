@@ -1,11 +1,10 @@
 package systems.whitestar.mediasite_monitor;
 
+import lombok.Setter;
+import lombok.extern.log4j.Log4j;
 import systems.whitestar.mediasite_monitor.API.Models.Preference;
 import systems.whitestar.mediasite_monitor.API.Models.Recorder;
 import systems.whitestar.mediasite_monitor.API.Models.User;
-import lombok.Setter;
-import org.apache.log4j.Logger;
-import org.jasypt.util.password.StrongPasswordEncryptor;
 
 import javax.persistence.*;
 import java.util.List;
@@ -16,10 +15,8 @@ import java.util.Properties;
  * Created on 5/5/17.
  */
 @SuppressWarnings( {"unchecked"})
+@Log4j
 public class DB {
-    private static final Logger LOGGER = Logger.getLogger(DB.class);
-    public static final StrongPasswordEncryptor PASSWORD_ENCRYPTOR = new StrongPasswordEncryptor();
-
     @Setter
     private static EntityManagerFactory sessionFactory;
 
@@ -30,10 +27,10 @@ public class DB {
         props.setProperty("javax.persistence.jdbc.password", Secret.getInstance().getSecret("db-password"));
 
         try {
-            sessionFactory = Persistence.createEntityManagerFactory("edu.sdsu.its.jpa", props);
-            LOGGER.info("Session Factory is ready to go!");
+            sessionFactory = Persistence.createEntityManagerFactory("systems.whitestar.mediasite_monitor.jpa", props);
+            log.info("Session Factory is ready to go!");
         } catch (Exception e) {
-            LOGGER.fatal("Could not start Session Factory", e);
+            log.fatal("Could not start Session Factory", e);
 
             throw e;
         }
@@ -41,7 +38,7 @@ public class DB {
 
     public static void shutdown() {
         if (sessionFactory != null) {
-            LOGGER.warn("Closing Session Factory");
+            log.warn("Closing Session Factory");
             sessionFactory.close();
         }
     }
@@ -56,14 +53,14 @@ public class DB {
             entityManager.getTransaction().begin();
 
             Preference preference = (Preference) entityManager.createQuery("select p from Preference p where p.setting = '" + name + "'").getSingleResult();
-            LOGGER.debug(preference);
+            log.debug(preference);
 
             entityManager.getTransaction().commit();
             entityManager.close();
 
             return preference.getValue();
         } catch (NoResultException e) {
-            LOGGER.warn("No Setting found with name - " + name);
+            log.warn("No Setting found with name - " + name);
         }
 
         return null;
@@ -98,8 +95,8 @@ public class DB {
             updatedUser = users.get(0);
             entityManager.getTransaction().commit();
         } else {
-            LOGGER.warn("Failed to Update User - Rolling Back");
-            LOGGER.debug(user.toString());
+            log.warn("Failed to Update User - Rolling Back");
+            log.debug(user.toString());
             entityManager.getTransaction().rollback();
         }
 
@@ -121,41 +118,26 @@ public class DB {
         entityManager.getTransaction().begin();
 
         List<User> users = entityManager.createQuery("select u from User u" + (restriction != null && !restriction.isEmpty() ? " where " + restriction : "")).getResultList();
-        LOGGER.debug(String.format("Found %d users in DB that match restriction \"%s\"", users.size(), restriction));
+        log.debug(String.format("Found %d users in DB that match restriction \"%s\"", users.size(), restriction));
 
         entityManager.getTransaction().commit();
         entityManager.close();
 
-        return users.toArray(new User[]{});
+        return users.toArray(new User[users.size()]);
     }
 
     /**
-     * Verify and retrieve a user based on their email address/password pair.
+     * Delete a User from the DB
      *
-     * @param email    {@link String} User's Email Address
-     * @param password {@link String} User's Password
-     * @return {@link User} User, Null if non existent or password incorrect
+     * @param user {@link User} User to delete
      */
-    public static User loginUser(final String email, final String password) {
-        try {
-            User user = DB.getUser("email = '" + email + "'")[0];
-            String passHash = user.getPassword();
-
-            return password != null && !passHash.isEmpty() && PASSWORD_ENCRYPTOR.checkPassword(password, passHash) ? user : null;
-        } catch (IndexOutOfBoundsException e) {
-            LOGGER.warn(String.format("No user exists with the Email \"%s\"", email));
-        }
-        return null;
-    }
-
     public static void deleteUser(final User user) {
-        LOGGER.warn(String.format("Deleting User with Email: %s", user.getEmail()));
+        log.warn(String.format("Deleting User with Email: %s", user.getEmail()));
         EntityManager entityManager = sessionFactory.createEntityManager();
         entityManager.getTransaction().begin();
         entityManager.remove(entityManager.contains(user) ? user : entityManager.merge(user));
         entityManager.getTransaction().commit();
         entityManager.close();
-
     }
 
     /**
@@ -169,12 +151,12 @@ public class DB {
         entityManager.getTransaction().begin();
 
         List<Recorder> recorders = entityManager.createQuery("select r from Recorder r " + (restriction != null && !restriction.isEmpty() ? " where " + restriction : "")).getResultList();
-        LOGGER.debug(String.format("Found %d Recorders in DB that match restriction \"%s\"", recorders.size(), restriction));
+        log.debug(String.format("Found %d Recorders in DB that match restriction \"%s\"", recorders.size(), restriction));
 
         entityManager.getTransaction().commit();
         entityManager.close();
 
-        return recorders.toArray(new Recorder[]{});
+        return recorders.toArray(new Recorder[recorders.size()]);
     }
 
     /**
@@ -190,7 +172,5 @@ public class DB {
         entityManager.close();
     }
 
-    private static String sanitize(final String s) {
-        return s.replace("'", "");
     }
 }

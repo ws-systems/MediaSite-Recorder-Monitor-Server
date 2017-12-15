@@ -7,7 +7,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
 import java.io.IOException;
+
+import static systems.whitestar.mediasite_monitor.Routes.Route.addMeta;
+import static systems.whitestar.mediasite_monitor.Routes.Route.setNavBar;
+import static systems.whitestar.mediasite_monitor.Routes.Route.setUserData;
 
 /**
  * @author Tom Paulus
@@ -21,12 +26,13 @@ public class ManageUsers extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        if (!Route.checkAuth(request, response)) return;
-        Route.addMeta(request);
-        Route.setUserData(request);
+        addMeta(request);
+        setUserData(request);
+        setNavBar(request);
 
         request.setAttribute("users", DB.getUser(""));
 
+        response.setHeader("Content-Type", MediaType.TEXT_HTML);
         renderer.dispatcherFor(TEMPLATE_PATH)
                 .render(request, response);
     }

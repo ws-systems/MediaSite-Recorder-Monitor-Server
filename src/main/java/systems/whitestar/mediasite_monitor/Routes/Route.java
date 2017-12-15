@@ -1,36 +1,23 @@
 package systems.whitestar.mediasite_monitor.Routes;
 
+import lombok.extern.log4j.Log4j;
+import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.ProfileManager;
 import systems.whitestar.mediasite_monitor.API.Models.User;
+import systems.whitestar.mediasite_monitor.DB;
 import systems.whitestar.mediasite_monitor.Meta;
+import systems.whitestar.mediasite_monitor.Secret;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.util.Optional;
 
 /**
  * @author Tom Paulus
- *         Created on 7/5/17.
+ * Created on 7/5/17.
  */
-public class Route {
-    /**
-     * Check if a User has a Valid Session.
-     * If the user does not have a valid session, the "post-login-redirect" will be saved to the session,
-     * and the user will be redirected to the login page
-     *
-     * @param request  {@link HttpServletRequest} Request
-     * @param response {@link HttpServletResponse} Response
-     * @return True if session is valid, false otherwise.
-     * @throws IOException If an input or output exception occurs
-     */
-    static boolean checkAuth(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (request.getSession().getAttribute("user") == null) {
-            // User is not logged in - redirect to login page
-            request.getSession(true).setAttribute("post-login-redirect", request.getRequestURI());
-            response.sendRedirect("/login");
-            return false;
-        }
-        return true;
-    }
+@Log4j class Route {
+    private static final String SSO_UPDATE_INFO_URL = Secret.getInstance().getSecret("sso.update-info-URL");
 
     /**
      * Add Monitor Dashboard Build Information
@@ -55,7 +42,56 @@ public class Route {
      * @param request {@link HttpServletRequest} Request
      */
     static void setUserData(HttpServletRequest request) {
-        User user = (User) request.getSession().getAttribute("user");
-        request.setAttribute("user", user);
+        if (request.getSession().getAttribute("user") == null) {
+            ProfileManager manager = new ProfileManager(new J2EContext(request, null));
+            //noinspection unchecked
+            Optional<CommonProfile> profile = manager.get(true);
+            if (profile.isPresent()) {
+                final User[] users = DB.getUser("external_id = '" + profile.get().getId() + "'");
+                User user;
+                if (users.length == 0) {
+                    // Need to Create User
+                    log.info(String.format("User with email %s does not yet exist - creating", profile.get().getEmail()));
+                    user = User.builder()
+                            .name((String) profile.get().getAttribute("name"))
+                            .email(profile.get().getEmail())
+                            .externalId(profile.get().getId())
+                            .notify(false)
+                            .build();
+                    DB.updateUser(user);
+                    request.setAttribute("first_login", true);
+                } else {
+                    // Incomplete Session
+                    // Update User with SSO Provider Information
+                    user = User.builder()
+                            .name((String) profile.get().getAttribute("name"))
+                            .email(profile.get().getEmail())
+                            .externalId(profile.get().getId())
+                            .build();
+
+                    user = User.merge(users[0], user);
+                    DB.updateUser(user);
+                    request.setAttribute("first_login", false);
+                }
+
+                request.setAttribute("user", user);
+            }
+        } else {
+            User user = (User) request.getSession().getAttribute("user");
+            request.setAttribute("user", user);
+            request.setAttribute("first_login", false);
+        }
+
+        request.setAttribute("sso_update_info_url", SSO_UPDATE_INFO_URL);
+    }
+
+
+    /**
+     * Set attributes defined in the NavBar
+     *
+     * @param request {@link HttpServletRequest} Request
+     */
+    static void setNavBar(HttpServletRequest request) {
+        request.setAttribute("agent_count", DB.getAgent("").length);
     }
 }

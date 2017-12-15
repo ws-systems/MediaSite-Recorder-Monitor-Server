@@ -1,62 +1,21 @@
-<div class="modal fade" id="createUserModal">
+<div class="modal fade" tabindex="-1" role="dialog" id="createUserModal">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Create New Monitor User</h5>
+                <h5 class="modal-title">External User Management</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form action="#" onsubmit="createUser(); return false;">
-                    <div class="form-group row">
-                        <label for="createEmail" class="col-sm-3 col-form-label">Email: </label>
-                        <div class="col-sm-9">
-                            <input class="form-control form-control-danger" title="Email" type="email" id="createEmail" required>
-                            <div class="form-control-feedback" id="createDuplicateEmailWarning" style="display: none">Sorry, that email address is taken. Try another?</div>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="createFirstName" class="col-sm-3 col-form-label">First Name: </label>
-                        <div class="col-sm-9">
-                            <input class="form-control" title="First Name" type="text" id="createFirstName" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="createLastName" class="col-sm-3 col-form-label">Last Name: </label>
-                        <div class="col-sm-9">
-                            <input class="form-control" title="Last Name" type="text" id="createLastName" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="createPassword1" class="col-sm-3 col-form-label">Password: </label>
-                        <div class="col-sm-9 passwordInput">
-                            <input class="form-control" title="Password" type="password" id="createPassword1">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="createPassword2" class="col-sm-3 col-form-label">Confirm: </label>
-                        <div class="col-sm-9 passwordInput">
-                            <input class="form-control" title="Confirm Password" type="password" id="createPassword2">
-                            <div class="form-control-feedback passwordMismatchErr" style="display: none">Please make
-                                sure that the passwords match.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-check">
-                        <label class="form-check-label">
-                            <input class="form-check-input mr-2" type="checkbox" value="" id="createNotifyCheckbox" checked>
-                            Notify User via Email on Recorder Alarms
-                        </label>
-                    </div>
-                </form>
+                <p>Users are managed by the configured SSO (OIdC), and not directly through Mediasite Recorder Monitor.
+                    If you would like to create a new user account, have them use their SSO account (creating one if
+                    necessary) to access this website. On first login, they will be prompted if they would like
+                    to be notified of notified of Recorder Outages.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary float-left mr-auto" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="$('#createUserModal').find('form').submit()">Create
-                    User
-                </button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+        </div>
+    </div>
+</div>

@@ -27,7 +27,7 @@ class NotifyHook extends EventHook {
         Notify.Recipient[] recipients = new Notify.Recipient[usersToNotify.length];
         for (int i = 0; i < usersToNotify.length; i++) {
             User user = usersToNotify[i];
-            recipients[i] = new Notify.Recipient(user.getFirstName() + " " + user.getLastName(),
+            recipients[i] = new Notify.Recipient(user.getName(),
                     user.getEmail());
         }
 

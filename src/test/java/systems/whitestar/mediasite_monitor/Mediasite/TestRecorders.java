@@ -34,7 +34,7 @@ public class TestRecorders {
             assertNotNull(recorder.getVersion());
             assertNotNull(recorder.getLastVersionUpdateDate());
             assertNotNull(recorder.getPhysicalAddress());
-            assertNotNull(recorder.getImageVersion());
+            // recorder.getImageVersion can be null
         }
     }
 

@@ -2,11 +2,13 @@ package systems.whitestar.mediasite_monitor.API;
 
 import com.google.gson.Gson;
 import lombok.extern.log4j.Log4j;
+import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.jax.rs.annotations.Pac4JProfile;
+import org.pac4j.jax.rs.annotations.Pac4JSecurity;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
 import systems.whitestar.mediasite_monitor.API.Models.Preference;
 import systems.whitestar.mediasite_monitor.API.Models.SimpleMessage;
-import systems.whitestar.mediasite_monitor.API.Models.User;
 import systems.whitestar.mediasite_monitor.DB;
 import systems.whitestar.mediasite_monitor.Jobs.SyncRecorderDB;
 import systems.whitestar.mediasite_monitor.Jobs.SyncRecorderStatus;
@@ -24,6 +26,7 @@ import java.util.Arrays;
 import java.util.Set;
 
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
+import static systems.whitestar.mediasite_monitor.API.Session.getSessionProfile;
 
 /**
  * API Endpoints associated with Job Rates and Pausing/Resuming Job Triggers.
@@ -34,6 +37,7 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 @Log4j
 @SuppressWarnings("unchecked")
 @Path("rates")
+@Pac4JSecurity(authorizers = "isAuthenticated")
 public class Rates {
     @Context
     private HttpServletRequest request;
@@ -66,7 +70,7 @@ public class Rates {
             if (!current.equals(preference.getValue())) {
                 // Setting has been modified
                 log.warn(String.format("User \"%s\" is updating the setting with name \"%s\"from \"%s\" to \"%s\"",
-                        ((User) request.getSession().getAttribute("user")).getEmail(),
+                        getSessionProfile(request).getAttribute("name"),
                         preference.getSetting(),
                         current,
                         preference.getValue()));

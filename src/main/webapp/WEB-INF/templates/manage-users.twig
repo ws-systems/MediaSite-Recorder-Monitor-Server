@@ -23,8 +23,7 @@
             <table class="table table-hover sortable mx-auto" id="users">
                 <thead>
                 <tr>
-                    <th>First Name</th>
-                    <th>Last Name</th>
+                    <th>Name</th>
                     <th>Email Address</th>
                     <th>Notify</th>
                     <th class="sorttable_nosort">{# Edit Button#}</th>
@@ -34,11 +33,9 @@
                 {% for u in users %}
                     <tr id="user-{{ u.PK }}"
                         data-email="{{ u.email }}"
-                        data-fname="{{ u.firstName }}"
-                        data-lname="{{ u.lastName }}"
+                        data-name="{{ u.name }}"
                         data-notify="{{ u.notify }}">
-                        <td>{{ u.firstName }}</td>
-                        <td>{{ u.lastName }}</td>
+                        <td>{{ u.name }}</td>
                         <td>{{ u.email }}</td>
                         <td class="text-justify">{% if u.notify -%}
                                 <i class="fa fa-check" aria-hidden="true"></i>

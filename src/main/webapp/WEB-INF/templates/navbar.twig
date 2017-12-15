@@ -22,14 +22,14 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="manageDropdownMenuLink">
                         <a class="dropdown-item {% if (active == 'manage-users') %} active {% endif %}"
-                           href="{% if (active == 'manage-users') %}#{% else %}/manage/users{% endif %}">Users</a>
+                           href="{% if (active == 'manage-users') %}#{% else %}/app/manage/users{% endif %}">Users</a>
                         <a class="dropdown-item {% if (active == 'manage-integrations') %} active {% endif %}"
-                           href="{% if (active == 'manage-integrations') %}#{% else %}/manage/integrations{% endif %}">External
+                           href="{% if (active == 'manage-integrations') %}#{% else %}/app/manage/integrations{% endif %}">External
                             Integrations</a>
                         <a class="dropdown-item {% if (active == 'manage-rates') %} active {% endif %}"
-                           href="{% if (active == 'manage-rates') %}#{% else %}/manage/rates{% endif %}">Rates</a>
+                           href="{% if (active == 'manage-rates') %}#{% else %}/app/manage/rates{% endif %}">Rates</a>
                         <a class="dropdown-item {% if (active == 'manage-agents') %} active {% endif %}"
-                           href="{% if (active == 'manage-agents') %}#{% else %}/manage/agents{% endif %}">Agents
+                           href="{% if (active == 'manage-agents') %}#{% else %}/app/manage/agents{% endif %}">Agents
                             <span class="badge badge-pill badge-secondary">{{ agent_count }}</span></a>
                     </div>
                 </li>

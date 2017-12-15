@@ -10,6 +10,12 @@
 
     <div class="row">
         <div class="col-7 mx-auto mt-3">
+            <div class="alert alert-info" role="alert">
+                <strong><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp; By the way&hellip;</strong>
+                Changes to the Mediasite Credentials will take into affect after all agents have been restarted. Until
+                then each agent will use their respective copy of the previous configuration.
+            </div>
+
             <form action="#" onsubmit="updateSettings(); return false;">
                 {# MEDIASITE Settings #}
                 <h2 class="mb-2">Mediasite</h2>
@@ -146,7 +152,7 @@
                 {#SUBMIT/RESET Buttons#}
                 <div class="row justify-content-between mt-5">
                     <div class="col mx-auto">
-                        <button class="btn btn-default float-left"
+                        <button class="btn btn-secondary float-left"
                                 type="reset">
                             Reset to Saved
                         </button>

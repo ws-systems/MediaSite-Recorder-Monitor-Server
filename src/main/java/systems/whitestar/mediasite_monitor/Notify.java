@@ -36,7 +36,6 @@ public class Notify {
         this.subject = subject;
         this.message = message;
 
-        // TODO have these in the Settings Table and allow them to be changed via UI
         @NonNull final String emailHost = DB.getPreference("email.host");
         @NonNull final int emailPort = Integer.parseInt(DB.getPreference("email.port"));
         @NonNull final String emailUser = DB.getPreference("email.username");

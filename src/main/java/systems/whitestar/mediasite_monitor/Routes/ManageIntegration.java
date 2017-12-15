@@ -7,11 +7,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 
-import static systems.whitestar.mediasite_monitor.Routes.Route.addMeta;
-import static systems.whitestar.mediasite_monitor.Routes.Route.checkAuth;
-import static systems.whitestar.mediasite_monitor.Routes.Route.setUserData;
+import static systems.whitestar.mediasite_monitor.Routes.Route.*;
 
 /**
  * @author Tom Paulus
@@ -25,9 +24,9 @@ public class ManageIntegration extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        if (!checkAuth(request, response)) return;
         addMeta(request);
         setUserData(request);
+        setNavBar(request);
 
         // Mediasite Settings
         request.setAttribute("ms_api_url", DB.getPreference("ms.url"));
@@ -42,6 +41,7 @@ public class ManageIntegration extends HttpServlet {
         request.setAttribute("email_from_name", DB.getPreference("email.from_name"));
         request.setAttribute("email_from_email", DB.getPreference("email.from_email"));
 
+        response.setHeader("Content-Type", MediaType.TEXT_HTML);
         renderer.dispatcherFor(TEMPLATE_PATH)
                 .render(request, response);
     }

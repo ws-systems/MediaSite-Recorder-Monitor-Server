@@ -1,3 +1,4 @@
+// TODO Update
 function updateOwnInfo() {
     const $updateEmail = $('#update_selfEmail');
     var password = $('#update_selfPassword1').val();
@@ -47,4 +48,23 @@ function updateOwnInfo() {
                 $('#update_selfUserModal').modal('hide');
             }
         });
+}
+
+function subscribeToNotifications() {
+    $.ajax({
+        method: "POST",
+        url: "/api/users/self/subscribe",
+        contentType: "application/json; charset=utf-8"
+    })
+        .done(function () {
+            swal("Done!", "Your have been subscribed!", "success");
+            $('#welcomeModal').modal('hide');
+        })
+        .fail(function (req) {
+            sweetAlert("Oops...", "Something went wrong!", "error");
+            console.log(req);
+            $('#welcomeModal').modal('hide');
+        });
+
+    return false;
 }

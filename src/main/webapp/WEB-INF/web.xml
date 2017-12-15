@@ -6,22 +6,15 @@
         version="3.1">
     <display-name>MediaSite Recorder Monitor</display-name>
 
+    <absolute-ordering/>
+
     <servlet>
         <servlet-name>Index</servlet-name>
         <servlet-class>systems.whitestar.mediasite_monitor.Routes.Index</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Index</servlet-name>
-        <url-pattern>/index</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>Login</servlet-name>
-        <servlet-class>systems.whitestar.mediasite_monitor.Routes.Login</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Login</servlet-name>
-        <url-pattern>/login</url-pattern>
+        <url-pattern>/app</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -30,7 +23,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>Manage-Integrations</servlet-name>
-        <url-pattern>/manage/integrations</url-pattern>
+        <url-pattern>/app/manage/integrations</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -39,7 +32,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>Manage-Rates</servlet-name>
-        <url-pattern>/manage/rates</url-pattern>
+        <url-pattern>/app/manage/rates</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -84,6 +77,88 @@
         <async-supported>true</async-supported>
     </filter>
 
+    <!-- LOGIN BELOW -->
+    <filter>
+        <filter-name>callbackFilter</filter-name>
+        <filter-class>org.pac4j.j2e.filter.CallbackFilter</filter-class>
+        <async-supported>true</async-supported>
+        <init-param>
+            <param-name>defaultUrl</param-name>
+            <param-value>/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>renewSession</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <param-name>multiProfile</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>callbackFilter</filter-name>
+        <url-pattern>/callback</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/callback</url-pattern>
+    </servlet-mapping>
+
+    <filter>
+        <filter-name>OpenIDFilter</filter-name>
+        <filter-class>org.pac4j.j2e.filter.SecurityFilter</filter-class>
+        <async-supported>true</async-supported>
+        <init-param>
+            <param-name>configFactory</param-name>
+            <param-value>systems.whitestar.mediasite_monitor.LoginConfigFactory</param-value>
+        </init-param>
+        <init-param>
+            <param-name>clients</param-name>
+            <param-value>OidcClient</param-value>
+        </init-param>
+        <init-param>
+            <param-name>authorizers</param-name>
+            <param-value>securityHeaders</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>OpenIDFilter</filter-name>
+        <url-pattern>/app/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>OpenIDFilter</filter-name>
+        <url-pattern>/api/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>logoutFilter</filter-name>
+        <filter-class>org.pac4j.j2e.filter.LogoutFilter</filter-class>
+        <init-param>
+            <param-name>defaultUrl</param-name>
+            <param-value>/?defaulturlafterlogout</param-value>
+        </init-param>
+        <init-param>
+            <param-name>destroySession</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>logoutFilter</filter-name>
+        <url-pattern>/logout</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/logout</url-pattern>
+    </servlet-mapping>
+
+    <!-- LOGIN ABOVE -->
+
     <listener>
         <listener-class>systems.whitestar.mediasite_monitor.Init</listener-class>
     </listener>
@@ -93,7 +168,7 @@
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>index</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
 </web-app>
 

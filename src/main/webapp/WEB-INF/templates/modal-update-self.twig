@@ -1,4 +1,51 @@
 {# TODO Update IDs to not conflict with Update User Modal IDs #}
+<div class="modal fade" id="updateUserModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Monitor User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="#" onsubmit="updateUser(); return false;">
+                    <input type="hidden" id="userPK">
+                    <div class="form-group row">
+                        <label for="updateEmail" class="col-sm-3 col-form-label">Email: </label>
+                        <div class="col-sm-9">
+                            <input readonly class="form-control-plaintext" title="Email" type="email" id="updateEmail">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="updateFirstName" class="col-sm-3 col-form-label">Name: </label>
+                        <div class="col-sm-9">
+                            <input readonly class="form-control-plaintext" title="Name" type="text" id="updateName"
+                                   required>
+                        </div>
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label mr-2">
+                            <input class="form-check-input" type="checkbox" value="" id="updateNotifyCheckbox">
+                            Notify User via Email on Recorder Alarms
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger float-left mr-auto" onclick="deleteUser()"
+                        id="deleteUserBtn">Delete User
+                </button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="$('#updateUserModal').find('form').submit()">
+                    Update
+                    User
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 
 <div class="modal fade" id="updateSelfModal">
     <div class="modal-dialog" role="document">
@@ -10,65 +57,38 @@
                 </button>
             </div>
             <div class="modal-body">
+                <div class="alert alert-info" role="alert">
+                    <strong><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp; Updating your Name and
+                        Email</strong>
+                    In order to update your name and/or email address. Update them in the External Identity Provider
+                    (SSO), then logout of MediaSite Recorder Monitor. When you login next, your email address and name
+                    will be updated with the information provided by the Identity Provider.
+                </div>
                 <form action="#" onsubmit="updateOwnInfo(); return false;">
                     <input type="hidden" id="update_selfPK" value="{{ user.PK }}">
-                    <input type="hidden" id="update_selfPreviousEmail" value="{{ user.email }}">
                     <div class="form-group row">
                         <label for="update_selfEmail"
                                class="col-sm-3 col-form-label">Email: </label>
                         <div class="col-sm-9">
-                            <input class="form-control"
+                            <input readonly
+                                   class="form-control-plaintext"
                                    title="Email"
                                    type="email"
                                    id="update_selfEmail"
                                    value="{{ user.email }}"
                                    required>
-                            <div class="form-control-feedback" id="update_selfDuplicateEmailWarning" style="display: none">Sorry, that email address is taken. Try another?</div>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="update_selfFirstName"
-                               class="col-sm-3 col-form-label">First Name: </label>
+                        <label for="update_selfName"
+                               class="col-sm-3 col-form-label">Name: </label>
                         <div class="col-sm-9">
-                            <input class="form-control"
-                                   title="First Name"
-                                   id="update_selfFirstName"
-                                   value="{{ user.firstName }}"
+                            <input readonly
+                                   class="form-control-plaintext"
+                                   title="Name"
+                                   id="update_selfName"
+                                   value="{{ user.name }}"
                                    required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="update_selfLastName"
-                               class="col-sm-3 col-form-label">Last Name: </label>
-                        <div class="col-sm-9">
-                            <input class="form-control"
-                                   title="Last Name"
-                                   id="update_selfLastName"
-                                   value="{{ user.lastName }}"
-                                   required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="update_selfPassword1"
-                               class="col-sm-3 col-form-label">Password: </label>
-                        <div class="col-sm-9 passwordInput">
-                            <input class="form-control"
-                                   title="Password"
-                                   type="password"
-                                   id="update_selfPassword1">
-                            <small class="text-muted">Leave blank to not change password.</small>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="update_selfPassword2" class="col-sm-3 col-form-label">Confirm: </label>
-                        <div class="col-sm-9 passwordInput">
-                            <input class="form-control"
-                                   title="Confirm Password"
-                                   type="password"
-                                   id="update_selfPassword2">
-                            <div class="form-control-feedback passwordMismatchErr" style="display: none">Please make
-                                sure that the passwords match.
-                            </div>
                         </div>
                     </div>
                     <div class="form-check">

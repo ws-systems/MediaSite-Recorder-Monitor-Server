@@ -17,6 +17,11 @@ apply plugin: 'war'
 repositories {
     mavenCentral()
     jcenter()
+
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
+
 }
 
 war {
@@ -58,6 +63,12 @@ dependencies {
 
     // Email and Reporting
     compile group: 'org.apache.commons', name: 'commons-email', version: '1.4'
+
+    // Login
+    compile group: 'org.pac4j', name: 'pac4j-core', version: '2.1.1-SNAPSHOT'
+    compile group: 'org.pac4j', name: 'jax-rs-pac4j', version: '2.1.1-SNAPSHOT'
+    compile group: 'org.pac4j', name: 'j2e-pac4j', version: '2.1.1-SNAPSHOT'
+    compile group: 'org.pac4j', name: 'pac4j-oidc', version: '2.1.1-SNAPSHOT'
 
     // Scheduler
     compile group: 'org.quartz-scheduler', name: 'quartz', version: '2.2.3'

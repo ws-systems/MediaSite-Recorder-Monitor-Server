@@ -7,7 +7,6 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.matchers.GroupMatcher;
 import systems.whitestar.mediasite_monitor.API.Models.Recorder;
-import systems.whitestar.mediasite_monitor.API.Models.User;
 import systems.whitestar.mediasite_monitor.Jobs.SyncRecorderDB;
 import systems.whitestar.mediasite_monitor.Jobs.SyncRecorderStatus;
 
@@ -24,7 +23,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Initialize and Teardown the WebApp and DB
+ * Initialize and Tear down the WebApp and DB
  *
  * @author Tom Paulus
  * Created on 10/21/2016.
@@ -32,10 +31,6 @@ import java.util.Properties;
 @Log4j
 @WebListener
 public class Init implements ServletContextListener {
-    private static final String DEFAULT_FIRST_NAME = "Administrator";
-    private static final String DEFAULT_LAST_NAME = "User";
-    private static final String DEFAULT_EMAIL = "admin@its.sdsu.edu";
-    private static final String DEFAULT_PASSWORD = "changeme";
 
     /**
      * Initialize the WebApp with the Default User if no users exist.
@@ -46,9 +41,6 @@ public class Init implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         // Setup Hibernate ORM Connector
         DB.setup();
-
-        // Create Default User
-        createInitialUser();
 
         // Set Defaults in Preferences table in DB
         try {
@@ -105,21 +97,6 @@ public class Init implements ServletContextListener {
                 // driver was not registered by the webapp's ClassLoader and may be in use elsewhere
                 log.info(String.format("Not deregistering JDBC driver %s as it does not belong to this webapp's ClassLoader", driver));
             }
-        }
-    }
-
-    private void createInitialUser() {
-        User[] users = DB.getUser("");
-        log.info(String.format("Starting Webapp. Found %d users in DB", users.length));
-        if (users.length == 0) {
-            log.info("No users were found in the DB. Creating default User.");
-            User user = new User(DEFAULT_FIRST_NAME, DEFAULT_LAST_NAME, DEFAULT_EMAIL, true);
-            user.setPassword(DEFAULT_PASSWORD);
-            DB.updateUser(user);
-
-            log.info(String.format("Initial Staff Created.\n " +
-                    "Username: \"%s\"\n" +
-                    "Password: \"%s\"", DEFAULT_EMAIL, DEFAULT_PASSWORD));
         }
     }
 

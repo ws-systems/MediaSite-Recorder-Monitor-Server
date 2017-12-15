@@ -2,9 +2,11 @@ package systems.whitestar.mediasite_monitor.API;
 
 import com.google.gson.Gson;
 import lombok.extern.log4j.Log4j;
+import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.jax.rs.annotations.Pac4JProfile;
+import org.pac4j.jax.rs.annotations.Pac4JSecurity;
 import systems.whitestar.mediasite_monitor.API.Models.Preference;
 import systems.whitestar.mediasite_monitor.API.Models.SimpleMessage;
-import systems.whitestar.mediasite_monitor.API.Models.User;
 import systems.whitestar.mediasite_monitor.DB;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +19,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
 
+import static systems.whitestar.mediasite_monitor.API.Session.getSessionProfile;
+
 /**
  * API Endpoints associated with External Integrations, like Mediasite and Email.
  * Used to modify the settings for these services, like access credentials, etc.
@@ -26,6 +30,7 @@ import java.util.Arrays;
  */
 @Log4j
 @Path("integrations")
+@Pac4JSecurity(authorizers = "isAuthenticated")
 public class Integrations {
     @Context
     private HttpServletRequest request;
@@ -58,7 +63,7 @@ public class Integrations {
             if (!current.equals(preference.getValue())) {
                 // Setting has been modified
                 log.warn(String.format("User \"%s\" is updating the setting with name \"%s\"from \"%s\" to \"%s\"",
-                        ((User) request.getSession().getAttribute("user")).getEmail(),
+                        getSessionProfile(request).getAttribute("name"),
                         preference.getSetting(),
                         current,
                         preference.getValue()));

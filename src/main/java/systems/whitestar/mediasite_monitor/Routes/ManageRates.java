@@ -7,11 +7,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 
-import static systems.whitestar.mediasite_monitor.Routes.Route.addMeta;
-import static systems.whitestar.mediasite_monitor.Routes.Route.checkAuth;
-import static systems.whitestar.mediasite_monitor.Routes.Route.setUserData;
+import static systems.whitestar.mediasite_monitor.Routes.Route.*;
 
 /**
  * @author Tom Paulus
@@ -25,15 +24,16 @@ public class ManageRates extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        if (!checkAuth(request, response)) return;
         addMeta(request);
         setUserData(request);
+        setNavBar(request);
 
         request.setAttribute("list_sync", DB.getPreference("sync_db.enable"));
         request.setAttribute("list_frequency", DB.getPreference("sync_db.frequency"));
         request.setAttribute("status_sync", DB.getPreference("sync_recorder.enable"));
         request.setAttribute("status_frequency", DB.getPreference("sync_recorder.frequency"));
 
+        response.setHeader("Content-Type", MediaType.TEXT_HTML);
         renderer.dispatcherFor(TEMPLATE_PATH)
                 .render(request, response);
     }

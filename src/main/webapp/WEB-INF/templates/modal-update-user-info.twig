@@ -9,41 +9,17 @@
             </div>
             <div class="modal-body">
                 <form action="#" onsubmit="updateUser(); return false;">
-                    <input type="hidden" id="updatePreviousEmail">
                     <input type="hidden" id="userPK">
                     <div class="form-group row">
                         <label for="updateEmail" class="col-sm-3 col-form-label">Email: </label>
                         <div class="col-sm-9">
-                            <input class="form-control form-control-danger" title="Email" type="email" id="updateEmail" required>
-                            <div class="form-control-feedback" id="updateDuplicateEmailWarning" style="display: none">Sorry, that email address is taken. Try another?</div>
+                            <input readonly class="form-control-plaintext" title="Email" type="email" id="updateEmail">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="updateFirstName" class="col-sm-3 col-form-label">First Name: </label>
+                        <label for="updateFirstName" class="col-sm-3 col-form-label">Name: </label>
                         <div class="col-sm-9">
-                            <input class="form-control" title="First Name" type="text" id="updateFirstName" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="updateLastName" class="col-sm-3 col-form-label">Last Name: </label>
-                        <div class="col-sm-9">
-                            <input class="form-control" title="Last Name" type="text" id="updateLastName" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="updatePassword1" class="col-sm-3 col-form-label">Password: </label>
-                        <div class="col-sm-9 passwordInput">
-                            <input class="form-control" title="Password" type="password" id="updatePassword1">
-                            <small class="text-muted">Leave blank to not change password.</small>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="updatePassword2" class="col-sm-3 col-form-label">Confirm: </label>
-                        <div class="col-sm-9 passwordInput">
-                            <input class="form-control" title="Confirm Password" type="password" id="updatePassword2">
-                            <div class="form-control-feedback passwordMismatchErr" style="display: none">Please make
-                                sure that the passwords match.
-                            </div>
+                            <input readonly class="form-control-plaintext" title="Name" type="text" id="updateName" required>
                         </div>
                     </div>
                     <div class="form-check">

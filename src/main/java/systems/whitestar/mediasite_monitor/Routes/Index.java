@@ -7,9 +7,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 
 import static systems.whitestar.mediasite_monitor.Routes.Route.addMeta;
+import static systems.whitestar.mediasite_monitor.Routes.Route.setNavBar;
 import static systems.whitestar.mediasite_monitor.Routes.Route.setUserData;
 
 /**
@@ -26,9 +28,10 @@ public class Index extends HttpServlet {
 
         addMeta(request);
         setUserData(request);
+        setNavBar(request);
 
         request.setAttribute("recorders", DB.getRecorder(""));
-
+        response.setHeader("Content-Type", MediaType.TEXT_HTML);
         renderer.dispatcherFor(TEMPLATE_PATH)
                 .render(request, response);
     }
