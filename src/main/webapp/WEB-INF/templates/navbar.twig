@@ -1,14 +1,14 @@
-<nav class="navbar navbar-toggleable-md navbar-inverse fixed-top bg-inverse">
-    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
-            data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false"
-            aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
     <a class="navbar-brand" href="{% if (active == 'index') %}#{% else %}/{% endif %}">
         <img src="/assets/images/logo-bug.jpg" width="30" height="30" class="d-inline-block align-top" alt="">
         MS Recorder Monitor
     </a>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mainNavbar">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item {% if (active == 'index') %} active {% endif %}">
                 <a class="nav-link" href="{% if (active == 'index') %}#{% else %}/{% endif %}">Overview</a>
@@ -28,33 +28,31 @@
                             Integrations</a>
                         <a class="dropdown-item {% if (active == 'manage-rates') %} active {% endif %}"
                            href="{% if (active == 'manage-rates') %}#{% else %}/manage/rates{% endif %}">Rates</a>
+                        <a class="dropdown-item {% if (active == 'manage-agents') %} active {% endif %}"
+                           href="{% if (active == 'manage-agents') %}#{% else %}/manage/agents{% endif %}">Agents
+                            <span class="badge badge-pill badge-secondary">{{ agent_count }}</span></a>
                     </div>
                 </li>
             {% endif %}
         </ul>
         <ul class="nav navbar-nav justify-content-end">
-            {% if defined(user) and user != null %}
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdownMenuLink" data-toggle="dropdown"
-                       aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-user" aria-hidden="true"></i> <span
-                                id="header-user-name">{{ user.firstName }}</span>
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="userDropdownMenuLink">
-                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#updateSelfModal">
-                            <i class="fa fa-file-o" aria-hidden="true"></i>&nbsp;
-                            Update Info</a>
-                        <a class="dropdown-item" href="/api/logout"><i class="fa fa-sign-out"
-                                                                       aria-hidden="true"></i>&nbsp; Log Out</a>
-                    </div>
-                </li>
-            {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="login">
-                        <i class="fa fa-user" aria-hidden="true"></i>
-                        Login</a>
-                </li>
-            {% endif %}
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdownMenuLink" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-user" aria-hidden="true"></i> <span
+                            id="header-user-name">{{ user.name }}</span>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="userDropdownMenuLink">
+                    <a class="dropdown-item" href="{{ sso_update_info_url }}" target="_blank">
+                        <i class="fa fa-file-o" aria-hidden="true"></i>&nbsp;
+                        Update External Info</a>
+                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#updateSelfModal">
+                        <i class="fa fa-envelope-o" aria-hidden="true"></i>&nbsp;
+                        Update Subscriptions</a>
+                    <a class="dropdown-item" href="/logout"><i class="fa fa-sign-out"
+                                                               aria-hidden="true"></i>&nbsp; Log Out</a>
+                </div>
+            </li>
         </ul>
     </div>
 </nav>

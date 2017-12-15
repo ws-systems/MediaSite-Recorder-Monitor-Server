@@ -5,10 +5,10 @@ html {
 
 body {
     /* NAV BAR*/
-    padding-top: 4.5rem;
+    padding-top: 6rem;
 
     /* Margin bottom by footer height */
-    margin-bottom: 40px;
+    margin-bottom: 50px;
 }
 
 li.nav-item {
@@ -41,6 +41,20 @@ body > div.container {
     [aria-labelledby="userDropdownMenuLink"] {
         margin-left: -75px;
     }
+}
+
+/* Agent Status Icons */
+.agent-status .authorized {
+    color: #28a745;
+}
+
+.agent-status .unauthorized {
+    color: #dc3545;
+}
+
+.agent-status .unauthorized.offline,
+.agent-status .authorized.online {
+    color: #868e96;
 }
 
 /* Sorting and related Icons */
@@ -120,4 +134,8 @@ footer.footer a:visited {
 /* Modal Styles */
 .modal form label.col-form-label {
     font-weight: 600;
+}
+
+.modal form input.form-control-plaintext {
+    width: 100%;
 }
