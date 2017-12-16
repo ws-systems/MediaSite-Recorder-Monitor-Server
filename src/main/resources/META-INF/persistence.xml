@@ -14,10 +14,10 @@
             Persistence unit for the Mediasite Monitor JPA
         </description>
 
-        <class>systems.whitestar.mediasite_monitor.API.Models.Preference</class>
-        <class>systems.whitestar.mediasite_monitor.API.Models.Recorder</class>
-        <class>systems.whitestar.mediasite_monitor.API.Models.User</class>
-        <class>systems.whitestar.mediasite_monitor.Agent.Models.Agent</class>
+        <class>systems.whitestar.mediasite_monitor.Models.Preference</class>
+        <class>systems.whitestar.mediasite_monitor.Models.Recorder</class>
+        <class>systems.whitestar.mediasite_monitor.Models.User</class>
+        <class>systems.whitestar.mediasite_monitor.Models.Agent</class>
 
         <properties>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>

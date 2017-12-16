@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import lombok.extern.log4j.Log4j;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.jax.rs.annotations.Pac4JSecurity;
-import systems.whitestar.mediasite_monitor.API.Models.SimpleMessage;
-import systems.whitestar.mediasite_monitor.API.Models.User;
+import systems.whitestar.mediasite_monitor.Models.SimpleMessage;
+import systems.whitestar.mediasite_monitor.Models.User;
 import systems.whitestar.mediasite_monitor.DB;
 import systems.whitestar.mediasite_monitor.Hooks.Hook;
 

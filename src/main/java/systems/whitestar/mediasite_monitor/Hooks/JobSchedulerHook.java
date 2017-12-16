@@ -1,7 +1,7 @@
 package systems.whitestar.mediasite_monitor.Hooks;
 
-import systems.whitestar.mediasite_monitor.API.Models.Recorder;
-import systems.whitestar.mediasite_monitor.API.Models.User;
+import systems.whitestar.mediasite_monitor.Models.Recorder;
+import systems.whitestar.mediasite_monitor.Models.User;
 import systems.whitestar.mediasite_monitor.DB;
 import systems.whitestar.mediasite_monitor.Jobs.SyncRecorderStatus;
 import systems.whitestar.mediasite_monitor.Schedule;

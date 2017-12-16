@@ -1,4 +1,4 @@
-package systems.whitestar.mediasite_monitor.API.Models;
+package systems.whitestar.mediasite_monitor.Models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

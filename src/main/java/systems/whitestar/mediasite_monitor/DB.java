@@ -2,9 +2,9 @@ package systems.whitestar.mediasite_monitor;
 
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
-import systems.whitestar.mediasite_monitor.API.Models.Preference;
-import systems.whitestar.mediasite_monitor.API.Models.Recorder;
-import systems.whitestar.mediasite_monitor.API.Models.User;
+import systems.whitestar.mediasite_monitor.Models.Preference;
+import systems.whitestar.mediasite_monitor.Models.Recorder;
+import systems.whitestar.mediasite_monitor.Models.User;
 
 import javax.persistence.*;
 import java.util.List;

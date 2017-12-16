@@ -1,6 +1,6 @@
 package systems.whitestar.mediasite_monitor.Mediasite;
 
-import systems.whitestar.mediasite_monitor.API.Models.Recorder;
+import systems.whitestar.mediasite_monitor.Models.Recorder;
 import systems.whitestar.mediasite_monitor.DB;
 import org.apache.log4j.Logger;
 import org.junit.After;

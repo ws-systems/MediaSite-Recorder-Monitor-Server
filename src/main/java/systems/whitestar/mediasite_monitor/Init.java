@@ -6,7 +6,7 @@ import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.matchers.GroupMatcher;
-import systems.whitestar.mediasite_monitor.API.Models.Recorder;
+import systems.whitestar.mediasite_monitor.Models.Recorder;
 import systems.whitestar.mediasite_monitor.Jobs.SyncRecorderDB;
 import systems.whitestar.mediasite_monitor.Jobs.SyncRecorderStatus;
 

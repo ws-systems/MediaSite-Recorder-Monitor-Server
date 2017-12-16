@@ -3,8 +3,8 @@ package systems.whitestar.mediasite_monitor.API;
 import com.google.gson.Gson;
 import lombok.extern.log4j.Log4j;
 import org.pac4j.jax.rs.annotations.Pac4JSecurity;
-import systems.whitestar.mediasite_monitor.API.Models.Recorder;
-import systems.whitestar.mediasite_monitor.API.Models.SimpleMessage;
+import systems.whitestar.mediasite_monitor.Models.Recorder;
+import systems.whitestar.mediasite_monitor.Models.SimpleMessage;
 import systems.whitestar.mediasite_monitor.DB;
 
 import javax.ws.rs.*;

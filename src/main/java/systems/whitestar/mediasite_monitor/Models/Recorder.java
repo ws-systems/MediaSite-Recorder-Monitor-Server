@@ -1,4 +1,4 @@
-package systems.whitestar.mediasite_monitor.API.Models;
+package systems.whitestar.mediasite_monitor.Models;
 
 import com.google.gson.GsonBuilder;
 import lombok.*;

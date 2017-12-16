@@ -2,8 +2,8 @@ package systems.whitestar.mediasite_monitor.Hooks;
 
 
 import systems.whitestar.mediasite_monitor.API.BroadcastEvent;
-import systems.whitestar.mediasite_monitor.API.Models.Recorder;
-import systems.whitestar.mediasite_monitor.API.Models.User;
+import systems.whitestar.mediasite_monitor.Models.Recorder;
+import systems.whitestar.mediasite_monitor.Models.User;
 import lombok.extern.log4j.Log4j;
 
 /**

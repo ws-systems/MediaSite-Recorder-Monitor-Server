@@ -3,7 +3,7 @@ package systems.whitestar.mediasite_monitor.Jobs;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.quartz.*;
-import systems.whitestar.mediasite_monitor.API.Models.Recorder;
+import systems.whitestar.mediasite_monitor.Models.Recorder;
 import systems.whitestar.mediasite_monitor.DB;
 import systems.whitestar.mediasite_monitor.Hooks.Hook;
 import systems.whitestar.mediasite_monitor.Mediasite.Recorders;

@@ -8,8 +8,8 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import lombok.extern.log4j.Log4j;
 import org.apache.http.conn.ConnectTimeoutException;
-import systems.whitestar.mediasite_monitor.API.Models.Recorder;
-import systems.whitestar.mediasite_monitor.API.Models.Status;
+import systems.whitestar.mediasite_monitor.Models.Recorder;
+import systems.whitestar.mediasite_monitor.Models.Status;
 import systems.whitestar.mediasite_monitor.DB;
 
 import java.util.ArrayList;

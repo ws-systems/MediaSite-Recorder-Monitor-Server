@@ -41,7 +41,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>Manage-Users</servlet-name>
-        <url-pattern>/manage/users</url-pattern>
+        <url-pattern>/app/manage/users</url-pattern>
     </servlet-mapping>
 
 

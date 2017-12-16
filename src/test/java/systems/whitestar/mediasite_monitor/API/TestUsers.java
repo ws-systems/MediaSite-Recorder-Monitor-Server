@@ -1,6 +1,6 @@
 package systems.whitestar.mediasite_monitor.API;
 
-import systems.whitestar.mediasite_monitor.API.Models.User;
+import systems.whitestar.mediasite_monitor.Models.User;
 import systems.whitestar.mediasite_monitor.DB;
 import lombok.extern.log4j.Log4j;
 import org.junit.*;
