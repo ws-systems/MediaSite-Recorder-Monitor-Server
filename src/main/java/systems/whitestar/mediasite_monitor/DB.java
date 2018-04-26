@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j;
 import systems.whitestar.mediasite_monitor.Models.Preference;
 import systems.whitestar.mediasite_monitor.Models.Recorder;
 import systems.whitestar.mediasite_monitor.Models.User;
+import systems.whitestar.mediasite_monitor.Models.Agent;
 
 import javax.persistence.*;
 import java.util.List;
@@ -172,5 +173,51 @@ public class DB {
         entityManager.close();
     }
 
+    /**
+     * Get an Monitor Agent from the DB with given restrictions
+     *
+     * @param restriction {@link String} Restriction on the Search, as a WHERE SQL Statement, the WHERE is already included
+     * @return {@link Agent[]} Matching Agents
+     */
+    public static Agent[] getAgent(final String restriction) {
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+
+        List<Agent> agents = entityManager.createQuery("select a from Agent a " + (restriction != null && !restriction.isEmpty() ? " where " + restriction : "")).getResultList();
+        log.debug(String.format("Found %d Agents in DB that match restriction \"%s\"", agents.size(), restriction));
+
+        entityManager.getTransaction().commit();
+        entityManager.close();
+
+        return agents.toArray(new Agent[agents.size()]);
     }
+
+    /**
+     * Update a Monitor Agent in the DB
+     *
+     * @param agent {@link Agent} Agent to update
+     */
+    public static void updateAgent(final Agent agent) {
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+        entityManager.persist(entityManager.contains(agent) ? agent : entityManager.merge(agent));
+        entityManager.getTransaction().commit();
+        entityManager.close();
+    }
+
+    /**
+     * Delete an Agent from the DB. This should ony be done after the
+     *
+     * @param agent {@link Agent} Agent to delete
+     */
+    public static void deleteAgent(final Agent agent) {
+        log.warn(String.format("Deleting Agent with ID: %s", agent.getId()));
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+        entityManager.remove(entityManager.contains(agent) ? agent : entityManager.merge(agent));
+        entityManager.getTransaction().commit();
+        entityManager.close();
+    }
+
+
 }
