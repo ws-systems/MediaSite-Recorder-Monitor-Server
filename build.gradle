@@ -5,7 +5,7 @@ plugins {
     id 'io.franzbecker.gradle-lombok' version '1.8'
 }
 
-group 'edu.sdsu.its'
+group 'systems.whitestar'
 version '1.0'
 final def versionCode = "${project.version}"
 final def buildCode = "${buildNumber()}"
@@ -63,6 +63,9 @@ dependencies {
 
     // Email and Reporting
     compile group: 'org.apache.commons', name: 'commons-email', version: '1.4'
+
+    // AWS Services
+    compile group: 'com.amazonaws', name: 'aws-java-sdk-sns', version: '1.11.233'
 
     // Login
     compile group: 'org.pac4j', name: 'pac4j-core', version: '2.1.1-SNAPSHOT'
