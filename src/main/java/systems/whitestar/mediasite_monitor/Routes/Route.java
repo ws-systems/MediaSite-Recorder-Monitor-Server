@@ -4,7 +4,7 @@ import lombok.extern.log4j.Log4j;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
-import systems.whitestar.mediasite_monitor.API.Models.User;
+import systems.whitestar.mediasite_monitor.Models.User;
 import systems.whitestar.mediasite_monitor.DB;
 import systems.whitestar.mediasite_monitor.Meta;
 import systems.whitestar.mediasite_monitor.Secret;
