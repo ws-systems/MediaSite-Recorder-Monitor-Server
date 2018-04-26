@@ -1,5 +1,14 @@
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+
+plugins {
+    id 'io.franzbecker.gradle-lombok' version '1.8'
+}
+
 group 'edu.sdsu.its'
 version '1.0'
+final def versionCode = "${project.version}"
+final def buildCode = "${buildNumber()}"
 
 apply plugin: 'java'
 apply plugin: 'war'
@@ -7,34 +16,99 @@ apply plugin: 'war'
 
 repositories {
     mavenCentral()
+    jcenter()
+
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
+
 }
+
 war {
     archiveName 'ms-monitor.war'
 }
+
+lombok {
+    sha256 = "" // skip verify Lombok task
+}
+
 dependencies {
     // Logging
-    compile 'log4j:log4j:1.2.17'
+    compile group: 'log4j', name: 'log4j', version: '1.2.17'
     compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
 
     // WebServer
-    compile 'javax.ws.rs:javax.ws.rs-api:2.0'
-    compile 'org.glassfish.jersey.containers:jersey-container-servlet:2.22.1'
+    compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.0.1'
+    compile group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet', version: '2.25.1'
+    compile group: 'org.glassfish.jersey.media', name: 'jersey-media-sse', version: '2.25.1'
+    compile group: 'org.glassfish.jersey.bundles.repackaged', name: 'jersey-guava', version: '2.25.1'
+    providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
+
+    // DB
+    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.43'
+    compile group: 'org.hibernate', name: 'hibernate-core', version: '5.2.10.Final'
 
     // Web Requests (Outbound)
-    compile 'com.google.code.gson:gson:2.5'
-    compile 'org.apache.httpcomponents:httpclient:4.4'
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.8.1'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.3'
 
-    // Session Tokens & Passwords
-    compile group: 'org.jasypt', name: 'jasypt', version: '1.9.2'
-    compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
+    // Twig
+    compile "org.jtwig:jtwig-web:5.86.0.RELEASE"
 
     // Vault
+    compile group: 'com.bettercloud', name: 'vault-java-driver', version: '3.0.0'
+
+    // Web Requests
     compile group: 'com.mashape.unirest', name: 'unirest-java', version: '1.4.9'
 
     // Email and Reporting
-    compile 'org.apache.commons:commons-email:1.4'
+    compile group: 'org.apache.commons', name: 'commons-email', version: '1.4'
+
+    // Login
+    compile group: 'org.pac4j', name: 'pac4j-core', version: '2.1.1-SNAPSHOT'
+    compile group: 'org.pac4j', name: 'jax-rs-pac4j', version: '2.1.1-SNAPSHOT'
+    compile group: 'org.pac4j', name: 'j2e-pac4j', version: '2.1.1-SNAPSHOT'
+    compile group: 'org.pac4j', name: 'pac4j-oidc', version: '2.1.1-SNAPSHOT'
+
+    // Scheduler
+    compile group: 'org.quartz-scheduler', name: 'quartz', version: '2.2.3'
+
+    // Password Hashing
+    compile group: 'org.jasypt', name: 'jasypt', version: '1.9.2'
+
+    // Commons
+    compile group: 'commons-io', name: 'commons-io', version: '2.5'
+    compile group: 'com.google.guava', name: 'guava', version: '22.0'
 
     // Unit Tests
     testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+static def buildNumber() {
+    return Long.toString(System.currentTimeMillis(), 36).toUpperCase()
+}
+
+static def getHost() {
+    return InetAddress.getLocalHost().getHostName()
+}
+
+def makeBuildInfoFile(versionCode, buildCode) {
+    println 'Saving Build Info to src/main/resources/build_info.properties'
+    def configFile = new File('src/main/resources/build_info.properties')
+    def config = new Properties()
+    config.setProperty("version", versionCode as String)
+    config.setProperty("build", buildCode as String)
+    config.setProperty("time", "${ZonedDateTime.now().format(DateTimeFormatter.ISO_INSTANT)}")
+    config.setProperty("host", getHost())
+    config.setProperty("user", "${System.getProperty("user.name")}")
+    config.store(new FileOutputStream(configFile), null)
+}
+
+clean.doLast {
+    // Delete Build Info File
+    new File('src/main/resources/build_info.properties').delete()
+}
+
+processResources.doFirst {
+    makeBuildInfoFile(versionCode, buildCode)
 }

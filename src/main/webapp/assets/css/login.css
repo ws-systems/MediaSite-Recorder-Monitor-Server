@@ -1,0 +1,90 @@
+body {
+    padding-top: 40px;
+    padding-bottom: 40px;
+    background-color: #eee;
+}
+
+div.logo {
+    display: inline-block;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 2rem;
+    padding-top: 3rem;
+}
+
+div.login-container{
+    text-align: center;
+}
+
+.logo span {
+    margin-top: auto;
+    margin-bottom: auto;
+    vertical-align: middle;
+}
+
+.logo hr {
+    margin-top: .75rem;
+    border-top: 1px solid rgba(0,0,0,.3);
+}
+
+.logo span.appName {
+    font-weight: 300;
+    font-size: 2.25rem;
+}
+
+.logo img {
+    margin: auto;
+    width: 225px;
+}
+
+div.alert {
+    max-width: 330px;
+    margin: auto;
+}
+
+.form-signin {
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+}
+
+.form-signin .form-signin-heading {
+    text-align: left;
+}
+
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+    margin-bottom: 10px;
+}
+
+
+.form-signin .form-control {
+    position: relative;
+    height: auto;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.form-signin .form-control:focus {
+    z-index: 2;
+}
+
+.form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.form-signin button[type="submit"] {
+    color: #fff;
+    background-color: #C41230;
+    border-color: #C41230;
+}

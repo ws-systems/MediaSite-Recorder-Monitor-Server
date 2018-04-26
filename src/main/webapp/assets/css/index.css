@@ -1,0 +1,55 @@
+td.recorder-status {
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.recorder-status.status-0,
+.recorder-status.status-1 {
+    color: #636C72;
+}
+
+.recorder-status.status-2 {
+    color: #5CB859;
+}
+
+.recorder-status.status-3,
+.recorder-status.status-4,
+.recorder-status.status-5,
+.recorder-status.status-6 {
+    color: #0275D8;
+}
+
+.recorder-status.status-7 {
+    color: #f0AD4E;
+}
+
+.recorder-status.status-8,
+.recorder-status.status-9,
+.recorder-status.status-10,
+.recorder-status.status-11,
+.recorder-status.status-12,
+.recorder-status.status-13,
+.recorder-status.status-14,
+.recorder-status.status-15,
+.recorder-status.status-16,
+.recorder-status.status-17,
+.recorder-status.status-18,
+.recorder-status.status-19 {
+    color: #D9534F;
+}
+
+td.recorder-info {
+    color: black;
+}
+
+td.recorder-info:hover {
+    color: #002569;
+}
+
+#RecorderInfo div.modal-body div.row div:nth-child(1) {
+    font-weight: bold;
+}
+
+#RecorderInfo div.modal-body div.row {
+    margin-top: 2px;
+}

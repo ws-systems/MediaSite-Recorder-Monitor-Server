@@ -1,0 +1,27 @@
+<div class="modal" tabindex="-1" role="dialog" id="welcomeModal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Welcome!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Welcome to MediaSite Recorder Monitor. From this page, you can monitor the status of all of the
+                    MediaSite Recorders in your fleet, as well as manage your subscription preferences to be
+                    notified, should one of your recorders go down, or be in a state that required your attention.</p>
+                <p>By default, you are not subscribed to Recorder Down notification emails. Would you like to be
+                    notified if one of the recorders in the fleet are down or out of service? You can always change
+                    this setting bu clicking on your name in the top right corner, and then selecting "Update
+                    Subscriptions."</p>
+                {# TODO Add Screenshot #}
+                {# TODO Expand Welcome Message #}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                <button type="button" class="btn btn-success" onclick="subscribeToNotifications()">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
