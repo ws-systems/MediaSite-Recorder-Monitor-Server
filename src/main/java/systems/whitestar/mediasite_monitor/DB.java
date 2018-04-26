@@ -171,6 +171,4 @@ public class DB {
         entityManager.getTransaction().commit();
         entityManager.close();
     }
-
-    }
 }
