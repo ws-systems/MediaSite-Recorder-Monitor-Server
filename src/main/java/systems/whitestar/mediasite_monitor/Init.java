@@ -7,8 +7,9 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.matchers.GroupMatcher;
 import systems.whitestar.mediasite_monitor.Models.Recorder;
-import systems.whitestar.mediasite_monitor.Jobs.SyncRecorderDB;
-import systems.whitestar.mediasite_monitor.Jobs.SyncRecorderStatus;
+import systems.whitestar.mediasite_monitor.Scheduler.Schedule;
+import systems.whitestar.mediasite_monitor.Scheduler.SyncRecorderDB;
+import systems.whitestar.mediasite_monitor.Scheduler.SyncRecorderStatus;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -35,7 +36,7 @@ public class Init implements ServletContextListener {
     /**
      * Initialize the WebApp with the Default User if no users exist.
      * <p>
-     * Also, Start the DB Sync Job, as well as schedule Recorder Sync Jobs for the already existent recorders
+     * Also, Start the DB Sync Job, as well as schedule Recorder Sync Scheduler for the already existent recorders
      */
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -49,12 +50,12 @@ public class Init implements ServletContextListener {
             log.error("Problem Updating Preferences Table via Defaults", e);
         }
 
-        // Setup Sync Jobs
+        // Setup Sync Scheduler
         startSyncAgents();
     }
 
     /**
-     * Stop All Scheduler Jobs and Shut Down the Scheduler
+     * Stop All Scheduler Scheduler and Shut Down the Scheduler
      * Deregister DB Driver to prevent memory leaks.
      */
     @Override
