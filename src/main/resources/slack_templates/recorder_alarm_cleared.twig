@@ -1,0 +1,24 @@
+{
+"attachments": [
+{
+"fallback": "Recorder {{ recorder.Name }} is in status {{ recorder.status.stateString }}.",
+"color": "#28a745",
+"title": "Recorder Alarm Cleared",
+"text": "The specified recorder has re-entered a good state following an outage. No action is needed at this point.",
+"fields": [
+{
+"title": "Name",
+"value": "{{ recorder.Name }}",
+"short": true
+},
+{
+"title": "Status",
+"value": "{{ recorder.status.stateString }}",
+"short": true
+}
+],
+"footer": "MS Recorder Monitor",
+"ts": {{ generated_ts }}
+}
+]
+}

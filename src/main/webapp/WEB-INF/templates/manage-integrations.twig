@@ -12,7 +12,7 @@
         <div class="col-7 mx-auto mt-3">
             <div class="alert alert-info" role="alert">
                 <strong><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp; By the way&hellip;</strong>
-                Changes to the Mediasite Credentials will take into affect after all agents have been restarted. Until
+                Changes to the Mediasite Credentials will go into affect after all agents have been restarted. Until
                 then each agent will use their respective copy of the previous configuration.
             </div>
 
@@ -146,6 +146,33 @@
                                type="email"
                                required
                                value="{{ email_from_email }}">
+                    </div>
+                </div>
+
+                {# SLACK Settings #}
+                <h2 class="mb-2">Slack</h2>
+                <div class="form-group row">
+                    <label for="slack.enable"
+                           class="col-sm-3 col-form-label">Enable: </label>
+                    <div class="col-sm-9">
+                        <select class="form-control mutable-setting"
+                                title="Enable Slack Webhooks"
+                                id="slack.enable"
+                                required>
+                            <option value="true" {% if(slack_enable) %}selected{% endif %}>Yes</option>
+                            <option value="false" {% if(not(slack_enable)) %}selected{% endif %}>No</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="slack.webhook_url"
+                           class="col-sm-3 col-form-label">Webhook URL: </label>
+                    <div class="col-sm-9">
+                        <input class="form-control mutable-setting"
+                               title="Webhook URL"
+                               type="url"
+                               id="slack.webhook_url"
+                               value="{{ slack_webhook_url }}">
                     </div>
                 </div>
 
