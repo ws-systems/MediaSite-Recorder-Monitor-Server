@@ -44,16 +44,16 @@ body > div.container {
 }
 
 /* Agent Status Icons */
-.agent-status .authorized {
+.agent-status .authorized.online {
     color: #28a745;
 }
 
-.agent-status .unauthorized {
+.agent-status .unauthorized.online {
     color: #dc3545;
 }
 
 .agent-status .unauthorized.offline,
-.agent-status .authorized.online {
+.agent-status .authorized.offline {
     color: #868e96;
 }
 
