@@ -28,6 +28,7 @@ public class ManageIntegration extends HttpServlet {
         setUserData(request);
         setNavBar(request);
 
+
         // Mediasite Settings
         request.setAttribute("ms_api_url", DB.getPreference("ms.url"));
         request.setAttribute("ms_api_key", DB.getPreference("ms.api-key"));
@@ -40,6 +41,10 @@ public class ManageIntegration extends HttpServlet {
         request.setAttribute("email_username", DB.getPreference("email.username"));
         request.setAttribute("email_from_name", DB.getPreference("email.from_name"));
         request.setAttribute("email_from_email", DB.getPreference("email.from_email"));
+
+        // Slack Settings
+        request.setAttribute("slack_enable", DB.getPreference("slack.enable"));
+        request.setAttribute("slack_webhook_url", DB.getPreference("slack.webhook_url"));
 
         response.setHeader("Content-Type", MediaType.TEXT_HTML);
         renderer.dispatcherFor(TEMPLATE_PATH)
