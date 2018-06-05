@@ -7,9 +7,7 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.matchers.GroupMatcher;
 import systems.whitestar.mediasite_monitor.Models.Recorder;
-import systems.whitestar.mediasite_monitor.Scheduler.Schedule;
-import systems.whitestar.mediasite_monitor.Scheduler.SyncRecorderDB;
-import systems.whitestar.mediasite_monitor.Scheduler.SyncRecorderStatus;
+import systems.whitestar.mediasite_monitor.Jobs.*;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;

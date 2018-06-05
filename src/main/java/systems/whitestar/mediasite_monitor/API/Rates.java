@@ -8,9 +8,10 @@ import org.quartz.impl.matchers.GroupMatcher;
 import systems.whitestar.mediasite_monitor.Models.Preference;
 import systems.whitestar.mediasite_monitor.Models.SimpleMessage;
 import systems.whitestar.mediasite_monitor.DB;
-import systems.whitestar.mediasite_monitor.Scheduler.SyncRecorderDB;
-import systems.whitestar.mediasite_monitor.Scheduler.SyncRecorderStatus;
-import systems.whitestar.mediasite_monitor.Scheduler.Schedule;
+import systems.whitestar.mediasite_monitor.Jobs.SyncRecorderDB;
+import systems.whitestar.mediasite_monitor.Jobs
+        .SyncRecorderStatus;
+import systems.whitestar.mediasite_monitor.Schedule;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;

@@ -2,12 +2,10 @@ package systems.whitestar.mediasite_monitor;
 
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
-import systems.whitestar.mediasite_monitor.Models.Preference;
-import systems.whitestar.mediasite_monitor.Models.Recorder;
-import systems.whitestar.mediasite_monitor.Models.User;
-import systems.whitestar.mediasite_monitor.Models.Agent;
+import systems.whitestar.mediasite_monitor.Models.*;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Properties;
 
@@ -124,7 +122,7 @@ public class DB {
         entityManager.getTransaction().commit();
         entityManager.close();
 
-        return users.toArray(new User[users.size()]);
+        return users.toArray(new User[0]);
     }
 
     /**
@@ -157,7 +155,7 @@ public class DB {
         entityManager.getTransaction().commit();
         entityManager.close();
 
-        return recorders.toArray(new Recorder[recorders.size()]);
+        return recorders.toArray(new Recorder[0]);
     }
 
     /**
@@ -189,7 +187,7 @@ public class DB {
         entityManager.getTransaction().commit();
         entityManager.close();
 
-        return agents.toArray(new Agent[agents.size()]);
+        return agents.toArray(new Agent[0]);
     }
 
     /**
