@@ -6,6 +6,7 @@ import systems.whitestar.mediasite_monitor.DB;
 import systems.whitestar.mediasite_monitor.Notify;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.mail.EmailException;
+import systems.whitestar.mediasite_monitor.Secret;
 
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -37,7 +38,9 @@ class NotifyHook extends EventHook {
                     .recipients(recipients)
                     .message(Notify.messageFromTemplate(ALERT_TEMPLATE_PATH, new HashMap<String, Object>() {{
                         put("recorder", DB.getRecorder("id='" + recorder.getId() + "'")[0]);
-                        put("url_base", "http://example.com"); // TODO Add to Vault - shouldn't end with '/'
+                        String www_url = Secret.getInstance().getSecret("www_url");
+                        if (www_url.endsWith("/")) www_url = www_url.substring(0, www_url.length()-2);
+                        put("url_base", www_url);
                         put("generated_on_date_footer", new Timestamp(new java.util.Date().getTime()).toString());
                     }}))
                     .build();
