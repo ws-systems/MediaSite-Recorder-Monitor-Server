@@ -30,7 +30,7 @@
                            href="{% if (active == 'manage-rates') %}#{% else %}/app/manage/rates{% endif %}">Rates</a>
                         <a class="dropdown-item {% if (active == 'manage-agents') %} active {% endif %}"
                            href="{% if (active == 'manage-agents') %}#{% else %}/app/manage/agents{% endif %}">Agents
-                            <span class="badge badge-pill badge-secondary">{{ agent_count }}</span></a>
+                            &nbsp; <span class="badge badge-pill badge-secondary">{{ agent_count }}</span></a>
                     </div>
                 </li>
             {% endif %}
