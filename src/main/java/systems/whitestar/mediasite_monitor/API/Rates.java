@@ -142,7 +142,7 @@ public class Rates {
         log.debug("Paused Trigger Groups: " + Arrays.toString(scheduler.getPausedTriggerGroups().toArray()));
 
         // retrieve the current triggers
-        Set<TriggerKey> triggerKeys = scheduler.getTriggerKeys(GroupMatcher.triggerGroupStartsWith(SyncRecorderDB.TRIGGER_NAME));
+        Set<TriggerKey> triggerKeys = scheduler.getTriggerKeys(GroupMatcher.triggerGroupStartsWith(SyncRecorderDB.JOB_GROUP));
 
         if (triggerKeys.size() == 0) {
             log.warn("Couldn't find any Triggers for List Sync Job - Aborting Update to trigger - Does not exist");
