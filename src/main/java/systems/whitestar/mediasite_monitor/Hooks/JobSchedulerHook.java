@@ -1,21 +1,21 @@
 package systems.whitestar.mediasite_monitor.Hooks;
 
-import systems.whitestar.mediasite_monitor.Models.Recorder;
-import systems.whitestar.mediasite_monitor.Models.User;
-import systems.whitestar.mediasite_monitor.DB;
-import systems.whitestar.mediasite_monitor.Jobs.SyncRecorderStatus;
-import systems.whitestar.mediasite_monitor.Schedule;
 import lombok.extern.log4j.Log4j;
 import org.quartz.JobKey;
 import org.quartz.ObjectAlreadyExistsException;
 import org.quartz.SchedulerException;
+import systems.whitestar.mediasite_monitor.DB;
+import systems.whitestar.mediasite_monitor.Jobs.SyncRecorderStatus;
+import systems.whitestar.mediasite_monitor.Models.Recorder;
+import systems.whitestar.mediasite_monitor.Models.User;
+import systems.whitestar.mediasite_monitor.Schedule;
 
 
 /**
  * Listen for hooks that require new jobs to be scheduled
  *
  * @author Tom Paulus
- *         Created on 7/24/17.
+ * Created on 7/24/17.
  */
 @SuppressWarnings("unused")
 @Log4j
@@ -31,8 +31,10 @@ class JobSchedulerHook extends EventHook {
                     log.info("Creating New Status Sync Job for Recorder ID: " + recorder.getId());
                     final String syncFrequency = DB.getPreference("sync_recorder.frequency");
                     if (syncFrequency != null) {
-                        new SyncRecorderStatus(recorder.getId())
-                                .schedule(Schedule.getScheduler(), Integer.parseInt(syncFrequency));
+                        SyncRecorderStatus
+                                .schedule(Schedule.getScheduler(),
+                                        Integer.parseInt(syncFrequency),
+                                        recorder.getId());
                         scheduled++;
                     } else {
                         log.error("Sync Frequency is not defined - cannot schedule job");

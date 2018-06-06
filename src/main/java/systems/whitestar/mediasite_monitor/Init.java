@@ -170,7 +170,7 @@ public class Init implements ServletContextListener {
 
                 for (Recorder recorder : DB.getRecorder("")) {
                     log.info(String.format("Scheduling Sync for Recorder with ID %s ", recorder.getId()));
-                    new SyncRecorderStatus(recorder.getId()).schedule(scheduler, syncRate);
+                    SyncRecorderStatus.schedule(scheduler, syncRate, recorder.getId());
                 }
             } else
                 log.warn("Recorder Sync has been DISABLED via Environment Variable (MS_SYNC_DISABLE)");

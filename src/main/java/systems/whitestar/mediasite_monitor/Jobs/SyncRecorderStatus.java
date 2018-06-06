@@ -2,7 +2,6 @@ package systems.whitestar.mediasite_monitor.Jobs;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.quartz.*;
@@ -31,30 +30,29 @@ import static org.quartz.TriggerBuilder.newTrigger;
  * Created on 5/14/17.
  */
 @Log4j
-@AllArgsConstructor
+@NoArgsConstructor
 public class SyncRecorderStatus implements AgentJobInterface, Job {
     public static final String JOB_GROUP = "recorder_status";
     public static final String TRIGGER_NAME_STEM = "SyncRecorderStatusTrigger";
     public static final String JOB_NAME_STEM = "SyncRecorderStatus";
-
-    private String mRecorderID;
 
     /**
      * Schedule the Sync Job
      *
      * @param scheduler         {@link Scheduler} Quartz Scheduler Instance
      * @param intervalInMinutes How often the job should run in Minutes
+     * @param recorderID        {@link String} Recorder whose status should be updated
      * @throws SchedulerException Something went wrong scheduling the job
      */
-    public void schedule(Scheduler scheduler, int intervalInMinutes) throws SchedulerException {
-        JobDetail job = newJob(this.getClass())
-                .withIdentity(JOB_NAME_STEM + "-" + mRecorderID, JOB_GROUP)
-                .withDescription(mRecorderID)
+    public static void schedule(Scheduler scheduler, int intervalInMinutes, String recorderID) throws SchedulerException {
+        JobDetail job = newJob(SyncRecorderStatus.class)
+                .withIdentity(JOB_NAME_STEM + "-" + recorderID, JOB_GROUP)
+                .withDescription(recorderID)
                 .build();
 
         // Trigger the job to run now, and then repeat every X Minutes
         Trigger trigger = newTrigger()
-                .withIdentity(TRIGGER_NAME_STEM + "-" + mRecorderID, JOB_GROUP)
+                .withIdentity(TRIGGER_NAME_STEM + "-" + recorderID, JOB_GROUP)
                 .withSchedule(simpleSchedule()
                         .withIntervalInMinutes(intervalInMinutes)
                         .repeatForever())
@@ -63,7 +61,7 @@ public class SyncRecorderStatus implements AgentJobInterface, Job {
 
         // Tell quartz to schedule the job using our trigger
         scheduler.scheduleJob(job, trigger);
-        log.debug("Scheduled Sync for Recorder with ID - " + this.mRecorderID);
+        log.debug("Scheduled Sync for Recorder with ID - " + recorderID);
     }
 
     public void execute(JobExecutionContext context) throws JobExecutionException {
