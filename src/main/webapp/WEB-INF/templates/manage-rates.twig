@@ -74,6 +74,17 @@
                         <small class="text-muted">In minutes.</small>
                     </div>
                 </div>
+                <div class="form-group row">
+                    <label for="sync_recorder.retry_count"
+                           class="col-sm-3 col-form-label">Retry: </label>
+                    <div class="col-sm-9">
+                        <input class="form-control mutable-setting"
+                               title="Status Sync Frequency"
+                               id="sync_recorder.retry_count"
+                               required
+                               value="{{ status_retry_count }}">
+                    </div>
+                </div>
 
                 {#SUBMIT/RESET Buttons#}
                 <div class="row justify-content-between mt-5">

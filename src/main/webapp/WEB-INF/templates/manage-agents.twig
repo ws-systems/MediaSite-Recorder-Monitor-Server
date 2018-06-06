@@ -1,0 +1,101 @@
+{% embed "header.twig" with { active: "manage-agents"} %}
+    {% block page_assets %}
+    {% endblock %}
+{% endembed %}
+{% include "navbar.twig" with { active: "manage-agents"} %}
+
+{% include "modal-update-agent.twig" %}
+
+<div class="container">
+    <div class="header row justify-content-between pt-2">
+        <div class="col">
+            <h1>Manage - Agents</h1>
+        </div>
+        <div class="col my-auto">
+            <div class="float-right">
+                <h4>
+                    <span class="badge badge-info">Agent Job Queue:
+                        {% if agent_job_count == 0 -%}
+                            Empty
+                        {%- else -%}
+                            {{ agent_job_count }}
+                        {%- endif %}</span>
+                </h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="row pt-3">
+        <div class="col mx-auto">
+            <div class="alert alert-info" role="alert">
+                <strong><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp; Just a heads up&hellip;</strong>
+                Unauthorized agents that have not checked-in within the past {{ agent_cleanup_rate }} hours will be
+                automatically removed to keep the agent list from getting cluttered and to save you the work of removing
+                agents you never wanted in the first place. Authorized agents will never be removed, even if they have
+                not checked-in in a while.
+            </div>
+
+            <table class="table table-hover sortable mx-auto" id="agents">
+                <thead>
+                <tr>
+                    <th scope="col" class="sorttable_nosort">{# Status Icon#}</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Last Seen</th>
+                    <th class="sorttable_nosort">{# Edit Button#}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for a in agents %}
+                    <tr id="agent-{{ a.id }}"
+                        data-name="{{ a.name }}"
+                        data-authorized="{{ a.authorized }}"
+                        data-lastSeen="{{ a.lastSeen }}">
+                        <th scope="row" class="agent-status">
+                            {% if a.authorized %}
+                                {# Agent is Authorized #}
+                                {% if a.lastSeen > last_seen_delta %}
+                                    {#Agent is Online#}
+                                    <i class="fa fa-check-circle fa-fw authorized online" aria-hidden="true"
+                                       data-toggle="tooltip" data-placement="left" title="Online and Authorized"></i>
+                                {% else %}
+                                    {#Agent is Offline#}
+                                    <i class="fa fa-check-circle fa-fw authorized offline" aria-hidden="true"
+                                       data-toggle="tooltip" data-placement="left" title="Offline, but Authorized"></i>
+                                {% endif %}
+                            {% else %}
+                                {# Agent is not Authorized #}
+                                {% if a.lastSeen > last_seen_delta %}
+                                    {#Agent is Online#}
+                                    <i class="fa fa-times-circle fa-fw unauthorized online" aria-hidden="true"
+                                       data-toggle="tooltip" data-placement="left" title="Online, but Unauthorized"></i>
+                                {% else %}
+                                    {#Agent is Offline#}
+                                    <i class="fa fa-times-circle fa-fw unauthorized offline" aria-hidden="true"
+                                       data-toggle="tooltip" data-placement="left" title="Offline and Unauthorized"></i>
+                                {% endif %}
+                            {% endif %}
+                        </th>
+                        <td>{{ a.name }}</td>
+                        <td>{{ a.lastSeen | date("MMM dd, yyyy h:mm:ss aa") }}</td>
+                        <td class="text-right">
+                            <button type="button"
+                                    class="btn btn-secondary btn-sm"
+                                    onclick="showEditModal(this)">
+                                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit Agent
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{# TODO Agent Authorization/Deauthorization Workflow #}
+
+{% embed "footer.twig" %}
+    {% block page_assets %}
+        <script src="/assets/js/manage-agents.js" type="text/javascript"></script>
+    {% endblock %}
+{% endembed %}

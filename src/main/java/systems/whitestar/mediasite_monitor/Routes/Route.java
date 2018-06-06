@@ -4,13 +4,15 @@ import lombok.extern.log4j.Log4j;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
-import systems.whitestar.mediasite_monitor.Models.User;
 import systems.whitestar.mediasite_monitor.DB;
 import systems.whitestar.mediasite_monitor.Meta;
+import systems.whitestar.mediasite_monitor.Models.User;
 import systems.whitestar.mediasite_monitor.Secret;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
+
+import static systems.whitestar.mediasite_monitor.Routes.ManageAgents.ONLINE_DELTA_MINS;
 
 /**
  * @author Tom Paulus
@@ -31,7 +33,7 @@ import java.util.Optional;
             request.setAttribute("app_build_time", Meta.buildInfo.getTime());
         }
 
-        // TODO
+        // TODO issue_link setings
 //        request.setAttribute("hide_issue_link", Settings.getSetting("issues.hideLink"));
 //        request.setAttribute("issue_link", Settings.getSetting("issues.link"));
     }
@@ -92,6 +94,7 @@ import java.util.Optional;
      * @param request {@link HttpServletRequest} Request
      */
     static void setNavBar(HttpServletRequest request) {
-        request.setAttribute("agent_count", DB.getAgent("").length);
+        // Agent Count is number of authorized and online agents
+        request.setAttribute("agent_count", DB.getAgent("a.lastSeen > (current_date() + " + ONLINE_DELTA_MINS + "/(24*60)) and a.authorized = true").length);
     }
 }

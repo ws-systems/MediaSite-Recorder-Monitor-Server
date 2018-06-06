@@ -30,6 +30,7 @@ import java.util.Properties;
 @Log4j
 @WebListener
 public class Init implements ServletContextListener {
+    private static final int CLEANUP_FREQUENCY = 10;
 
     /**
      * Initialize the WebApp with the Default User if no users exist.
@@ -50,6 +51,9 @@ public class Init implements ServletContextListener {
 
         // Setup Sync Scheduler
         startSyncAgents();
+
+        // Schedule Cleanup Jobs
+        startCleanupJobs();
     }
 
     /**
@@ -176,6 +180,15 @@ public class Init implements ServletContextListener {
                 log.warn("Recorder Sync has been DISABLED via Environment Variable (MS_SYNC_DISABLE)");
         } catch (SchedulerException e) {
             log.error("Problem Scheduling Recorder Sync Job(s)", e);
+        }
+    }
+
+    private void startCleanupJobs() {
+        try {
+            CleanupAgents.schedule(Schedule.getScheduler(), CLEANUP_FREQUENCY);
+            CleanupAgentJobs.schedule(Schedule.getScheduler(), CLEANUP_FREQUENCY);
+        } catch (SchedulerException e) {
+            log.error("Problem scheduling cleanup jobs", e);
         }
     }
 }

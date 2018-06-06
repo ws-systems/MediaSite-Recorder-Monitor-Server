@@ -44,6 +44,15 @@
         <url-pattern>/app/manage/users</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>Manage-Agents</servlet-name>
+        <servlet-class>systems.whitestar.mediasite_monitor.Routes.ManageAgents</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Manage-Agents</servlet-name>
+        <url-pattern>/app/manage/agents</url-pattern>
+    </servlet-mapping>
+
 
     <servlet-mapping>
         <servlet-name>default</servlet-name>
@@ -67,13 +76,30 @@
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>AgentAPI</servlet-name>
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+
+        <init-param>
+            <param-name>jersey.config.server.provider.packages</param-name>
+            <param-value>systems.whitestar.mediasite_monitor.Agent</param-value>
+        </init-param>
+
+        <load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AgentAPI</servlet-name>
+        <url-pattern>/agent/*</url-pattern>
+    </servlet-mapping>
+
     <filter-mapping>
-        <filter-name>AuthFilter</filter-name>
-        <url-pattern>/api/*</url-pattern>
+        <filter-name>AgentAuthFilter</filter-name>
+        <url-pattern>/agent/*</url-pattern>
     </filter-mapping>
     <filter>
-        <filter-name>AuthFilter</filter-name>
-        <filter-class>systems.whitestar.mediasite_monitor.API.APIFilter</filter-class>
+        <filter-name>AgentAuthFilter</filter-name>
+        <filter-class>systems.whitestar.mediasite_monitor.Agent.Filter</filter-class>
         <async-supported>true</async-supported>
     </filter>
 

@@ -18,10 +18,9 @@
         <class>systems.whitestar.mediasite_monitor.Models.Recorder</class>
         <class>systems.whitestar.mediasite_monitor.Models.User</class>
         <class>systems.whitestar.mediasite_monitor.Models.Agent</class>
+        <class>systems.whitestar.mediasite_monitor.Models.AgentJob</class>
 
         <properties>
-            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
-
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
 
