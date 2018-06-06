@@ -25,6 +25,17 @@ public class DB {
         props.setProperty("javax.persistence.jdbc.user", Secret.getInstance().getSecret("db-user"));
         props.setProperty("javax.persistence.jdbc.password", Secret.getInstance().getSecret("db-password"));
 
+        if (props.getProperty("javax.persistence.jdbc.url").startsWith("jdbc:mysql:")) {
+            log.info("Using MySQL DB Driver");
+            props.setProperty("javax.persistence.jdbc.driver", "com.mysql.jdbc.Driver");
+        } else if (props.getProperty("javax.persistence.jdbc.url").startsWith("jdbc:postgresql:")) {
+            log.info("Using PostgreSQL DB Driver");
+            props.setProperty("javax.persistence.jdbc.driver", "org.postgresql.Driver");
+        } else {
+            log.fatal("Unsupported DB Type");
+            throw new RuntimeException("Unsupported DB Type");
+        }
+
         try {
             sessionFactory = Persistence.createEntityManagerFactory("systems.whitestar.mediasite_monitor.jpa", props);
             log.info("Session Factory is ready to go!");
