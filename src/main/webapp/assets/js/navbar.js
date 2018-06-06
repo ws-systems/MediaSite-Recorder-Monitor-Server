@@ -1,27 +1,6 @@
-// TODO Update
 function updateOwnInfo() {
     const $updateEmail = $('#update_selfEmail');
-    var password = $('#update_selfPassword1').val();
-
-    if (password !== $('#update_selfPassword2').val()) {
-        // Password Mismatch
-        $('#update_selfPassword1, #update_selfPassword2').val("");
-        $('.passwordInput').addClass("has-danger");
-        $('.passwordMismatchErr').show();
-        return;
-    } else {
-        $('.passwordInput').removeClass("has-danger");
-        $('.passwordMismatchErr').hide();
-    }
-
-    $updateEmail.parent().removeClass("has-danger");
-    $('#update_selfDuplicateEmailWarning').hide();
-
     var payload = {};
-    payload.firstName = $('#update_selfFirstName').val();
-    payload.lastName = $('#update_selfLastName').val();
-    payload.email = $updateEmail.val();
-    if (password !== "") payload.password = password;
     payload.notify = $('#update_selfNotifyCheckbox')[0].checked;
 
     $.ajax({
