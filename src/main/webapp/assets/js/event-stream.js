@@ -69,7 +69,7 @@ function loadEvents() {
                     $(row.insertCell(4))
                         .addClass("recorder-more-info-button")
                         .addClass("recorder-info")
-                        .html("<i class=\"fa fa-info-circle\" aria-hidden=\"true\"\n" +
+                        .html("<i class=\"fas fa-info-circle\" aria-hidden=\"true\"\n" +
                             "                           onclick=\"showRecorderByID('" + obj.recorder.Id + "')\"></i>");
 
                     break;

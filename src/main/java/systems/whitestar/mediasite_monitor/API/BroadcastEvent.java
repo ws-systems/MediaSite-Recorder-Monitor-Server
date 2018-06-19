@@ -7,6 +7,7 @@ import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.OutboundEvent;
 import org.glassfish.jersey.media.sse.SseBroadcaster;
 import org.glassfish.jersey.media.sse.SseFeature;
+import org.pac4j.jax.rs.annotations.Pac4JSecurity;
 import systems.whitestar.mediasite_monitor.Models.Recorder;
 import systems.whitestar.mediasite_monitor.Models.Status;
 import systems.whitestar.mediasite_monitor.Hooks.Hook;
@@ -25,6 +26,7 @@ import java.util.UUID;
 @Log4j
 @Singleton
 @Path("stream")
+@Pac4JSecurity(authorizers = "isAuthenticated")
 public class BroadcastEvent {
     private static SseBroadcaster broadcaster = new SseBroadcaster();
 

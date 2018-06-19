@@ -4,6 +4,7 @@ TODO: JDoc for various Classes and Methods as needed.
 
 Mediasite Docs: [mediasite.sdsu.edu/mediasite/api/v1/$metadata](http://mediasite.sdsu.edu/mediasite/api/v1/$metadata)
 
+Auth Docs: https://github.com/pac4j/jax-rs-pac4j
 
 ### DDL
 ```sql

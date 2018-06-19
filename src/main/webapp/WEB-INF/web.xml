@@ -9,54 +9,37 @@
     <absolute-ordering/>
 
     <servlet>
-        <servlet-name>Index</servlet-name>
-        <servlet-class>systems.whitestar.mediasite_monitor.Routes.Index</servlet-class>
+        <servlet-name>App</servlet-name>
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+
+        <init-param>
+            <param-name>jersey.config.server.provider.packages</param-name>
+            <param-value>systems.whitestar.mediasite_monitor.Routes</param-value>
+        </init-param>
+
+        <load-on-startup>4</load-on-startup>
+        <async-supported>true</async-supported>
     </servlet>
     <servlet-mapping>
-        <servlet-name>Index</servlet-name>
-        <url-pattern>/app</url-pattern>
+        <servlet-name>App</servlet-name>
+        <url-pattern>/app/*</url-pattern>
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>Manage-Integrations</servlet-name>
-        <servlet-class>systems.whitestar.mediasite_monitor.Routes.ManageIntegration</servlet-class>
+        <servlet-name>Login</servlet-name>
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+
+        <init-param>
+            <param-name>jersey.config.server.provider.packages</param-name>
+            <param-value>systems.whitestar.mediasite_monitor.Auth</param-value>
+        </init-param>
+
+        <load-on-startup>3</load-on-startup>
+        <async-supported>true</async-supported>
     </servlet>
     <servlet-mapping>
-        <servlet-name>Manage-Integrations</servlet-name>
-        <url-pattern>/app/manage/integrations</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>Manage-Rates</servlet-name>
-        <servlet-class>systems.whitestar.mediasite_monitor.Routes.ManageRates</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Manage-Rates</servlet-name>
-        <url-pattern>/app/manage/rates</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>Manage-Users</servlet-name>
-        <servlet-class>systems.whitestar.mediasite_monitor.Routes.ManageUsers</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Manage-Users</servlet-name>
-        <url-pattern>/app/manage/users</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>Manage-Agents</servlet-name>
-        <servlet-class>systems.whitestar.mediasite_monitor.Routes.ManageAgents</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Manage-Agents</servlet-name>
-        <url-pattern>/app/manage/agents</url-pattern>
-    </servlet-mapping>
-
-
-    <servlet-mapping>
-        <servlet-name>default</servlet-name>
-        <url-pattern>/assets/*</url-pattern>
+        <servlet-name>Login</servlet-name>
+        <url-pattern>/auth/*</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -68,7 +51,7 @@
             <param-value>systems.whitestar.mediasite_monitor.API</param-value>
         </init-param>
 
-        <load-on-startup>1</load-on-startup>
+        <load-on-startup>2</load-on-startup>
         <async-supported>true</async-supported>
     </servlet>
     <servlet-mapping>
@@ -103,87 +86,47 @@
         <async-supported>true</async-supported>
     </filter>
 
-    <!-- LOGIN BELOW -->
-    <filter>
-        <filter-name>callbackFilter</filter-name>
-        <filter-class>org.pac4j.j2e.filter.CallbackFilter</filter-class>
-        <async-supported>true</async-supported>
-        <init-param>
-            <param-name>defaultUrl</param-name>
-            <param-value>/</param-value>
-        </init-param>
-        <init-param>
-            <param-name>renewSession</param-name>
-            <param-value>true</param-value>
-        </init-param>
-        <init-param>
-            <param-name>multiProfile</param-name>
-            <param-value>true</param-value>
-        </init-param>
-    </filter>
-    <filter-mapping>
-        <filter-name>callbackFilter</filter-name>
-        <url-pattern>/callback</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-    </filter-mapping>
-
+    <servlet>
+        <servlet-name>Global Admin</servlet-name>
+        <servlet-class>systems.whitestar.mediasite_monitor.Routes.SuperUser</servlet-class>
+    </servlet>
     <servlet-mapping>
-        <servlet-name>default</servlet-name>
-        <url-pattern>/callback</url-pattern>
+        <servlet-name>Global Admin</servlet-name>
+        <url-pattern>/superuser</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Global Admin</servlet-name>
+        <url-pattern>/superuser-login</url-pattern>
     </servlet-mapping>
 
     <filter>
-        <filter-name>OpenIDFilter</filter-name>
-        <filter-class>org.pac4j.j2e.filter.SecurityFilter</filter-class>
+        <filter-name>ForceLoginFilter</filter-name>
+        <filter-class>systems.whitestar.mediasite_monitor.Auth.ForceLoginFilter</filter-class>
         <async-supported>true</async-supported>
-        <init-param>
-            <param-name>configFactory</param-name>
-            <param-value>systems.whitestar.mediasite_monitor.LoginConfigFactory</param-value>
-        </init-param>
-        <init-param>
-            <param-name>clients</param-name>
-            <param-value>OidcClient</param-value>
-        </init-param>
-        <init-param>
-            <param-name>authorizers</param-name>
-            <param-value>securityHeaders</param-value>
-        </init-param>
     </filter>
     <filter-mapping>
-        <filter-name>OpenIDFilter</filter-name>
-        <url-pattern>/app/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>OpenIDFilter</filter-name>
-        <url-pattern>/api/*</url-pattern>
+        <filter-name>ForceLoginFilter</filter-name>
+        <url-pattern>/superuser</url-pattern>
         <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
 
-    <filter>
-        <filter-name>logoutFilter</filter-name>
-        <filter-class>org.pac4j.j2e.filter.LogoutFilter</filter-class>
-        <init-param>
-            <param-name>defaultUrl</param-name>
-            <param-value>/?defaulturlafterlogout</param-value>
-        </init-param>
-        <init-param>
-            <param-name>destroySession</param-name>
-            <param-value>true</param-value>
-        </init-param>
-    </filter>
-    <filter-mapping>
-        <filter-name>logoutFilter</filter-name>
-        <url-pattern>/logout</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-    </filter-mapping>
+    <servlet>
+        <servlet-name>Error</servlet-name>
+        <servlet-class>systems.whitestar.mediasite_monitor.Routes.Error</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Error</servlet-name>
+        <url-pattern>/error</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>default</servlet-name>
-        <url-pattern>/logout</url-pattern>
+        <url-pattern>/assets/*</url-pattern>
     </servlet-mapping>
 
-    <!-- LOGIN ABOVE -->
+    <error-page>
+        <location>/error</location>
+    </error-page>
 
     <listener>
         <listener-class>systems.whitestar.mediasite_monitor.Init</listener-class>

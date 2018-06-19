@@ -1,7 +1,7 @@
 function updateSettings() {
     $.LoadingOverlay("show", {
         image       : "",
-        fontawesome : "fa fa-spinner fa-spin"
+        fontawesome : "fas fa-spinner fa-spin"
     });
 
     var payload = [];

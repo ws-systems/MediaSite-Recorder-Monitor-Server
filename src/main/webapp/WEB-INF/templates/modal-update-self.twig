@@ -9,7 +9,7 @@
             </div>
             <div class="modal-body">
                 <div class="alert alert-info" role="alert">
-                    <strong><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp; Updating your Name and
+                    <strong><i class="fas fa-info-circle" aria-hidden="true"></i>&nbsp; Updating your Name and
                         Email</strong>
                     In order to update your name and/or email address. Update them in the External Identity Provider
                     (SSO), then logout of MediaSite Recorder Monitor. When you login next, your email address and name
@@ -39,6 +39,18 @@
                                    title="Name"
                                    id="update_selfName"
                                    value="{{ user.name }}"
+                                   required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="update_selfAdmin"
+                               class="col-sm-3 col-form-label">Type: </label>
+                        <div class="col-sm-9">
+                            <input readonly
+                                   class="form-control-plaintext"
+                                   title="Name"
+                                   id="update_selfAdmin"
+                                   value="{% if user.admin %}Administrator{% else %}Regular User{% endif %}"
                                    required>
                         </div>
                     </div>

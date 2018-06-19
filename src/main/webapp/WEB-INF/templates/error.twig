@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    {#<link rel="icon" href="/assets/icons/nav-ico.png">#}
+
+    <title>We've got some trouble | {{ code }} - {{ title }}</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+
+    <link rel="stylesheet" href="/assets/css/error.css">
+
+</head>
+<body class="plain error-page-wrapper background-color background-image">
+<div class="content-container">
+    <div class="head-line secondary-text-color">
+        {{ code }}
+    </div>
+    <div class="subheader primary-text-color">
+        {{ nl2br(title) }}
+    </div>
+    <hr>
+    <div class="clearfix"></div>
+    <div class="context primary-text-color">
+        <p>
+            {{ nl2br(message) }}
+        </p>
+    </div>
+
+    <div class="buttons-container">
+        {% if defined(stacktrace) and (show_stacktrace or code == 200) %}
+            <a class="border-button" data-toggle="collapse" href="#stacktrace" aria-expanded="false"
+               aria-controls="Show Stack Trace">
+                Show Stack Trace
+            </a>
+        {% endif %}
+        {% if defined(issue_link) and not hide_issue_link %}
+            <a class="border-button" href="{{ issue_link }}" target="_blank">Report A Problem</a>
+        {% endif %}
+    </div>
+
+    {% if defined(stacktrace) and (show_stacktrace or code == 200) %}
+        <div class="collapse" id="stacktrace">
+            <pre class="card card-block">{{ stacktrace }}</pre>
+        </div>
+    {% endif %}
+</div>
+
+{# End of Visible Content #}
+<script type="application/javascript"
+        src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+<script>
+    centerContent();
+
+    // Fade in Content
+    window.setTimeout(function () {
+        $('.content-container').addClass('in');
+    }, 500);
+
+
+    function centerContent() {
+        var $contentZContainer = $('.content-container');
+        var containerHeight = $('body').outerHeight()
+            , contentContainerHeight = $contentZContainer.outerHeight()
+            , top = (containerHeight - contentContainerHeight) / 2
+            , offset = 0;
+
+        $contentZContainer.css('top', top + offset);
+    }
+
+    // Responsiveness
+    $('body').on('resize', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        self.centerContent();
+    });
+
+    // hack to make sure content stays centered >_<
+    $(window).on('resize', function () {
+        $('body').trigger('resize')
+    });
+</script>
+
+</body>
+</html>

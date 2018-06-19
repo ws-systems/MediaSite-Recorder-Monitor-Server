@@ -2,6 +2,8 @@ package systems.whitestar.mediasite_monitor.API;
 
 import com.google.gson.Gson;
 import lombok.extern.log4j.Log4j;
+import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.jax.rs.annotations.Pac4JProfile;
 import org.pac4j.jax.rs.annotations.Pac4JSecurity;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
@@ -25,7 +27,6 @@ import java.util.Arrays;
 import java.util.Set;
 
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
-import static systems.whitestar.mediasite_monitor.API.Session.getSessionProfile;
 
 /**
  * API Endpoints associated with Job Rates and Pausing/Resuming Job Triggers.
@@ -36,7 +37,7 @@ import static systems.whitestar.mediasite_monitor.API.Session.getSessionProfile;
 @Log4j
 @SuppressWarnings("unchecked")
 @Path("rates")
-@Pac4JSecurity(authorizers = "isAuthenticated")
+@Pac4JSecurity(authorizers = "admin")
 public class Rates {
     @Context
     private HttpServletRequest request;
@@ -44,7 +45,8 @@ public class Rates {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateRates(final String payload) {
+    public Response updateRates(@Pac4JProfile CommonProfile profile,
+                                final String payload) {
         if (payload == null || payload.isEmpty())
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new SimpleMessage("Error",
@@ -69,7 +71,7 @@ public class Rates {
             if (!current.equals(preference.getValue())) {
                 // Setting has been modified
                 log.warn(String.format("User \"%s\" is updating the setting with name \"%s\"from \"%s\" to \"%s\"",
-                        getSessionProfile(request).getAttribute("name"),
+                        profile.getAttribute("name"),
                         preference.getSetting(),
                         current,
                         preference.getValue()));

@@ -2,6 +2,11 @@
  * Created by tom on 7/16/17.
  */
 
+$(document).ready(function () {
+    // Enable Status Tooltips on this page
+    $('[data-toggle="tooltip"]').tooltip()
+});
+
 /**
  * Pull User info from API and show update modal
  *
@@ -15,6 +20,7 @@ function showEditModal(elem) {
     $modal.find("#userPK").val(rowId.substring(rowId.lastIndexOf('-') + 1));
     $modal.find('#updateEmail').val($user.data("email"));
     $modal.find('#updateName').val($user.data("name"));
+    $modal.find('#updateAdmin').val($user.data("admin").toString()).change();
     $modal.find('#updateNotifyCheckbox').prop('checked', $user.data("notify"));
 
     if ($('#users').find('tr').length === 2) { // Header Row + User Rows
@@ -34,6 +40,7 @@ function updateUser() {
     payload.name = $('#updateName').val();
     payload.email = $updateEmail.val();
     payload.notify = $('#updateNotifyCheckbox')[0].checked;
+    payload.admin = $('#updateAdmin').find(":selected").val();
 
     $.ajax({
         method: "PUT",
@@ -52,11 +59,19 @@ function updateUser() {
             $row.find('td:nth-child(3)').innerHTML = req.email;
 
             if (req.notify) {
-                $row.find('td:nth-child(4)').innerHTML = "<i class=\"fa fa-check\" aria-hidden=\"true\"></i>\n" +
+                $row.find('td:nth-child(4)').innerHTML = "<i class=\"fas fa-check\" aria-hidden=\"true\"></i>\n" +
                     "                                <span class=\"sr-only\">Subscribed to notifications</span>";
             } else {
-                $row.find('td:nth-child(4)').innerHTML = " <i class=\"fa fa-times\" aria-hidden=\"true\"></i>\n" +
+                $row.find('td:nth-child(4)').innerHTML = " <i class=\"fas fa-times\" aria-hidden=\"true\"></i>\n" +
                     "                                <span class=\"sr-only\">Not subscribed to notifications</span>";
+            }
+
+            if (req.admin) {
+                $row.find('th:nth-child(1)').innerHTML = " <span data-toggle=\"tooltip\" data-placement=\"left\" title=\"Administrator\">\n" +
+                    "                                    <i class=\"fas fa-user-cog\"></i></span>"
+            } else {
+                $row.find('th:nth-child(1)').innerHTML = "<span data-toggle=\"tooltip\" data-placement=\"left\" title=\"Regular User\">\n" +
+                    "                                    <i class=\"fas fa-user\"></i></span>"
             }
 
             swal("Okay!", "User has been updated.", "success");

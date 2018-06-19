@@ -2,6 +2,8 @@ package systems.whitestar.mediasite_monitor.API;
 
 import com.google.gson.Gson;
 import lombok.extern.log4j.Log4j;
+import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.jax.rs.annotations.Pac4JProfile;
 import org.pac4j.jax.rs.annotations.Pac4JSecurity;
 import systems.whitestar.mediasite_monitor.DB;
 import systems.whitestar.mediasite_monitor.Models.Agent;
@@ -13,16 +15,13 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import static systems.whitestar.mediasite_monitor.API.Session.getSessionProfile;
-
 /**
  * @author Tom Paulus
  * Created on 12/15/17.
  */
 @Log4j
 @Path("agents")
-@Pac4JSecurity(authorizers = "isAuthenticated")
+@Pac4JSecurity(authorizers = "admin")
 public class Agents {
     @Context
     private HttpServletRequest request;
@@ -99,7 +98,8 @@ public class Agents {
     @DELETE
     @Consumes(MediaType.WILDCARD)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteAgent(@PathParam("id") final String agentId) {
+    public Response deleteAgent(@Pac4JProfile CommonProfile profile,
+                                @PathParam("id") final String agentId) {
         if (agentId == null || agentId.isEmpty())
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new SimpleMessage("Error",
@@ -107,7 +107,7 @@ public class Agents {
                     .build();
 
         log.warn(String.format("User \"%s\" is requesting to delete the Agent with ID \"%s\"",
-                getSessionProfile(request).getAttribute("name"),
+                profile.getAttribute("name"),
                 agentId));
 
         try {

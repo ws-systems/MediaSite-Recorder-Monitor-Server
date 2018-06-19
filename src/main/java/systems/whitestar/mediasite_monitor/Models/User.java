@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -50,6 +51,12 @@ public class User {
     @Setter
     Boolean notify;
 
+    @Expose
+    @Getter
+    @Setter
+    @ColumnDefault("0")
+    Boolean admin;
+
     @Expose(serialize = false)
     @Getter
     @Setter
@@ -68,6 +75,9 @@ public class User {
         }
         if (newUser.getNotify() != null) {
             existingUser.setNotify(newUser.getNotify());
+        }
+        if (newUser.getAdmin() != null) {
+            existingUser.setAdmin(newUser.getAdmin());
         }
         if (newUser.getExternalId() != null) {
             existingUser.setExternalId(newUser.getExternalId());

@@ -3,6 +3,7 @@ package systems.whitestar.mediasite_monitor.API;
 import com.google.gson.Gson;
 import lombok.extern.log4j.Log4j;
 import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.jax.rs.annotations.Pac4JProfile;
 import org.pac4j.jax.rs.annotations.Pac4JSecurity;
 import systems.whitestar.mediasite_monitor.Models.SimpleMessage;
 import systems.whitestar.mediasite_monitor.Models.User;
@@ -17,15 +18,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 
-import static systems.whitestar.mediasite_monitor.API.Session.getSessionProfile;
-
 /**
+ * Limited to Admins via web.xml
+ *
  * @author Tom Paulus
  * Created on 7/29/17.
  */
 @Log4j
 @Path("users")
-@Pac4JSecurity(authorizers = "isAuthenticated")
+@Pac4JSecurity(authorizers = "admin")
 public class Users {
     @Context
     private HttpServletRequest request;
@@ -174,7 +175,8 @@ public class Users {
     @DELETE
     @Consumes(MediaType.WILDCARD)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteUser(@PathParam("id") final String userEmail) {
+    public Response deleteUser(@Pac4JProfile CommonProfile profile,
+                               @PathParam("id") final String userEmail) {
         if (userEmail == null || userEmail.isEmpty())
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new SimpleMessage("Error",
@@ -182,7 +184,7 @@ public class Users {
                     .build();
 
         log.warn(String.format("User \"%s\" is requesting to delete the User with Email \"%s\"",
-                getSessionProfile(request).getAttribute("name"),
+                profile.getAttribute("name"),
                 userEmail));
 
         try {
@@ -207,26 +209,4 @@ public class Users {
                 String.format("User with email \"%s\" has been deleted", userEmail))
                 .asJson()).build();
     }
-
-    @Path("self/subscribe")
-    @POST
-    @Consumes(MediaType.WILDCARD)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response subscribeSelf() {
-        final CommonProfile sessionProfile = getSessionProfile(request);
-        log.info(String.format("Subscribing %s to Recorder Notifications", sessionProfile.getEmail()));
-        User[] users = DB.getUser("external_id = '" + sessionProfile.getId() + "'");
-        if (users.length != 1) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(
-                    new SimpleMessage("Error",
-                            "Current User does not exist. Try logging out and in again.").asJson()
-            ).build();
-        }
-
-        users[0].setNotify(true);
-        DB.updateUser(users[0]);
-
-        return Response.accepted().build();
-    }
-
 }

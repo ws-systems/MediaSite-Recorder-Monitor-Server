@@ -19,7 +19,17 @@
                     <div class="form-group row">
                         <label for="updateName" class="col-sm-3 col-form-label">Name: </label>
                         <div class="col-sm-9">
-                            <input readonly class="form-control-plaintext" title="Name" type="text" id="updateName" required>
+                            <input readonly class="form-control-plaintext" title="Name" type="text" id="updateName"
+                                   required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="updateAdmin" class="col-sm-3 col-form-label">Type: </label>
+                        <div class="col-sm-9">
+                            <select class="form-control" id="updateAdmin">
+                                <option value="false">Regular User</option>
+                                <option value="true">Administrator</option>
+                            </select>
                         </div>
                     </div>
                     <div class="form-check">
@@ -31,10 +41,12 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger float-left mr-auto" onclick="deleteUser()" id="deleteUserBtn">Delete User
+                <button type="button" class="btn btn-danger float-left mr-auto" onclick="deleteUser()"
+                        id="deleteUserBtn">Delete User
                 </button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="$('#updateUserModal').find('form').submit()">Update
+                <button type="button" class="btn btn-primary" onclick="$('#updateUserModal').find('form').submit()">
+                    Update
                     User
                 </button>
             </div>

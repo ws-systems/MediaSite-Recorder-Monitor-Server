@@ -1,53 +1,69 @@
 package systems.whitestar.mediasite_monitor.Routes;
 
+import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.jax.rs.annotations.Pac4JProfile;
+import org.pac4j.jax.rs.annotations.Pac4JSecurity;
 import systems.whitestar.mediasite_monitor.DB;
-import org.jtwig.web.servlet.JtwigRenderer;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import java.io.IOException;
+import javax.ws.rs.core.Response;
+import java.util.HashMap;
+import java.util.Map;
 
 import static systems.whitestar.mediasite_monitor.Routes.Route.*;
 
 /**
  * @author Tom Paulus
- *         Created on 5/28/17.
+ * Created on 5/28/17.
  */
-public class ManageIntegration extends HttpServlet {
-    private final JtwigRenderer renderer = JtwigRenderer.defaultRenderer();
+@Path("manage/integrations")
+public class ManageIntegration {
     private static final String TEMPLATE_PATH = "/WEB-INF/templates/manage-integrations.twig";
 
-    @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    @Context
+    private ServletContext context;
 
-        addMeta(request);
-        setUserData(request);
-        setNavBar(request);
 
+    @GET
+    @Consumes(MediaType.WILDCARD)
+    @Produces(MediaType.TEXT_HTML)
+    @Pac4JSecurity(clients = "OidcClient, FormClient", authorizers = "admin")
+    public Response getIndex(@Context final HttpServletRequest httpRequest,
+                             @Pac4JProfile CommonProfile profile) {
+        final Map<String, Object> attributes = new HashMap<>();
+
+        addMeta(attributes);
+        setUserData(httpRequest, profile, attributes);
+        setNavBar(attributes);
+
+        attributes.put("recorders", DB.getRecorder(""));
 
         // Mediasite Settings
-        request.setAttribute("ms_api_url", DB.getPreference("ms.url"));
-        request.setAttribute("ms_api_key", DB.getPreference("ms.api-key"));
-        request.setAttribute("ms_api_user", DB.getPreference("ms.api-user"));
+        attributes.put("ms_api_url", DB.getPreference("ms.url"));
+        attributes.put("ms_api_key", DB.getPreference("ms.api-key"));
+        attributes.put("ms_api_user", DB.getPreference("ms.api-user"));
 
         // Email Settings
-        request.setAttribute("email_host", DB.getPreference("email.host"));
-        request.setAttribute("email_port", DB.getPreference("email.port"));
-        request.setAttribute("email_ssl", Boolean.parseBoolean(DB.getPreference("email.ssl")));
-        request.setAttribute("email_username", DB.getPreference("email.username"));
-        request.setAttribute("email_from_name", DB.getPreference("email.from_name"));
-        request.setAttribute("email_from_email", DB.getPreference("email.from_email"));
+        attributes.put("email_host", DB.getPreference("email.host"));
+        attributes.put("email_port", DB.getPreference("email.port"));
+        attributes.put("email_ssl", Boolean.parseBoolean(DB.getPreference("email.ssl")));
+        attributes.put("email_username", DB.getPreference("email.username"));
+        attributes.put("email_from_name", DB.getPreference("email.from_name"));
+        attributes.put("email_from_email", DB.getPreference("email.from_email"));
 
         // Slack Settings
-        request.setAttribute("slack_enable", DB.getPreference("slack.enable"));
-        request.setAttribute("slack_webhook_url", DB.getPreference("slack.webhook_url"));
+        attributes.put("slack_enable", DB.getPreference("slack.enable"));
+        attributes.put("slack_webhook_url", DB.getPreference("slack.webhook_url"));
 
-        response.setHeader("Content-Type", MediaType.TEXT_HTML);
-        renderer.dispatcherFor(TEMPLATE_PATH)
-                .render(request, response);
+        String result = renderTemplate(TEMPLATE_PATH, attributes, context);
+
+        return Response.ok(result).build();
     }
 }

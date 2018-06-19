@@ -13,7 +13,8 @@
             <h1>Manage - Users</h1>
         </div>
         <div class="col my-auto">
-            <button type="button" class="btn btn-success float-right" data-toggle="modal" data-target="#createUserModal">Create User
+            <button type="button" class="btn btn-success float-right" data-toggle="modal"
+                    data-target="#createUserModal">Create User
             </button>
         </div>
     </div>
@@ -23,6 +24,7 @@
             <table class="table table-hover sortable mx-auto" id="users">
                 <thead>
                 <tr>
+                    <th scope="col" class="sorttable_nosort">{# Status Icon#}</th>
                     <th>Name</th>
                     <th>Email Address</th>
                     <th>Notify</th>
@@ -34,14 +36,24 @@
                     <tr id="user-{{ u.PK }}"
                         data-email="{{ u.email }}"
                         data-name="{{ u.name }}"
-                        data-notify="{{ u.notify }}">
+                        data-notify="{{ u.notify }}"
+                        data-admin="{{ u.admin }}">
+                        <th scope="row" class="agent-status">
+                            {% if u.admin -%}
+                                <span data-toggle="tooltip" data-placement="left" title="Administrator">
+                                    <i class="fas fa-user-cog"></i></span>
+                            {%- else -%}
+                                <span data-toggle="tooltip" data-placement="left" title="Regular User">
+                                    <i class="fas fa-user"></i></span>
+                            {%- endif %}
+                        </th>
                         <td>{{ u.name }}</td>
                         <td>{{ u.email }}</td>
                         <td class="text-justify">{% if u.notify -%}
-                                <i class="fa fa-check" aria-hidden="true"></i>
+                                <i class="fas fa-check" aria-hidden="true"></i>
                                 <span class="sr-only">Subscribed to notifications</span>
                             {%- else -%}
-                                <i class="fa fa-times" aria-hidden="true"></i>
+                                <i class="fas fa-times" aria-hidden="true"></i>
                                 <span class="sr-only">Not subscribed to notifications</span>
                             {%- endif %}
                         </td>
@@ -49,7 +61,7 @@
                             <button type="button"
                                     class="btn btn-secondary btn-sm"
                                     onclick="showEditModal(this)">
-                                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit User
+                                <i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp; Edit User
                             </button>
                         </td>
                     </tr>

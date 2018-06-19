@@ -1,11 +1,10 @@
 function updateOwnInfo() {
-    const $updateEmail = $('#update_selfEmail');
     var payload = {};
     payload.notify = $('#update_selfNotifyCheckbox')[0].checked;
 
     $.ajax({
         method: "PUT",
-        url: "/api/users/" + $('#update_selfPreviousEmail').val(),
+        url: "/api/self/profile",
         data: JSON.stringify(payload),
         contentType: "application/json; charset=utf-8",
         dataType: "json"
@@ -32,7 +31,7 @@ function updateOwnInfo() {
 function subscribeToNotifications() {
     $.ajax({
         method: "POST",
-        url: "/api/users/self/subscribe",
+        url: "/api/self/subscribe",
         contentType: "application/json; charset=utf-8"
     })
         .done(function () {

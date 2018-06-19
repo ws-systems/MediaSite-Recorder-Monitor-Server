@@ -28,7 +28,7 @@
     <div class="row pt-3">
         <div class="col mx-auto">
             <div class="alert alert-info" role="alert">
-                <strong><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp; Just a heads up&hellip;</strong>
+                <strong><i class="fas fa-info-circle" aria-hidden="true"></i>&nbsp; Just a heads up&hellip;</strong>
                 Unauthorized agents that have not checked-in within the past {{ agent_cleanup_rate }} hours will be
                 automatically removed to keep the agent list from getting cluttered and to save you the work of removing
                 agents you never wanted in the first place. Authorized agents will never be removed, even if they have
@@ -55,23 +55,28 @@
                                 {# Agent is Authorized #}
                                 {% if a.lastSeen > last_seen_delta %}
                                     {#Agent is Online#}
-                                    <i class="fa fa-check-circle fa-fw authorized online" aria-hidden="true"
-                                       data-toggle="tooltip" data-placement="left" title="Online and Authorized"></i>
+                                    <span data-toggle="tooltip" data-placement="left" title="Online and Authorized">
+                                        <i class="fas fa-check-circle fa-fw authorized online" aria-hidden="true"></i>\
+                                    </span>
                                 {% else %}
                                     {#Agent is Offline#}
-                                    <i class="fa fa-check-circle fa-fw authorized offline" aria-hidden="true"
-                                       data-toggle="tooltip" data-placement="left" title="Offline, but Authorized"></i>
+                                    <span data-toggle="tooltip" data-placement="left" title="Offline, but Authorized">
+                                        <i class="fas fa-check-circle fa-fw authorized offline" aria-hidden="true"></i>
+                                    </span>
                                 {% endif %}
                             {% else %}
                                 {# Agent is not Authorized #}
                                 {% if a.lastSeen > last_seen_delta %}
                                     {#Agent is Online#}
-                                    <i class="fa fa-times-circle fa-fw unauthorized online" aria-hidden="true"
-                                       data-toggle="tooltip" data-placement="left" title="Online, but Unauthorized"></i>
+                                    <span data-toggle="tooltip" data-placement="left" title="Online, but Unauthorized">
+                                        <i class="fas fa-times-circle fa-fw unauthorized online" aria-hidden="true"></i>
+                                    </span>
                                 {% else %}
                                     {#Agent is Offline#}
-                                    <i class="fa fa-times-circle fa-fw unauthorized offline" aria-hidden="true"
-                                       data-toggle="tooltip" data-placement="left" title="Offline and Unauthorized"></i>
+                                    <span data-toggle="tooltip" data-placement="left" title="Offline and Unauthorized">
+                                        <i class="fas fa-times-circle fa-fw unauthorized offline"
+                                           aria-hidden="true"></i>
+                                    </span>
                                 {% endif %}
                             {% endif %}
                         </th>
@@ -81,7 +86,7 @@
                             <button type="button"
                                     class="btn btn-secondary btn-sm"
                                     onclick="showEditModal(this)">
-                                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit Agent
+                                <i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp; Edit Agent
                             </button>
                         </td>
                     </tr>
@@ -91,8 +96,6 @@
         </div>
     </div>
 </div>
-
-{# TODO Agent Authorization/Deauthorization Workflow #}
 
 {% embed "footer.twig" %}
     {% block page_assets %}
