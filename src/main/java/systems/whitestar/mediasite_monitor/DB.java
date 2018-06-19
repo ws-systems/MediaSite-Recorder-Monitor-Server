@@ -6,7 +6,9 @@ import systems.whitestar.mediasite_monitor.Models.*;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -57,6 +59,12 @@ public class DB {
         return sessionFactory;
     }
 
+    /**
+     * Get a given preference by name
+     *
+     * @param name {@link String} Preference Name
+     * @return {@link String} Preference Value
+     */
     public static String getPreference(final String name) {
         try {
             EntityManager entityManager = sessionFactory.createEntityManager();
@@ -76,6 +84,39 @@ public class DB {
         return null;
     }
 
+    /**
+     * Get all preferences saved in the DB.
+     * This should not be directly delivered to the client, as it may contain sensitive information (like passwords).
+     *
+     * @return {@link Map}
+     */
+    public static Map<String, String> getPreferences() {
+        Map<String, String> preferenceMap = new HashMap<>();
+
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+
+        List<Preference> preferences = entityManager.createQuery("select p from Preference p").getResultList();
+        log.debug(String.format("Retrieved %d preferences", preferences.size()));
+        log.debug(preferences);
+
+        for (Preference preference : preferences) {
+            preferenceMap.put(preference.getSetting(), preference.getValue());
+        }
+
+        entityManager.getTransaction().commit();
+        entityManager.close();
+
+        return preferenceMap;
+    }
+
+    /**
+     * Set/update a given preference value. If a preference with that name already exists, the value is updated; else
+     * a preference with that value is created.
+     *
+     * @param name  {@link String} Preference Name
+     * @param value {@link String} Preference Value
+     */
     public static void setPreference(final String name, final String value) {
         final Preference preference = new Preference(name, value);
 
@@ -272,7 +313,7 @@ public class DB {
         entityManager.getTransaction().begin();
 
         long jobCount = ((long) entityManager.createQuery("select count(j.id) from AgentJob j").getSingleResult());
-        log.debug(String.format("Found %d AgentJobs in DB",jobCount));
+        log.debug(String.format("Found %d AgentJobs in DB", jobCount));
 
         entityManager.getTransaction().commit();
         entityManager.close();
@@ -291,7 +332,7 @@ public class DB {
         entityManager.close();
     }
 
-    public static void deleteAgentJob(final AgentJob job){
+    public static void deleteAgentJob(final AgentJob job) {
         log.warn(String.format("Deleting Job with ID: %s", job.getId()));
         EntityManager entityManager = sessionFactory.createEntityManager();
         entityManager.getTransaction().begin();

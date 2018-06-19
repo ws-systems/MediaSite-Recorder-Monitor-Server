@@ -109,8 +109,10 @@ public class Init implements ServletContextListener {
         Properties properties = new Properties();
         properties.load(this.getClass().getClassLoader().getResourceAsStream("defaults.properties"));
 
+        Map<String, String> dbPreferences = DB.getPreferences();
+
         for (Map.Entry<Object, Object> preference : properties.entrySet()) {
-            if (DB.getPreference(String.valueOf(preference.getKey())) == null) {
+            if (dbPreferences.containsKey(preference.getKey().toString())) {
                 log.info("No value in DB for " + String.valueOf(preference.getKey()) + "; Setting to Default Value of " + String.valueOf(preference.getValue()));
                 DB.setPreference(String.valueOf(preference.getKey()),
                         String.valueOf(preference.getValue()));

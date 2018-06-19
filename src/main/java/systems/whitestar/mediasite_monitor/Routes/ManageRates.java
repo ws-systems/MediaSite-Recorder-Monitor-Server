@@ -42,11 +42,13 @@ public class ManageRates {
         setUserData(httpRequest, profile, attributes);
         setNavBar(attributes);
 
-        attributes.put("list_sync", DB.getPreference("sync_db.enable"));
-        attributes.put("list_frequency", DB.getPreference("sync_db.frequency"));
-        attributes.put("status_sync", DB.getPreference("sync_recorder.enable"));
-        attributes.put("status_frequency", DB.getPreference("sync_recorder.frequency"));
-        attributes.put("status_retry_count", DB.getPreference("sync_recorder.retry_count"));
+        Map<String, String> preferences = DB.getPreferences();
+
+        attributes.put("list_sync", preferences.get("sync_db.enable"));
+        attributes.put("list_frequency", preferences.get("sync_db.frequency"));
+        attributes.put("status_sync", preferences.get("sync_recorder.enable"));
+        attributes.put("status_frequency", preferences.get("sync_recorder.frequency"));
+        attributes.put("status_retry_count", preferences.get("sync_recorder.retry_count"));
 
         return Response.ok(renderTemplate(TEMPLATE_PATH, attributes, context)).build();
     }
