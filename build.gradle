@@ -2,7 +2,6 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 plugins {
-    id 'io.franzbecker.gradle-lombok' version '1.11'
     id 'com.moowork.node' version '1.2.0'
     id 'com.moowork.gulp' version '1.2.0'
     id 'java'
@@ -18,10 +17,6 @@ sourceCompatibility = 1.8
 
 war {
     archiveName 'ms-monitor.war'
-}
-
-lombok {
-    sha256 = "" // skip verify Lombok task
 }
 
 gulp {
@@ -47,6 +42,10 @@ repositories {
 }
 
 dependencies {
+    // Lombok
+    compileOnly('org.projectlombok:lombok:1.18.0')
+    annotationProcessor 'org.projectlombok:lombok:1.18.0'
+
     // Logging
     compile group: 'log4j', name: 'log4j', version: '1.2.17'
     compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
