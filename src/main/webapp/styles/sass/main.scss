@@ -1,0 +1,10 @@
+@import "libs/functions";
+@import "libs/vars";
+
+@import "common";
+@import "index";
+
+body, html {
+  height: 100%;
+  display: grid;
+}

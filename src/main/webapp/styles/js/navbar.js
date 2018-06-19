@@ -11,7 +11,7 @@ function updateOwnInfo() {
     })
         .done(function (req) {
             swal("Okay!", "Your info has been updated!", "success");
-            const $updateUserModal = $('#updateSelfModal');
+            var $updateUserModal = $('#updateSelfModal');
             $updateUserModal.find('form')[0].reset();
             $updateUserModal.modal('hide');
         })

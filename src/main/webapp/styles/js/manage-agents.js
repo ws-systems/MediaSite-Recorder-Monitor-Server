@@ -1,11 +1,6 @@
-$(document).ready(function () {
-    // Enable Status Tooltips on this page
-    $('[data-toggle="tooltip"]').tooltip()
-});
-
-function showEditModal(elem) {
-    const $modal = $('#updateAgentModal');
-    const $agent = $($(elem).closest('tr'));
+function showAgentEditModal(elem) {
+    var $modal = $('#updateAgentModal');
+    var $agent = $($(elem).closest('tr'));
 
     var rowId = $agent.attr('id');
     $modal.find("#agentID").val(rowId.substring(rowId.indexOf('-') + 1));
@@ -40,7 +35,7 @@ function updateAgent() {
         dataType: "json"
     })
         .done(function (req) {
-            const loadDelay = 2500;
+            var loadDelay = 2500;
             $('#updateAgentModal').modal('hide');
 
             swal({
@@ -66,7 +61,7 @@ function updateAgent() {
 
 
 function deleteAgent() {
-    const $modal = $('#updateAgentModal');
+    var $modal = $('#updateAgentModal');
 
     var agentID = $modal.find('#agentID').val();
     $.ajax({

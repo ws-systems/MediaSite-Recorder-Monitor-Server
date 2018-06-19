@@ -12,9 +12,9 @@ $(document).ready(function () {
  *
  * @param elem DOM Context
  */
-function showEditModal(elem) {
-    const $modal = $('#updateUserModal');
-    const $user = $($(elem).closest('tr'));
+function showUserEditModal(elem) {
+    var $modal = $('#updateUserModal');
+    var $user = $($(elem).closest('tr'));
 
     var rowId = $user.attr('id');
     $modal.find("#userPK").val(rowId.substring(rowId.lastIndexOf('-') + 1));
@@ -34,7 +34,7 @@ function showEditModal(elem) {
 }
 
 function updateUser() {
-    const $updateEmail = $('#updateEmail');
+    var $updateEmail = $('#updateEmail');
 
     var payload = {};
     payload.name = $('#updateName').val();
@@ -75,7 +75,7 @@ function updateUser() {
             }
 
             swal("Okay!", "User has been updated.", "success");
-            const $updateUserModal = $('#updateUserModal');
+            var $updateUserModal = $('#updateUserModal');
             $updateUserModal.find('form')[0].reset();
             $updateUserModal.modal('hide');
         })
@@ -93,7 +93,7 @@ function updateUser() {
 }
 
 function deleteUser() {
-    const $modal = $('#updateUserModal');
+    var $modal = $('#updateUserModal');
 
     var userEmail = $modal.find('#updateEmail').val();
     $.ajax({

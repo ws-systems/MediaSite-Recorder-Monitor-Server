@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "@fortawesome/fontawesome": "^1.1.8",
+    "@fortawesome/fontawesome-free-brands": "^5.0.13",
+    "@fortawesome/fontawesome-free-regular": "^5.0.13",
+    "@fortawesome/fontawesome-free-solid": "^5.0.13",
+    "bootstrap": "^4.1.1",
+    "gasparesganga-jquery-loading-overlay": "^2.1.4",
+    "jquery": "^3.3.1",
+    "popper.js": "^1.14.3",
+    "sweetalert": "^2.1.0"
+  },
+  "devDependencies": {
+    "gulp": "^4.0.0",
+    "gulp-autoprefixer": "^4.1.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-filter": "^5.1.0",
+    "gulp-imagemin": "^4.1.0",
+    "gulp-sass": "^4.0.1",
+    "gulp-uglify": "^3.0.0",
+    "pump": "^2.0.1"
+  },
+  "name": "webapp",
+  "version": "1.0.0",
+  "license": "MIT"
+}

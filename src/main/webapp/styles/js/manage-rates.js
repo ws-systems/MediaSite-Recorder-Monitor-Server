@@ -1,11 +1,11 @@
-function updateSettings() {
+function updateRates() {
     $.LoadingOverlay("show", {
         image       : "",
         fontawesome : "fas fa-spinner fa-spin"
     });
 
     var payload = [];
-    const $mutableSettings = $('.mutable-setting');
+    var $mutableSettings = $('.mutable-setting');
 
     for (var i = 0; i < $mutableSettings.length; i++) {
         var $settingInput = $($mutableSettings[i]);
@@ -17,18 +17,19 @@ function updateSettings() {
         }
     }
 
+
     $.ajax({
         method: "PUT",
-        url: "/api/integrations/",
+        url: "/api/rates/",
         data: JSON.stringify(payload),
         contentType: "application/json; charset=utf-8",
         dataType: "json"
     })
         .done(function (req) {
-            const loadDelay = 5000;
+            var loadDelay = 5000;
 
             swal({
-                title: "Settings Updated!",
+                title: "Rates Updated!",
                 text: "Please wait a moment while they are being applied.<br>" +
                 "This page will refresh automatically when done.",
                 timer: loadDelay,

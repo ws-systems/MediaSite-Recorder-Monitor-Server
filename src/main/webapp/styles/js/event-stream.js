@@ -1,17 +1,17 @@
-const refreshRate = 2500; // Check that the Stream is Alive Every X Milliseconds
+var refreshRate = 2500; // Check that the Stream is Alive Every X Milliseconds
 
 var SSE_source = null;
 var processedEvents = [];
 
 $(document).ready(function () {
-    loadEvents();
-    window.setInterval(checkStream, refreshRate);
+    loadRecorderEvents();
+    window.setInterval(checkRecorderStream, refreshRate);
 });
 
 /**
  * Load Events via Server Sent Events
  */
-function loadEvents() {
+function loadRecorderEvents() {
     SSE_source = new EventSource("/api/stream");
     SSE_source.onmessage = function (event) {
         var obj = JSON.parse(event.data);
@@ -19,7 +19,7 @@ function loadEvents() {
 
         if (!processedEvents.includes(obj.id)) {
             processedEvents.push(obj.id);
-            const $recorderTable = $("#recorder-table");
+            var $recorderTable = $("#recorder-table");
             var $row;
 
             switch (obj.cause) {
@@ -94,15 +94,15 @@ function loadEvents() {
     };
 
     SSE_source.onError = function () {
-        loadEvents();
+        loadRecorderEvents();
     };
 }
 
 /**
  * Check if the Stream is closed, and if so, recreate and open it.
  */
-function checkStream() {
+function checkRecorderStream() {
     if (SSE_source.readyState === 2) {  // CLOSED == 2
-        loadEvents();
+        loadRecorderEvents();
     }
 }

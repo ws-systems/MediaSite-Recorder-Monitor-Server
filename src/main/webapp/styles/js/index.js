@@ -28,3 +28,8 @@ function showRecorderByID(recorderID) {
         }
     });
 }
+
+$(document).ready(function () {
+    // Enable Status Tooltips on this page
+    $('[data-toggle="tooltip"]').tooltip()
+});

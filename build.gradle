@@ -2,22 +2,19 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 plugins {
-    id 'io.franzbecker.gradle-lombok' version '1.8'
+    id 'io.franzbecker.gradle-lombok' version '1.11'
+    id 'com.moowork.node' version '1.2.0'
+    id 'com.moowork.gulp' version '1.2.0'
+    id 'java'
+    id 'war'
 }
 
 group 'systems.whitestar'
 version '2.0'
+
 final def versionCode = "${project.version}"
 final def buildCode = "${buildNumber()}"
-
-apply plugin: 'java'
-apply plugin: 'war'
-
-
-repositories {
-    mavenCentral()
-    jcenter()
-}
+sourceCompatibility = 1.8
 
 war {
     archiveName 'ms-monitor.war'
@@ -25,6 +22,28 @@ war {
 
 lombok {
     sha256 = "" // skip verify Lombok task
+}
+
+gulp {
+    // Set the directory where gulpfile.js should be found
+    workDir = file("${project.projectDir}/src/main/webapp")
+
+    // Whether colors should output on the terminal
+    colors = true
+
+    // Whether output from Gulp should be buffered - useful when running tasks in parallel
+    bufferOutput = false
+}
+
+node {
+    workDir = file("${project.projectDir}/src/main/webapp/")
+    nodeModulesDir = file("${project.projectDir}/src/main/webapp/")
+    npmWorkDir = file("${project.buildDir}/npm")
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
 }
 
 dependencies {
@@ -67,7 +86,6 @@ dependencies {
     compile group: 'org.pac4j', name: 'jersey-pac4j', version: '2.2.0'
     compile group: 'org.pac4j', name: 'jax-rs-pac4j', version: '2.2.0'
 
-
     // Scheduler
     compile group: 'org.quartz-scheduler', name: 'quartz', version: '2.3.0'
 
@@ -76,7 +94,7 @@ dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '22.0'
 
     // Unit Tests
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
 static def buildNumber() {
@@ -99,11 +117,19 @@ def makeBuildInfoFile(versionCode, buildCode) {
     config.store(new FileOutputStream(configFile), null)
 }
 
-clean.doLast {
+clean.doFirst {
+    // Delete Generated Assets
+    delete "${project.projectDir}/src/main/webapp/assets"
+
     // Delete Build Info File
-    new File('src/main/resources/build_info.properties').delete()
+    delete "${project.projectDir}/src/main/resources/build_info.properties"
 }
 
 processResources.doFirst {
     makeBuildInfoFile(versionCode, buildCode)
 }
+
+installGulp.dependsOn npm_install
+installGulp.dependsOn npm_update
+gulp_build.dependsOn installGulp
+compileJava.dependsOn gulp_build
