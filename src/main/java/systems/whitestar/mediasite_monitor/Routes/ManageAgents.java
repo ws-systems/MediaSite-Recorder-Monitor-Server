@@ -51,8 +51,6 @@ public class ManageAgents {
         attributes.put("agent_cleanup_rate", MAX_AGE);
         attributes.put("agent_job_count", DB.getAgentJobCount());
 
-        String result = renderTemplate(TEMPLATE_PATH, attributes, context);
-
-        return Response.ok(result).build();
+        return Response.ok(renderTemplate(TEMPLATE_PATH, attributes, context)).build();
     }
 }

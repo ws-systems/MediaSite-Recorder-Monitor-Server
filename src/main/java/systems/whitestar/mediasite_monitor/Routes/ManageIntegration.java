@@ -62,8 +62,6 @@ public class ManageIntegration {
         attributes.put("slack_enable", DB.getPreference("slack.enable"));
         attributes.put("slack_webhook_url", DB.getPreference("slack.webhook_url"));
 
-        String result = renderTemplate(TEMPLATE_PATH, attributes, context);
-
-        return Response.ok(result).build();
+        return Response.ok(renderTemplate(TEMPLATE_PATH, attributes, context)).build();
     }
 }

@@ -45,8 +45,6 @@ public class ManageUsers {
 
         attributes.put("users", DB.getUser(""));
 
-        String result = renderTemplate(TEMPLATE_PATH, attributes, context);
-
-        return Response.ok(result).build();
+        return Response.ok(renderTemplate(TEMPLATE_PATH, attributes, context)).build();
     }
 }

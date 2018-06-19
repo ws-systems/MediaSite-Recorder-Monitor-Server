@@ -46,9 +46,7 @@ public class Index {
 
         attributes.put("recorders", DB.getRecorder(""));
 
-        String result = renderTemplate(TEMPLATE_PATH, attributes, context);
-
-        return Response.ok(result).build();
+        return Response.ok(renderTemplate(TEMPLATE_PATH, attributes, context)).build();
     }
 
 }

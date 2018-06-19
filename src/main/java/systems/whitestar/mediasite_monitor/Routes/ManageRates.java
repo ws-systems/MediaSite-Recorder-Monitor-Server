@@ -48,8 +48,6 @@ public class ManageRates {
         attributes.put("status_frequency", DB.getPreference("sync_recorder.frequency"));
         attributes.put("status_retry_count", DB.getPreference("sync_recorder.retry_count"));
 
-        String result = renderTemplate(TEMPLATE_PATH, attributes, context);
-
-        return Response.ok(result).build();
+        return Response.ok(renderTemplate(TEMPLATE_PATH, attributes, context)).build();
     }
 }

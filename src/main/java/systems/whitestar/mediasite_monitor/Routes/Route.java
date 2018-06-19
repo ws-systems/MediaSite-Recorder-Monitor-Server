@@ -12,10 +12,11 @@ import systems.whitestar.mediasite_monitor.Secret;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
+import javax.ws.rs.core.StreamingOutput;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.MalformedURLException;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
 
@@ -78,27 +79,22 @@ import static systems.whitestar.mediasite_monitor.Routes.ManageAgents.ONLINE_DEL
      * @param templatePath {@link String} Template Path (Servlet Relative)
      * @param attributes   {@link Map} Model Attributes
      * @param context      {@link ServletContext} Servlet
-     * @return {@link String} Render Result (UTF-8 Encoded)
+     * @return {@link StreamingOutput} Render Result
      */
-    static String renderTemplate(String templatePath, Map<String, Object> attributes, ServletContext context) {
-        JtwigTemplate template;
+    static StreamingOutput renderTemplate(String templatePath, Map<String, Object> attributes, ServletContext context) {
         try {
-            template = JtwigTemplate.fileTemplate(context.getResource(templatePath).getPath());
+            final JtwigTemplate template = JtwigTemplate.fileTemplate(context.getResource(templatePath).getPath());
+            final JtwigModel model = JtwigModel.newModel(attributes);
+
+            return os -> {
+                Writer writer = new BufferedWriter(new OutputStreamWriter(os));
+                template.render(model, os);
+                writer.flush();
+            };
+
         } catch (MalformedURLException e) {
             log.error("Incorrectly formatted Template URL", e);
             throw new RuntimeException(e);
         }
-        JtwigModel model = JtwigModel.newModel(attributes);
-
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        template.render(model, os);
-        String result = null;
-
-        try {
-            result = new String(os.toByteArray(), StandardCharsets.UTF_8.name());
-        } catch (UnsupportedEncodingException e) {
-            log.error("Unsupported Encoding", e);
-        }
-        return result;
     }
 }
