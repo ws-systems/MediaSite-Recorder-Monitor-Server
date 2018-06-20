@@ -7,7 +7,7 @@ body {
   /* NAV BAR*/
   padding-top: 6rem;
   /* Margin bottom by footer height */
-  margin-bottom: 50px;
+  margin-bottom: 40px;
 }
 
 li.nav-item {
@@ -80,29 +80,7 @@ body > div.container {
 /* Sorting and related Icons */
 
 #sorttable_sortfwdind, #sorttable_sortrevind {
-  display: none;
-}
-
-/*noinspection CssNoGenericFontName*/
-
-table.sortable th::after {
-  font-family: fontawesome;
   padding-left: 5px;
-  display: inline-block;
-}
-
-th {
-  &.sorttable_sorted::after, &.sorttable_sorted_reverse::after {
-    font-family: fontawesome;
-    padding-left: 5px;
-    display: inline-block;
-  }
-  &.sorttable_sorted::after {
-    content: "\f0d8";
-  }
-  &.sorttable_sorted_reverse::after {
-    content: "\f0d7";
-  }
 }
 
 /* Page Header Styles */
