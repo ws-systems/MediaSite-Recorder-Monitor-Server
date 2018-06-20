@@ -4,8 +4,10 @@ var SSE_source = null;
 var processedEvents = [];
 
 $(document).ready(function () {
-    loadRecorderEvents();
-    window.setInterval(checkRecorderStream, refreshRate);
+    if ($('body').hasClass("index")) {
+        loadRecorderEvents();
+        window.setInterval(checkRecorderStream, refreshRate);
+    }
 });
 
 /**

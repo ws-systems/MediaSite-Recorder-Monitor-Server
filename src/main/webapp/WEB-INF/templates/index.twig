@@ -1,6 +1,5 @@
 {% embed "header.twig" with { active: "index"} %}
     {% block page_assets %}
-        <link rel="stylesheet" href="/assets/css/index.css">
     {% endblock %}
 {% endembed %}
 {% include "navbar.twig" with { active: "index"} %}
@@ -52,7 +51,5 @@
 
 {% embed "footer.twig" %}
     {% block page_assets %}
-        <script src="/styles/js/index.js" type="text/javascript"></script>
-        <script src="/styles/js/event-stream.js" type="application/javascript"></script>
     {% endblock %}
 {% endembed %}
