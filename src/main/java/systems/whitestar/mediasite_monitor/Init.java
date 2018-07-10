@@ -151,7 +151,7 @@ public class Init implements ServletContextListener {
                     throw new SchedulerException("Trigger Frequency not set");
                 }
             } else
-                log.warn("DB Sync has been DISABLED via Environment Variable (MS_SYNC_DISABLE)");
+                log.warn("Mediasite has been DISABLED via Environment Variable (MS_SYNC_DISABLE)");
         } catch (SchedulerException e) {
             log.error("Problem Scheduling DB Sync Job", e);
         }
@@ -179,9 +179,40 @@ public class Init implements ServletContextListener {
                     SyncRecorderStatus.schedule(scheduler, syncRate, recorder.getId());
                 }
             } else
-                log.warn("Recorder Sync has been DISABLED via Environment Variable (MS_SYNC_DISABLE)");
+                log.warn("Mediasite Sync has been DISABLED via Environment Variable (MS_SYNC_DISABLE)");
         } catch (SchedulerException e) {
             log.error("Problem Scheduling Recorder Sync Job(s)", e);
+        }
+
+        try {
+            if (!(envDisable != null && envDisable.toUpperCase().equals("TRUE"))) {
+                if (Boolean.parseBoolean(DB.getPreference("expectation_checks.enable"))) {
+                    final String pullTime = DB.getPreference("expectation_checks.time");
+                    log.debug("Pull Time: " + pullTime);
+
+                    if (pullTime == null || pullTime.isEmpty()) {
+                        log.warn("Expectation Pull Time has not been set - aborting");
+                        throw new SchedulerException("Trigger Frequency not set");
+                    }
+
+                    String[] time = pullTime.split(":");
+                    ScheduleExpectationChecks.schedule(scheduler, Integer.parseInt(time[0]), Integer.parseInt(time[1]), true);
+                    log.info(String.format("Scheduled Expectation Schedule Pull for %s:%s", time[0], time[1]));
+                } else {
+                    log.info("Expectation checks have been disabled via the UI.");
+
+                    log.info("Pausing Schedule Recorder Expectation Check Trigger Group");
+                    log.debug("Trigger Group: " + ScheduleExpectationChecks.JOB_GROUP);
+                    scheduler.pauseTriggers(GroupMatcher.groupContains(ScheduleExpectationChecks.JOB_GROUP));
+
+                    log.info("Pausing Recorder Expectation Check Trigger Group");
+                    log.debug("Trigger Group: " + RecorderExpectationCheck.JOB_GROUP);
+                    scheduler.pauseTriggers(GroupMatcher.groupContains(RecorderExpectationCheck.JOB_GROUP));
+                }
+            } else
+                log.warn("Mediasite Sync has been DISABLED via Environment Variable (MS_SYNC_DISABLE)");
+        } catch (SchedulerException e) {
+            log.error("Problem Scheduling Schedule Pull Job", e);
         }
     }
 

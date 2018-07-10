@@ -9,7 +9,7 @@ plugins {
 }
 
 group 'systems.whitestar'
-version '2.0'
+version '2.1'
 
 final def versionCode = "${project.version}"
 final def buildCode = "${buildNumber()}"

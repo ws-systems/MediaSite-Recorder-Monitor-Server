@@ -1,6 +1,7 @@
 package systems.whitestar.mediasite_monitor.Hooks;
 
 import systems.whitestar.mediasite_monitor.Models.Recorder;
+import systems.whitestar.mediasite_monitor.Models.RecorderExpectation;
 import systems.whitestar.mediasite_monitor.Models.User;
 
 
@@ -63,4 +64,20 @@ public abstract class EventHook {
      * @return {@link Object} Hook Response
      */
     abstract Object onRecorderAlarmClear(Recorder recorder);
+
+    /**
+     * Fired when a Schedule Expectation check is executed and the result is OK.
+     *
+     * @param expectation {@link RecorderExpectation} Executed Expectation Check
+     * @return {@link Object} Hook Response
+     */
+    abstract Object onExpectationPass(RecorderExpectation expectation);
+
+    /**
+     *  Fired when a Schedule Expectation check is executed and the result is FAIL.
+     *
+     * @param expectation {@link RecorderExpectation} Executed Expectation Check
+     * @return {@link Object} Hook Response
+     */
+    abstract Object onExpectationFail(RecorderExpectation expectation);
 }

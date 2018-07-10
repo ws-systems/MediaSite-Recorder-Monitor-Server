@@ -62,6 +62,7 @@ public class Register {
         if (DB.getAgent(String.format("id = '%s'", agent.getId())).length == 0) {
             log.info(String.format("Agent %s does not exist - creating", agent.getId()));
             agent.setLastSeen(new Timestamp(System.currentTimeMillis()));
+            agent.setAuthorized(false);
             DB.updateAgent(agent);
             status = Response.Status.CREATED;
         } else {

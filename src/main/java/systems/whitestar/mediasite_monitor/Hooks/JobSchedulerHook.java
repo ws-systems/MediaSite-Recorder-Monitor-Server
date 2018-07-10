@@ -7,6 +7,7 @@ import org.quartz.SchedulerException;
 import systems.whitestar.mediasite_monitor.DB;
 import systems.whitestar.mediasite_monitor.Jobs.SyncRecorderStatus;
 import systems.whitestar.mediasite_monitor.Models.Recorder;
+import systems.whitestar.mediasite_monitor.Models.RecorderExpectation;
 import systems.whitestar.mediasite_monitor.Models.User;
 import systems.whitestar.mediasite_monitor.Schedule;
 
@@ -71,6 +72,16 @@ class JobSchedulerHook extends EventHook {
     }
 
     Object onRecorderAlarmClear(Recorder recorder) {
+        // Intentionally Blank
+        return null;
+    }
+
+    Object onExpectationPass(RecorderExpectation expectation) {
+        // Intentionally Blank
+        return null;
+    }
+
+    Object onExpectationFail(RecorderExpectation expectation) {
         // Intentionally Blank
         return null;
     }

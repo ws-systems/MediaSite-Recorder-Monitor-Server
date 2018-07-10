@@ -30,7 +30,7 @@ function updateRates() {
 
             swal({
                 title: "Rates Updated!",
-                text: "Please wait a moment while they are being applied.<br>" +
+                text: "Please wait a moment while they are being applied." +
                 "This page will refresh automatically when done.",
                 timer: loadDelay,
                 html: true,

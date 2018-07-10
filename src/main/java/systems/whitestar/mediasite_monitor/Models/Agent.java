@@ -31,7 +31,7 @@ public class Agent {
     private String name;
 
     @Expose
-    private Boolean authorized;
+    private Boolean authorized = false;
 
     @Column(name = "last_seen")
     @Expose(deserialize = false)

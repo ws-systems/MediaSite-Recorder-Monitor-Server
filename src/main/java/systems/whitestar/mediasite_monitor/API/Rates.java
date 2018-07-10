@@ -7,12 +7,13 @@ import org.pac4j.jax.rs.annotations.Pac4JProfile;
 import org.pac4j.jax.rs.annotations.Pac4JSecurity;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
+import systems.whitestar.mediasite_monitor.DB;
+import systems.whitestar.mediasite_monitor.Jobs.RecorderExpectationCheck;
+import systems.whitestar.mediasite_monitor.Jobs.ScheduleExpectationChecks;
+import systems.whitestar.mediasite_monitor.Jobs.SyncRecorderDB;
+import systems.whitestar.mediasite_monitor.Jobs.SyncRecorderStatus;
 import systems.whitestar.mediasite_monitor.Models.Preference;
 import systems.whitestar.mediasite_monitor.Models.SimpleMessage;
-import systems.whitestar.mediasite_monitor.DB;
-import systems.whitestar.mediasite_monitor.Jobs.SyncRecorderDB;
-import systems.whitestar.mediasite_monitor.Jobs
-        .SyncRecorderStatus;
 import systems.whitestar.mediasite_monitor.Schedule;
 
 import javax.servlet.http.HttpServletRequest;
@@ -95,6 +96,17 @@ public class Rates {
                         case "sync_recorder.frequency":
                             updateStatusSchedule(Integer.parseInt(preference.getValue()));
                             break;
+
+                        case "expectation_checks.enable":
+                            updateExpectationTrigger(Boolean.parseBoolean(preference.getValue()));
+                            break;
+
+                        case "expectation_checks.time":
+                            updateExpectationSchedule(
+                                    Integer.parseInt(preference.getValue().split(":")[0]),
+                                    Integer.parseInt(preference.getValue().split(":")[1])
+                            );
+                            break;
                     }
                 } catch (SchedulerException e) {
                     log.error("Problem Updating Job Triggers", e);
@@ -134,6 +146,27 @@ public class Rates {
         } else {
             log.warn("Recorder Status Trigger is being Disabled");
             scheduler.pauseTriggers(matcher);
+        }
+    }
+
+    private void updateExpectationTrigger(final boolean enabled) throws SchedulerException {
+        final Scheduler scheduler = Schedule.getScheduler();
+
+        final GroupMatcher<TriggerKey> scheduleMatcher = GroupMatcher.groupEquals(ScheduleExpectationChecks.JOB_GROUP);
+        final GroupMatcher<TriggerKey> expectationMatcher = GroupMatcher.groupContains(RecorderExpectationCheck.JOB_GROUP);
+
+        if (enabled) {
+            log.info("Expectation Schedule Pull Trigger is being Enabled");
+            scheduler.resumeTriggers(scheduleMatcher);
+
+            log.info("Already scheduled expectation checks (if any) are being resumed");
+            scheduler.resumeTriggers(expectationMatcher);
+        } else {
+            log.warn("Expectation Schedule Pull Trigger is being Disabled");
+            scheduler.pauseTriggers(scheduleMatcher);
+
+            log.info("Pausing Already scheduled expectation checks (if any)");
+            scheduler.pauseTriggers(expectationMatcher);
         }
     }
 
@@ -199,6 +232,41 @@ public class Rates {
                     .withSchedule(simpleSchedule()
                             .withIntervalInMinutes(frequency)
                             .repeatForever())
+                    .startNow()
+                    .build();
+
+            scheduler.rescheduleJob(oldKey, newTrigger);
+        }
+    }
+
+    private void updateExpectationSchedule(int hour, int minute) throws SchedulerException {
+        log.info(String.format("Rescheduling Expectation Schedule Pull Job to run every day at %d:%d", hour, minute));
+
+        final Scheduler scheduler = Schedule.getScheduler();
+        log.debug("Paused Trigger Groups: " + Arrays.toString(scheduler.getPausedTriggerGroups().toArray()));
+
+        // retrieve the current triggers
+        Set<TriggerKey> triggerKeys = scheduler.getTriggerKeys(GroupMatcher.triggerGroupStartsWith(ScheduleExpectationChecks.JOB_GROUP));
+
+        if (triggerKeys.size() == 0) {
+            log.warn("Couldn't find any Triggers for Expectation Schedule Pull Job - Aborting Update to trigger - Does not exist");
+            return;
+        }
+
+
+        for (TriggerKey oldKey : triggerKeys) {
+            Trigger oldTrigger = scheduler.getTrigger(oldKey);
+
+            // obtain a builder that would produce the trigger
+            TriggerBuilder tb = oldTrigger.getTriggerBuilder();
+
+            // update the schedule associated with the builder, and build the new trigger
+            // (other builder methods could be called, to change the trigger in any desired way)
+            Trigger newTrigger = tb
+                    .withIdentity(oldTrigger.getKey().getName(), oldTrigger.getKey().getGroup())
+                    .withSchedule(
+                            CronScheduleBuilder.dailyAtHourAndMinute(hour, minute)
+                    )
                     .startNow()
                     .build();
 

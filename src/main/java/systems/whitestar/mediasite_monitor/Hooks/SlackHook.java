@@ -6,6 +6,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import lombok.extern.log4j.Log4j;
 import systems.whitestar.mediasite_monitor.DB;
 import systems.whitestar.mediasite_monitor.Models.Recorder;
+import systems.whitestar.mediasite_monitor.Models.RecorderExpectation;
 import systems.whitestar.mediasite_monitor.Models.User;
 import systems.whitestar.mediasite_monitor.Notify;
 
@@ -48,23 +49,23 @@ public class SlackHook extends EventHook {
         return response;
     }
 
-    @Override Object onUserCreate(User user) {
+    Object onUserCreate(User user) {
         return null;
     }
 
-    @Override Object onUserUpdate(User user) {
+    Object onUserUpdate(User user) {
         return null;
     }
 
-    @Override Object onRecorderRecordUpdate(Recorder[] recorders) {
+    Object onRecorderRecordUpdate(Recorder[] recorders) {
         return null;
     }
 
-    @Override Object onRecorderStatusUpdate(Recorder recorder) {
+    Object onRecorderStatusUpdate(Recorder recorder) {
         return null;
     }
 
-    @Override Object onRecorderAlarmActivate(Recorder recorder) {
+    Object onRecorderAlarmActivate(Recorder recorder) {
         if (!Boolean.parseBoolean(DB.getPreference("slack.enable"))) {
             log.info("Skipping Slack Notification for Recorder in Alarm - Integration Disabled");
             return null;
@@ -75,7 +76,7 @@ public class SlackHook extends EventHook {
         return true;
     }
 
-    @Override Object onRecorderAlarmClear(Recorder recorder) {
+    Object onRecorderAlarmClear(Recorder recorder) {
         if (!Boolean.parseBoolean(DB.getPreference("slack.enable"))) {
             log.info("Skipping Slack Notification for Recorder Alarm Cleared - Integration Disabled");
             return null;
@@ -83,6 +84,16 @@ public class SlackHook extends EventHook {
 
         postSlackWebhook(CLEARED_TEMPLATE_PATH, recorder);
 
+        return null;
+    }
+
+    Object onExpectationPass(RecorderExpectation expectation) {
+        // Intentionally Blank
+        return null;
+    }
+
+    Object onExpectationFail(RecorderExpectation expectation) {
+        // Intentionally Blank
         return null;
     }
 }

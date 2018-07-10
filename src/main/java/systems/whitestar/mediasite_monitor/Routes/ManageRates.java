@@ -46,9 +46,13 @@ public class ManageRates {
 
         attributes.put("list_sync", preferences.get("sync_db.enable"));
         attributes.put("list_frequency", preferences.get("sync_db.frequency"));
+
         attributes.put("status_sync", preferences.get("sync_recorder.enable"));
         attributes.put("status_frequency", preferences.get("sync_recorder.frequency"));
         attributes.put("status_retry_count", preferences.get("sync_recorder.retry_count"));
+
+        attributes.put("expectations_enable", preferences.get("expectation_checks.enable"));
+        attributes.put("expectations_time", preferences.get("expectation_checks.time"));
 
         return Response.ok(renderTemplate(TEMPLATE_PATH, attributes, context)).build();
     }
