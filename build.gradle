@@ -43,7 +43,7 @@ repositories {
 
 dependencies {
     // Lombok
-    compileOnly('org.projectlombok:lombok:1.18.0')
+    compile 'org.projectlombok:lombok:1.18.0'
     annotationProcessor 'org.projectlombok:lombok:1.18.0'
 
     // Logging

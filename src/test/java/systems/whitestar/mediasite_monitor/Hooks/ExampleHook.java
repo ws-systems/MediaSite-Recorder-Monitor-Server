@@ -1,6 +1,7 @@
 package systems.whitestar.mediasite_monitor.Hooks;
 
 import systems.whitestar.mediasite_monitor.Models.Recorder;
+import systems.whitestar.mediasite_monitor.Models.RecorderExpectation;
 import systems.whitestar.mediasite_monitor.Models.User;
 import lombok.extern.log4j.Log4j;
 
@@ -43,5 +44,15 @@ public class ExampleHook extends EventHook {
     Object onRecorderAlarmClear(Recorder recorder) {
         log.info("On Recorder Alarm Clear Hook Fired!");
         return true;
+    }
+
+    @Override Object onExpectationPass(RecorderExpectation expectation) {
+        log.info("On Expectation Pass Hook Fired!");
+        return null;
+    }
+
+    @Override Object onExpectationFail(RecorderExpectation expectation) {
+        log.info("On Expectation Fail Hook Fired!");
+        return null;
     }
 }
