@@ -1,4 +1,6 @@
 # MediaSite-Recorder-Monitor
+![Build Status](https://build.whitestar.systems/app/rest/builds/buildType:MSMON_ServerBuild/statusIcon.svg)
+
 TODO: Documentation and GitBook for Setup
 TODO: JDoc for various Classes and Methods as needed.
 
