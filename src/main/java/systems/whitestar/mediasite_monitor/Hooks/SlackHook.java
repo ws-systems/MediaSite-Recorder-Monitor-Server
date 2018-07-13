@@ -22,6 +22,7 @@ import java.util.HashMap;
 public class SlackHook extends EventHook {
     private static final String ALERT_TEMPLATE_PATH = "slack_templates/recorder_in_alarm.twig";
     private static final String CLEARED_TEMPLATE_PATH = "slack_templates/recorder_alarm_cleared.twig";
+    private static final String EXPECTATION_FAIL_TEMPLATE_PATH = "slack_templates/recorder_expectation_failed.twig";
 
     static HttpResponse<String> postSlackWebhook(final String templatePath, Recorder recorder) {
         HttpResponse<String> response = null;
@@ -84,7 +85,7 @@ public class SlackHook extends EventHook {
 
         postSlackWebhook(CLEARED_TEMPLATE_PATH, recorder);
 
-        return null;
+        return true;
     }
 
     Object onExpectationPass(RecorderExpectation expectation) {
@@ -93,7 +94,13 @@ public class SlackHook extends EventHook {
     }
 
     Object onExpectationFail(RecorderExpectation expectation) {
-        // Intentionally Blank
+        if (!Boolean.parseBoolean(DB.getPreference("slack.enable"))) {
+            log.info("Skipping Slack Notification for Recorder Expectation Failed - Integration Disabled");
+            return null;
+        }
+
+        postSlackWebhook(EXPECTATION_FAIL_TEMPLATE_PATH, expectation.getRecorder());
+
         return null;
     }
 }
