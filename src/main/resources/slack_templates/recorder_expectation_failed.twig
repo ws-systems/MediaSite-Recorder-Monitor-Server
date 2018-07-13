@@ -1,0 +1,29 @@
+{
+"attachments": [
+{
+"fallback": "Recorder {{ recorder.Name }} failed to meet the Expectation.",
+"color": "#dc3545",
+"title": "Recorder in Alarm",
+"text": "The recorder did not meet the expectation (typically is Recording) for the scheduled time. This is usually very bad.",
+"fields": [
+{
+"title": "Name",
+"value": "{{ recorder.Name }}",
+"short": true
+},
+{
+"title": "Status",
+"value": "{{ recorder.status.stateString }}",
+"short": true
+},
+{
+"title": "Last Seen",
+"value": "{{ recorder.lastSeen }}",
+"short": false
+}
+],
+"footer": "MS Recorder Monitor",
+"ts": {{ generated_ts }}
+}
+]
+}

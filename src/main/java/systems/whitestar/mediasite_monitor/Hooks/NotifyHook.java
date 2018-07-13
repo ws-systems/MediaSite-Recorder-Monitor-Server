@@ -20,6 +20,7 @@ import java.util.HashMap;
 @SuppressWarnings("unused")
 @Log4j class NotifyHook extends EventHook {
     private static final String ALERT_TEMPLATE_PATH = "email_templates/recorder_in_alarm.twig";
+    private static final String EXPECTATION_TEMPLATE_PATH = "email_templates/recorder_expectation_failed.twig";
 
     Object onRecorderAlarmActivate(Recorder recorder) {
         if (recorder == null) return false;
@@ -88,7 +89,39 @@ import java.util.HashMap;
     }
 
     Object onExpectationFail(RecorderExpectation expectation) {
-        // Intentionally Blank
-        return null;
+        if (expectation == null) return false;
+
+        User[] usersToNotify = DB.getUser("notify=1");
+        Notify.Recipient[] recipients = new Notify.Recipient[usersToNotify.length];
+        for (int i = 0; i < usersToNotify.length; i++) {
+            User user = usersToNotify[i];
+            recipients[i] = new Notify.Recipient(user.getName(),
+                    user.getEmail());
+        }
+
+        try {
+            Notify notification = Notify.builder()
+                    .subject("[MS Monitor] Recorder Expectation FAILED")
+                    .recipients(recipients)
+                    .message(Notify.messageFromTemplate(EXPECTATION_TEMPLATE_PATH, new HashMap<String, Object>() {{
+                        put("expectation", expectation);
+                        put("recorder", DB.getRecorder("id='" + expectation.getRecorder().getId() + "'")[0]);
+                        String www_url = Secret.getInstance().getSecret("www_url");
+                        if (www_url.endsWith("/")) www_url = www_url.substring(0, www_url.length() - 2);
+                        put("url_base", www_url);
+                        put("generated_on_date_footer", new Timestamp(new java.util.Date().getTime()).toString());
+                    }}))
+                    .build();
+            String confirmation = notification.send();
+            log.debug("Sent Notification Email - " + confirmation);
+            return confirmation;
+        } catch (IOException e) {
+            log.error("Problem making Expectation Alert Message", e);
+            log.info("Check Template - " + EXPECTATION_TEMPLATE_PATH);
+        } catch (EmailException e) {
+            log.error("Problem sending Expectation Alert Email", e);
+        }
+
+        return false;
     }
 }

@@ -4,7 +4,6 @@ import lombok.extern.log4j.Log4j;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import systems.whitestar.mediasite_monitor.Secret;
 
 import java.util.Map;
 import java.util.TreeMap;
