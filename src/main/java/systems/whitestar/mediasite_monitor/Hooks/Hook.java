@@ -31,7 +31,9 @@ public enum Hook {
     RECORDER_RECORD_UPDATE("onRecorderRecordUpdate"),
     RECORDER_STATUS_UPDATE("onRecorderStatusUpdate"),
     RECORDER_ALARM_ACTIVATE("onRecorderAlarmActivate"),
-    RECORDER_ALARM_CLEAR("onRecorderAlarmClear");
+    RECORDER_ALARM_CLEAR("onRecorderAlarmClear"),
+    EXPECTATION_CHECK_PASSED("onExpectationPass"),
+    EXPECTATION_CHECK_FAILED("onExpectationFail");
 
     private @Getter
     String name;

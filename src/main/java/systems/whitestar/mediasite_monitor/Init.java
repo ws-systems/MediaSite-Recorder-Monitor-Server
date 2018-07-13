@@ -7,8 +7,7 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.matchers.GroupMatcher;
 import systems.whitestar.mediasite_monitor.Models.Recorder;
-import systems.whitestar.mediasite_monitor.Jobs.SyncRecorderDB;
-import systems.whitestar.mediasite_monitor.Jobs.SyncRecorderStatus;
+import systems.whitestar.mediasite_monitor.Jobs.*;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -31,11 +30,12 @@ import java.util.Properties;
 @Log4j
 @WebListener
 public class Init implements ServletContextListener {
+    private static final int CLEANUP_FREQUENCY = 10;
 
     /**
      * Initialize the WebApp with the Default User if no users exist.
      * <p>
-     * Also, Start the DB Sync Job, as well as schedule Recorder Sync Jobs for the already existent recorders
+     * Also, Start the DB Sync Job, as well as schedule Recorder Sync Scheduler for the already existent recorders
      */
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -49,12 +49,15 @@ public class Init implements ServletContextListener {
             log.error("Problem Updating Preferences Table via Defaults", e);
         }
 
-        // Setup Sync Jobs
+        // Setup Sync Scheduler
         startSyncAgents();
+
+        // Schedule Cleanup Jobs
+        startCleanupJobs();
     }
 
     /**
-     * Stop All Scheduler Jobs and Shut Down the Scheduler
+     * Stop All Scheduler Scheduler and Shut Down the Scheduler
      * Deregister DB Driver to prevent memory leaks.
      */
     @Override
@@ -106,8 +109,10 @@ public class Init implements ServletContextListener {
         Properties properties = new Properties();
         properties.load(this.getClass().getClassLoader().getResourceAsStream("defaults.properties"));
 
+        Map<String, String> dbPreferences = DB.getPreferences();
+
         for (Map.Entry<Object, Object> preference : properties.entrySet()) {
-            if (DB.getPreference(String.valueOf(preference.getKey())) == null) {
+            if (!dbPreferences.containsKey(preference.getKey().toString())) {
                 log.info("No value in DB for " + String.valueOf(preference.getKey()) + "; Setting to Default Value of " + String.valueOf(preference.getValue()));
                 DB.setPreference(String.valueOf(preference.getKey()),
                         String.valueOf(preference.getValue()));
@@ -146,7 +151,7 @@ public class Init implements ServletContextListener {
                     throw new SchedulerException("Trigger Frequency not set");
                 }
             } else
-                log.warn("DB Sync has been DISABLED via Environment Variable (MS_SYNC_DISABLE)");
+                log.warn("Mediasite has been DISABLED via Environment Variable (MS_SYNC_DISABLE)");
         } catch (SchedulerException e) {
             log.error("Problem Scheduling DB Sync Job", e);
         }
@@ -171,12 +176,52 @@ public class Init implements ServletContextListener {
 
                 for (Recorder recorder : DB.getRecorder("")) {
                     log.info(String.format("Scheduling Sync for Recorder with ID %s ", recorder.getId()));
-                    new SyncRecorderStatus(recorder.getId()).schedule(scheduler, syncRate);
+                    SyncRecorderStatus.schedule(scheduler, syncRate, recorder.getId());
                 }
             } else
-                log.warn("Recorder Sync has been DISABLED via Environment Variable (MS_SYNC_DISABLE)");
+                log.warn("Mediasite Sync has been DISABLED via Environment Variable (MS_SYNC_DISABLE)");
         } catch (SchedulerException e) {
             log.error("Problem Scheduling Recorder Sync Job(s)", e);
+        }
+
+        try {
+            if (!(envDisable != null && envDisable.toUpperCase().equals("TRUE"))) {
+                if (Boolean.parseBoolean(DB.getPreference("expectation_checks.enable"))) {
+                    final String pullTime = DB.getPreference("expectation_checks.time");
+                    log.debug("Pull Time: " + pullTime);
+
+                    if (pullTime == null || pullTime.isEmpty()) {
+                        log.warn("Expectation Pull Time has not been set - aborting");
+                        throw new SchedulerException("Trigger Frequency not set");
+                    }
+
+                    String[] time = pullTime.split(":");
+                    ScheduleExpectationChecks.schedule(scheduler, Integer.parseInt(time[0]), Integer.parseInt(time[1]), true);
+                    log.info(String.format("Scheduled Expectation Schedule Pull for %s:%s", time[0], time[1]));
+                } else {
+                    log.info("Expectation checks have been disabled via the UI.");
+
+                    log.info("Pausing Schedule Recorder Expectation Check Trigger Group");
+                    log.debug("Trigger Group: " + ScheduleExpectationChecks.JOB_GROUP);
+                    scheduler.pauseTriggers(GroupMatcher.groupContains(ScheduleExpectationChecks.JOB_GROUP));
+
+                    log.info("Pausing Recorder Expectation Check Trigger Group");
+                    log.debug("Trigger Group: " + RecorderExpectationCheck.JOB_GROUP);
+                    scheduler.pauseTriggers(GroupMatcher.groupContains(RecorderExpectationCheck.JOB_GROUP));
+                }
+            } else
+                log.warn("Mediasite Sync has been DISABLED via Environment Variable (MS_SYNC_DISABLE)");
+        } catch (SchedulerException e) {
+            log.error("Problem Scheduling Schedule Pull Job", e);
+        }
+    }
+
+    private void startCleanupJobs() {
+        try {
+            CleanupAgents.schedule(Schedule.getScheduler(), CLEANUP_FREQUENCY);
+            CleanupAgentJobs.schedule(Schedule.getScheduler(), CLEANUP_FREQUENCY);
+        } catch (SchedulerException e) {
+            log.error("Problem scheduling cleanup jobs", e);
         }
     }
 }

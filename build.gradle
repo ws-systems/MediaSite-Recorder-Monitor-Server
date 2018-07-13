@@ -2,37 +2,50 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 plugins {
-    id 'io.franzbecker.gradle-lombok' version '1.8'
+    id 'com.moowork.node' version '1.2.0'
+    id 'com.moowork.gulp' version '1.2.0'
+    id 'java'
+    id 'war'
 }
 
 group 'systems.whitestar'
-version '1.0'
+version '2.1'
+
 final def versionCode = "${project.version}"
 final def buildCode = "${buildNumber()}"
-
-apply plugin: 'java'
-apply plugin: 'war'
-
-
-repositories {
-    mavenCentral()
-    jcenter()
-
-    maven {
-        url 'https://oss.sonatype.org/content/repositories/snapshots'
-    }
-
-}
+sourceCompatibility = 1.8
 
 war {
     archiveName 'ms-monitor.war'
 }
 
-lombok {
-    sha256 = "" // skip verify Lombok task
+gulp {
+    // Set the directory where gulpfile.js should be found
+    workDir = file("${project.projectDir}/src/main/webapp")
+
+    // Whether colors should output on the terminal
+    colors = true
+
+    // Whether output from Gulp should be buffered - useful when running tasks in parallel
+    bufferOutput = false
+}
+
+node {
+    workDir = file("${project.projectDir}/src/main/webapp/")
+    nodeModulesDir = file("${project.projectDir}/src/main/webapp/")
+    npmWorkDir = file("${project.buildDir}/npm")
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
 }
 
 dependencies {
+    // Lombok
+    compile 'org.projectlombok:lombok:1.18.0'
+    annotationProcessor 'org.projectlombok:lombok:1.18.0'
+
     // Logging
     compile group: 'log4j', name: 'log4j', version: '1.2.17'
     compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
@@ -45,8 +58,9 @@ dependencies {
     providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
 
     // DB
-    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.43'
-    compile group: 'org.hibernate', name: 'hibernate-core', version: '5.2.10.Final'
+    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.46'
+    compile group: 'org.postgresql', name: 'postgresql', version: '42.2.2'
+    compile group: 'org.hibernate', name: 'hibernate-core', version: '5.3.1.Final'
 
     // Web Requests (Outbound)
     compile group: 'com.google.code.gson', name: 'gson', version: '2.8.1'
@@ -64,27 +78,22 @@ dependencies {
     // Email and Reporting
     compile group: 'org.apache.commons', name: 'commons-email', version: '1.4'
 
-    // AWS Services
-    compile group: 'com.amazonaws', name: 'aws-java-sdk-sns', version: '1.11.233'
-
     // Login
-    compile group: 'org.pac4j', name: 'pac4j-core', version: '2.1.1-SNAPSHOT'
-    compile group: 'org.pac4j', name: 'jax-rs-pac4j', version: '2.1.1-SNAPSHOT'
-    compile group: 'org.pac4j', name: 'j2e-pac4j', version: '2.1.1-SNAPSHOT'
-    compile group: 'org.pac4j', name: 'pac4j-oidc', version: '2.1.1-SNAPSHOT'
+    compile group: 'org.pac4j', name: 'pac4j-core', version: '2.2.0'
+    compile group: 'org.pac4j', name: 'pac4j-http', version: '2.2.0'
+    compile group: 'org.pac4j', name: 'pac4j-oidc', version: '2.2.0'
+    compile group: 'org.pac4j', name: 'jersey-pac4j', version: '2.2.0'
+    compile group: 'org.pac4j', name: 'jax-rs-pac4j', version: '2.2.0'
 
     // Scheduler
-    compile group: 'org.quartz-scheduler', name: 'quartz', version: '2.2.3'
-
-    // Password Hashing
-    compile group: 'org.jasypt', name: 'jasypt', version: '1.9.2'
+    compile group: 'org.quartz-scheduler', name: 'quartz', version: '2.3.0'
 
     // Commons
     compile group: 'commons-io', name: 'commons-io', version: '2.5'
     compile group: 'com.google.guava', name: 'guava', version: '22.0'
 
     // Unit Tests
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
 static def buildNumber() {
@@ -107,11 +116,19 @@ def makeBuildInfoFile(versionCode, buildCode) {
     config.store(new FileOutputStream(configFile), null)
 }
 
-clean.doLast {
+clean.doFirst {
+    // Delete Generated Assets
+    delete "${project.projectDir}/src/main/webapp/assets"
+
     // Delete Build Info File
-    new File('src/main/resources/build_info.properties').delete()
+    delete "${project.projectDir}/src/main/resources/build_info.properties"
 }
 
 processResources.doFirst {
     makeBuildInfoFile(versionCode, buildCode)
 }
+
+installGulp.dependsOn npm_install
+installGulp.dependsOn npm_update
+gulp_build.dependsOn installGulp
+compileJava.dependsOn gulp_build

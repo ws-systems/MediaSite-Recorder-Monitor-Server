@@ -2,6 +2,8 @@ package systems.whitestar.mediasite_monitor.API;
 
 import com.google.gson.Gson;
 import lombok.extern.log4j.Log4j;
+import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.jax.rs.annotations.Pac4JProfile;
 import org.pac4j.jax.rs.annotations.Pac4JSecurity;
 import systems.whitestar.mediasite_monitor.Models.Preference;
 import systems.whitestar.mediasite_monitor.Models.SimpleMessage;
@@ -17,18 +19,17 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
 
-import static systems.whitestar.mediasite_monitor.API.Session.getSessionProfile;
-
 /**
  * API Endpoints associated with External Integrations, like Mediasite and Email.
  * Used to modify the settings for these services, like access credentials, etc.
+ *
  *
  * @author Tom Paulus
  * Created on 8/1/17.
  */
 @Log4j
 @Path("integrations")
-@Pac4JSecurity(authorizers = "isAuthenticated")
+@Pac4JSecurity(authorizers = "admin")
 public class Integrations {
     @Context
     private HttpServletRequest request;
@@ -36,7 +37,8 @@ public class Integrations {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateSetting(final String payload) {
+    public Response updateSetting(@Pac4JProfile CommonProfile profile,
+                                  final String payload) {
         if (payload == null || payload.isEmpty())
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new SimpleMessage("Error",
@@ -61,7 +63,7 @@ public class Integrations {
             if (!current.equals(preference.getValue())) {
                 // Setting has been modified
                 log.warn(String.format("User \"%s\" is updating the setting with name \"%s\"from \"%s\" to \"%s\"",
-                        getSessionProfile(request).getAttribute("name"),
+                        profile.getAttribute("name"),
                         preference.getSetting(),
                         current,
                         preference.getValue()));

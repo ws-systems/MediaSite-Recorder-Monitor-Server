@@ -1,9 +1,12 @@
 # MediaSite-Recorder-Monitor
+![Build Status](https://build.whitestar.systems/app/rest/builds/buildType:MSMON_ServerBuild/statusIcon.svg)
+
 TODO: Documentation and GitBook for Setup
 TODO: JDoc for various Classes and Methods as needed.
 
 Mediasite Docs: [mediasite.sdsu.edu/mediasite/api/v1/$metadata](http://mediasite.sdsu.edu/mediasite/api/v1/$metadata)
 
+Auth Docs: https://github.com/pac4j/jax-rs-pac4j
 
 ### DDL
 ```sql

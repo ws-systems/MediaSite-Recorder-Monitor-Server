@@ -1,0 +1,75 @@
+body {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #eee;
+}
+
+div {
+  &.logo {
+    display: inline-block;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 2rem;
+    padding-top: 3rem;
+  }
+  &.login-container {
+    text-align: center;
+  }
+}
+
+.logo {
+  span {
+    margin-top: auto;
+    margin-bottom: auto;
+    vertical-align: middle;
+  }
+  hr {
+    margin-top: .75rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.3);
+  }
+  span.appName {
+    font-weight: 300;
+    font-size: 2.25rem;
+  }
+  img {
+    margin: auto;
+    width: 225px;
+  }
+}
+
+div.alert {
+  max-width: 330px;
+  margin: auto;
+}
+
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+  .form-signin-heading {
+    text-align: left;
+    margin-bottom: 10px;
+  }
+  .checkbox {
+    margin-bottom: 10px;
+  }
+  .form-control {
+    position: relative;
+    height: auto;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 10px;
+    font-size: 16px;
+    &:focus {
+      z-index: 2;
+    }
+  }
+  input[type="password"] {
+    margin-bottom: 10px;
+  }
+  button[type="submit"] {
+    color: #fff;
+    background-color: #C41230;
+    border-color: #C41230;
+  }
+}

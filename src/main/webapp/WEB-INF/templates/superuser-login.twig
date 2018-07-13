@@ -1,0 +1,63 @@
+{% embed "header.twig" %}
+    {% block page_assets %}
+        <link rel="stylesheet" href="/assets/css/login.css">
+    {% endblock %}
+{% endembed %}
+
+<div class="container login-container">
+    <div class="logo">
+        <a href="https://whitestar.systems" target="_blank">
+            <img src="/assets/images/logo.png">
+        </a>
+        <hr>
+        <span class="appName">Super User Login</span>
+    </div>
+
+    <noscript>
+        <div class="alert alert-danger" role="alert" id="noScriptAlert">You do not have JavaScript Enabled! Checkout
+            will not work properly with out it.
+            <br>
+            Here are the <a class="alert-link"
+                            href="http://www.enable-javascript.com/"
+                            target="_blank">
+                instructions how to enable JavaScript in your web browser</a>.
+        </div>
+    </noscript>
+
+    {% if login_status == 'error' %}
+        <div class="alert alert-info" role="alert" id="loginErrorAlert">
+            Something went wrong trying to log you in!
+            Trying again may or may not fix the issue. ¯\_(ツ)_/¯
+        </div>
+    {% elseif login_status == 'logged out' %}
+        <div class="alert alert-info" role="alert" id="logoutAlert">
+            You have been logged out. See you again soon!
+        </div>
+    {% endif %}
+
+    <form class="form-signin" method="POST" action="{{ post_url }}" name="loginForm">
+        <h2 class="form-signin-heading">Please sign in</h2>
+        <div class="form-group {% if login_status == 'failed' %}has-danger{% endif %}">
+            <input type="hidden" name="username" value="superuser" />
+            <label for="inputPassword"
+                   class="sr-only">Password</label>
+            <input type="password"
+                   name="password"
+                   id="inputPassword"
+                   class="form-control"
+                   placeholder="Password"
+                   title="Password"
+                   required>
+            {% if login_status == 'failed' %}
+                <div class="form-control-feedback">Incorrect Password</div>
+            {% endif %}
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    </form>
+</div>
+
+{% include "footer.twig" with {"hidden": "true"} %}
+
+{# TODO Fix Submit Button Coloring #}
+{# TODO Change Wording #}
+{# TODO Include Password Save Path #}

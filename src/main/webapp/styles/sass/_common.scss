@@ -1,0 +1,154 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  /* NAV BAR*/
+  padding-top: 6rem;
+  /* Margin bottom by footer height */
+  margin-bottom: 40px;
+}
+
+li.nav-item {
+  padding-left: .5em;
+  padding-right: .5em;
+}
+
+body > div.container {
+  margin-bottom: 4rem;
+}
+
+.navbar-default {
+  .navbar-brand {
+    font-weight: 700;
+    color: black;
+    &:focus, &:hover {
+      font-weight: 700;
+      color: black;
+    }
+  }
+  .navbar-nav > {
+    li > a {
+      color: #555;
+    }
+    .active > a {
+      color: #333;
+      &:focus, &:hover {
+        color: #333;
+      }
+    }
+  }
+}
+
+.active.disabled {
+  color: #999 !important;
+}
+
+.disabled {
+  color: #999 !important;
+  &:focus, &:hover {
+    color: #999 !important;
+  }
+}
+
+@media (min-width: 992px) {
+  [aria-labelledby="userDropdownMenuLink"] {
+    margin-left: -75px;
+  }
+}
+
+/* Agent Status Icons */
+
+.agent-status {
+  .authorized.online {
+    color: #28a745;
+  }
+  .unauthorized {
+    &.online {
+      color: #dc3545;
+    }
+    &.offline {
+      color: #868e96;
+    }
+  }
+  .authorized.offline {
+    color: #868e96;
+  }
+}
+
+/* Sorting and related Icons */
+
+#sorttable_sortfwdind, #sorttable_sortrevind {
+  padding-left: 5px;
+}
+
+/* Page Header Styles */
+
+div.header {
+  border-bottom: 0.25px solid rgba(0, 0, 0, 0.25);
+}
+
+/* General Table Styles */
+
+.table th {
+  border-top: none;
+}
+
+/* Footer Styles*/
+
+.footer {
+  position: absolute;
+  bottom: .5rem;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 40px;
+  line-height: 35px;
+  /* Vertically center the text there */
+  font-size: .75rem;
+  .container {
+    border-top: solid #E0E0E0 1px;
+    color: #666666;
+    cursor: default;
+    a {
+      text-decoration: none;
+      color: inherit;
+      cursor: default;
+    }
+  }
+  &.container a:hover {
+    text-decoration: none;
+    color: inherit;
+    cursor: default;
+  }
+}
+
+footer.footer a {
+  &:not(.icon):hover, &:visited:not(.icon):hover {
+    border-bottom-color: #1166BB;
+  }
+  &:not(.icon), &:visited:not(.icon) {
+    border-bottom: 1px solid #d3d6db;
+  }
+  &:hover {
+    color: #222324;
+  }
+  &:visited {
+    &:hover {
+      color: #222324;
+    }
+    color: #69707a;
+  }
+  color: #69707a;
+}
+
+/* Modal Styles */
+
+.modal form {
+  label.col-form-label {
+    font-weight: 600;
+  }
+  input.form-control-plaintext {
+    width: 100%;
+  }
+}

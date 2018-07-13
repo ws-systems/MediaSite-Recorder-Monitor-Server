@@ -1,10 +1,11 @@
 package systems.whitestar.mediasite_monitor.Hooks;
 
 
+import lombok.extern.log4j.Log4j;
 import systems.whitestar.mediasite_monitor.API.BroadcastEvent;
 import systems.whitestar.mediasite_monitor.Models.Recorder;
+import systems.whitestar.mediasite_monitor.Models.RecorderExpectation;
 import systems.whitestar.mediasite_monitor.Models.User;
-import lombok.extern.log4j.Log4j;
 
 /**
  * Broadcast Events to Clients subscribed via Server Side Events.
@@ -62,5 +63,15 @@ public class BroadcastHook extends EventHook {
         event.broadcast();
 
         return true;
+    }
+
+    Object onExpectationPass(RecorderExpectation expectation) {
+        // Intentionally Blank
+        return null;
+    }
+
+    Object onExpectationFail(RecorderExpectation expectation) {
+        // Intentionally Blank
+        return null;
     }
 }

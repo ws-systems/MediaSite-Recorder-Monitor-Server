@@ -11,8 +11,8 @@
     <div class="row">
         <div class="col-7 mx-auto mt-3">
             <div class="alert alert-info" role="alert">
-                <strong><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp; By the way&hellip;</strong>
-                Changes to the Mediasite Credentials will take into affect after all agents have been restarted. Until
+                <strong><i class="fas fa-info-circle" aria-hidden="true"></i>&nbsp; By the way&hellip;</strong>
+                Changes to the Mediasite Credentials will go into affect after all agents have been restarted. Until
                 then each agent will use their respective copy of the previous configuration.
             </div>
 
@@ -98,8 +98,8 @@
                                 title="SMTP Use SSL"
                                 id="email.ssl"
                                 required>
-                            <option value="true" {% if(email_ssl) %}selected{% endif %}>True</option>
-                            <option value="false" {% if(not(email_ssl)) %}selected{% endif %}>False</option>
+                            <option value="true" {% if(email_ssl) %}selected{% endif %}>Enabled</option>
+                            <option value="false" {% if(not(email_ssl)) %}selected{% endif %}>Disabled</option>
                         </select>
                     </div>
                 </div>
@@ -149,6 +149,33 @@
                     </div>
                 </div>
 
+                {# SLACK Settings #}
+                <h2 class="mb-2">Slack</h2>
+                <div class="form-group row">
+                    <label for="slack.enable"
+                           class="col-sm-3 col-form-label">Enable: </label>
+                    <div class="col-sm-9">
+                        <select class="form-control mutable-setting"
+                                title="Enable Slack Webhooks"
+                                id="slack.enable"
+                                required>
+                            <option value="true" {% if(slack_enable) %}selected{% endif %}>Yes</option>
+                            <option value="false" {% if(not(slack_enable)) %}selected{% endif %}>No</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="slack.webhook_url"
+                           class="col-sm-3 col-form-label">Webhook URL: </label>
+                    <div class="col-sm-9">
+                        <input class="form-control mutable-setting"
+                               title="Webhook URL"
+                               type="url"
+                               id="slack.webhook_url"
+                               value="{{ slack_webhook_url }}">
+                    </div>
+                </div>
+
                 {#SUBMIT/RESET Buttons#}
                 <div class="row justify-content-between mt-5">
                     <div class="col mx-auto">
@@ -170,9 +197,7 @@
 
 {% embed "footer.twig" %}
     {% block page_assets %}
-        <script src="/assets/lib/loadingoverlay.min.js"
+        <script src="/assets/js/loadingoverlay.min.js"
                 type="application/javascript"></script>
-        <script src="/assets/js/manage-integrations.js"
-                type="text/javascript"></script>
     {% endblock %}
 {% endembed %}

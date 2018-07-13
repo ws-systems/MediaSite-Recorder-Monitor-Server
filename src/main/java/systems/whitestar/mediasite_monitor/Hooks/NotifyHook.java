@@ -1,11 +1,13 @@
 package systems.whitestar.mediasite_monitor.Hooks;
 
-import systems.whitestar.mediasite_monitor.Models.Recorder;
-import systems.whitestar.mediasite_monitor.Models.User;
-import systems.whitestar.mediasite_monitor.DB;
-import systems.whitestar.mediasite_monitor.Notify;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.mail.EmailException;
+import systems.whitestar.mediasite_monitor.DB;
+import systems.whitestar.mediasite_monitor.Models.Recorder;
+import systems.whitestar.mediasite_monitor.Models.RecorderExpectation;
+import systems.whitestar.mediasite_monitor.Models.User;
+import systems.whitestar.mediasite_monitor.Notify;
+import systems.whitestar.mediasite_monitor.Secret;
 
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -13,11 +15,10 @@ import java.util.HashMap;
 
 /**
  * @author Tom Paulus
- *         Created on 7/21/17.
+ * Created on 7/21/17.
  */
 @SuppressWarnings("unused")
-@Log4j
-class NotifyHook extends EventHook {
+@Log4j class NotifyHook extends EventHook {
     private static final String ALERT_TEMPLATE_PATH = "email_templates/recorder_in_alarm.twig";
 
     Object onRecorderAlarmActivate(Recorder recorder) {
@@ -37,7 +38,9 @@ class NotifyHook extends EventHook {
                     .recipients(recipients)
                     .message(Notify.messageFromTemplate(ALERT_TEMPLATE_PATH, new HashMap<String, Object>() {{
                         put("recorder", DB.getRecorder("id='" + recorder.getId() + "'")[0]);
-                        put("url_base", "http://example.com"); // TODO Add to Vault - shouldn't end with '/'
+                        String www_url = Secret.getInstance().getSecret("www_url");
+                        if (www_url.endsWith("/")) www_url = www_url.substring(0, www_url.length() - 2);
+                        put("url_base", www_url);
                         put("generated_on_date_footer", new Timestamp(new java.util.Date().getTime()).toString());
                     }}))
                     .build();
@@ -54,27 +57,37 @@ class NotifyHook extends EventHook {
         return false;
     }
 
-    @Override Object onRecorderAlarmClear(Recorder recorder) {
+    Object onRecorderAlarmClear(Recorder recorder) {
         // Intentionally Blank
         return null;
     }
 
-    @Override Object onUserCreate(User user) {
+    Object onUserCreate(User user) {
         // Intentionally Blank
         return null;
     }
 
-    @Override Object onUserUpdate(User user) {
+    Object onUserUpdate(User user) {
         // Intentionally Blank
         return null;
     }
 
-    @Override Object onRecorderRecordUpdate(Recorder[] recorders) {
+    Object onRecorderRecordUpdate(Recorder[] recorders) {
         // Intentionally Blank
         return null;
     }
 
-    @Override Object onRecorderStatusUpdate(Recorder recorder) {
+    Object onRecorderStatusUpdate(Recorder recorder) {
+        // Intentionally Blank
+        return null;
+    }
+
+    Object onExpectationPass(RecorderExpectation expectation) {
+        // Intentionally Blank
+        return null;
+    }
+
+    Object onExpectationFail(RecorderExpectation expectation) {
         // Intentionally Blank
         return null;
     }

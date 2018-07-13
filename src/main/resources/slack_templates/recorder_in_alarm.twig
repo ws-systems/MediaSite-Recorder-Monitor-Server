@@ -1,0 +1,29 @@
+{
+"attachments": [
+{
+"fallback": "Recorder {{ recorder.Name }} is in status {{ recorder.status.stateString }}.",
+"color": "#dc3545",
+"title": "Recorder in Alarm",
+"text": "A Recorder has either failed to respond to a status request, or has returned a status indicating the recorder is out-of service. Action is required as soon as possible!",
+"fields": [
+{
+"title": "Name",
+"value": "{{ recorder.Name }}",
+"short": true
+},
+{
+"title": "Status",
+"value": "{{ recorder.status.stateString }}",
+"short": true
+},
+{
+"title": "Last Seen",
+"value": "{{ recorder.lastSeen }}",
+"short": false
+}
+],
+"footer": "MS Recorder Monitor",
+"ts": {{ generated_ts }}
+}
+]
+}

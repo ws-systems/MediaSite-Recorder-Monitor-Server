@@ -2,13 +2,13 @@ package systems.whitestar.mediasite_monitor;
 
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
-import systems.whitestar.mediasite_monitor.Models.Preference;
-import systems.whitestar.mediasite_monitor.Models.Recorder;
-import systems.whitestar.mediasite_monitor.Models.User;
-import systems.whitestar.mediasite_monitor.Models.Agent;
+import systems.whitestar.mediasite_monitor.Models.*;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -26,6 +26,17 @@ public class DB {
         props.setProperty("javax.persistence.jdbc.url", Secret.getInstance().getSecret("db-url"));
         props.setProperty("javax.persistence.jdbc.user", Secret.getInstance().getSecret("db-user"));
         props.setProperty("javax.persistence.jdbc.password", Secret.getInstance().getSecret("db-password"));
+
+        if (props.getProperty("javax.persistence.jdbc.url").startsWith("jdbc:mysql:")) {
+            log.info("Using MySQL DB Driver");
+            props.setProperty("javax.persistence.jdbc.driver", "com.mysql.jdbc.Driver");
+        } else if (props.getProperty("javax.persistence.jdbc.url").startsWith("jdbc:postgresql:")) {
+            log.info("Using PostgreSQL DB Driver");
+            props.setProperty("javax.persistence.jdbc.driver", "org.postgresql.Driver");
+        } else {
+            log.fatal("Unsupported DB Type");
+            throw new RuntimeException("Unsupported DB Type");
+        }
 
         try {
             sessionFactory = Persistence.createEntityManagerFactory("systems.whitestar.mediasite_monitor.jpa", props);
@@ -48,6 +59,12 @@ public class DB {
         return sessionFactory;
     }
 
+    /**
+     * Get a given preference by name
+     *
+     * @param name {@link String} Preference Name
+     * @return {@link String} Preference Value
+     */
     public static String getPreference(final String name) {
         try {
             EntityManager entityManager = sessionFactory.createEntityManager();
@@ -67,6 +84,39 @@ public class DB {
         return null;
     }
 
+    /**
+     * Get all preferences saved in the DB.
+     * This should not be directly delivered to the client, as it may contain sensitive information (like passwords).
+     *
+     * @return {@link Map}
+     */
+    public static Map<String, String> getPreferences() {
+        Map<String, String> preferenceMap = new HashMap<>();
+
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+
+        List<Preference> preferences = entityManager.createQuery("select p from Preference p").getResultList();
+        log.debug(String.format("Retrieved %d preferences", preferences.size()));
+        log.debug(preferences);
+
+        for (Preference preference : preferences) {
+            preferenceMap.put(preference.getSetting(), preference.getValue());
+        }
+
+        entityManager.getTransaction().commit();
+        entityManager.close();
+
+        return preferenceMap;
+    }
+
+    /**
+     * Set/update a given preference value. If a preference with that name already exists, the value is updated; else
+     * a preference with that value is created.
+     *
+     * @param name  {@link String} Preference Name
+     * @param value {@link String} Preference Value
+     */
     public static void setPreference(final String name, final String value) {
         final Preference preference = new Preference(name, value);
 
@@ -124,7 +174,7 @@ public class DB {
         entityManager.getTransaction().commit();
         entityManager.close();
 
-        return users.toArray(new User[users.size()]);
+        return users.toArray(new User[0]);
     }
 
     /**
@@ -157,7 +207,7 @@ public class DB {
         entityManager.getTransaction().commit();
         entityManager.close();
 
-        return recorders.toArray(new Recorder[recorders.size()]);
+        return recorders.toArray(new Recorder[0]);
     }
 
     /**
@@ -189,7 +239,7 @@ public class DB {
         entityManager.getTransaction().commit();
         entityManager.close();
 
-        return agents.toArray(new Agent[agents.size()]);
+        return agents.toArray(new Agent[0]);
     }
 
     /**
@@ -219,5 +269,87 @@ public class DB {
         entityManager.close();
     }
 
+    public static AgentJob getNewAgentJob(Agent agent) {
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        entityManager.getTransaction().begin();
 
+        List<AgentJob> jobs = entityManager.createQuery("select j from AgentJob j WHERE j.status = " + AgentJob.AgentJobStatus.CREATED.getStatus() + " order by j.priority desc").getResultList();
+        entityManager.getTransaction().commit();
+        entityManager.close();
+
+        for (AgentJob job : jobs) {
+            if (job.filter(agent)) return job;
+        }
+
+        return null;
+    }
+
+    public static AgentJob getAgentJob(final String jobID) {
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+
+        AgentJob job = (AgentJob) entityManager.createQuery("select j from AgentJob j WHERE j.id = '" + jobID + "'").getSingleResult();
+        entityManager.getTransaction().commit();
+        entityManager.close();
+
+        return job;
+    }
+
+    public static AgentJob[] getAgentJobs(final String restriction) {
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+
+        List<AgentJob> jobs = entityManager.createQuery("select j from AgentJob j " + (restriction != null && !restriction.isEmpty() ? " where " + restriction : "")).getResultList();
+        log.debug(String.format("Found %d AgentJobs in DB that match restriction \"%s\"", jobs.size(), restriction));
+
+        entityManager.getTransaction().commit();
+        entityManager.close();
+
+        return jobs.toArray(new AgentJob[0]);
+    }
+
+    public static long getAgentJobCount() {
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+
+        long jobCount = ((long) entityManager.createQuery("select count(j.id) from AgentJob j").getSingleResult());
+        log.debug(String.format("Found %d AgentJobs in DB", jobCount));
+
+        entityManager.getTransaction().commit();
+        entityManager.close();
+
+        return jobCount;
+    }
+
+    public static void updateAgentJob(final AgentJob job) {
+        // Set job updated time to NOW
+        job.setUpdated(new Timestamp(System.currentTimeMillis()));
+
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+        entityManager.persist(entityManager.contains(job) ? job : entityManager.merge(job));
+        entityManager.getTransaction().commit();
+        entityManager.close();
+    }
+
+    public static void deleteAgentJob(final AgentJob job) {
+        log.warn(String.format("Deleting Job with ID: %s", job.getId()));
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+        entityManager.remove(entityManager.contains(job) ? job : entityManager.merge(job));
+        entityManager.getTransaction().commit();
+        entityManager.close();
+    }
+
+    public static void clearAgentJobQueue() {
+        EntityManager entityManager = sessionFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+        List<AgentJob> jobs = entityManager.createQuery("select j from AgentJob j").getResultList();
+        for (AgentJob job : jobs) {
+            entityManager.remove(job);
+        }
+
+        entityManager.getTransaction().commit();
+        entityManager.close();
+    }
 }
