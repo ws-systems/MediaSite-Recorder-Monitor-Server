@@ -28,12 +28,13 @@ import java.util.Map;
 @Singleton
 @Log4j
 public class Secret {
-    static Vault vault = null;
+    private static Vault vault = null;
     private static Secret secret = null;
     private String mVaultAddr;
     private String mRoleId;
     private String mSecretId;
     private String mAppName;
+    private VaultConfig vaultConfig;
 
     Secret() throws VaultException {
         mVaultAddr = System.getenv("VAULT_ADDR");
@@ -99,6 +100,10 @@ public class Secret {
      * @return {@link T} Secret Value
      */
     public <T> T getSecret(String appName, String secretName, Class<T> type) {
+        return getSecret(appName, secretName, type, true);
+    }
+
+    private <T> T getSecret(String appName, String secretName, Class<T> type, boolean retry) {
         try {
             String response = vault.logical()
                     .read("secret/" + appName)
@@ -112,8 +117,25 @@ public class Secret {
             }
 
         } catch (VaultException e) {
-            log.error(String.format("Secret with name \"%s\" in app \"%s\" is not defined", secretName, appName));
-            throw new RuntimeException(e);
+            if (e.getHttpStatusCode() == 403) {
+                log.info("Vault Token may be expired, or the Role permissions don't allow for us to access this option.");
+                try {
+                    authenticate();
+                } catch (VaultException e1) {
+                    log.error("Could not authenticate with the vault", e1);
+                    throw new RuntimeException(e1);
+                }
+
+                if (retry) {
+                    return getSecret(appName, secretName, type, false);
+                } else {
+                    throw new RuntimeException(e);
+                }
+
+            } else {
+                log.error(String.format("Secret with name \"%s\" in app \"%s\" is not defined", secretName, appName));
+                throw new RuntimeException(e);
+            }
         }
 
     }
@@ -199,12 +221,16 @@ public class Secret {
     }
 
     private void initializeVaultConnector() throws VaultException {
-        final VaultConfig vaultConfig = new VaultConfig()
+        vaultConfig = new VaultConfig()
                 .address(mVaultAddr)
                 .build();
 
         vault = new Vault(vaultConfig);
 
+        authenticate();
+    }
+
+    private void authenticate() throws VaultException {
         AuthResponse response = vault.auth().loginByAppRole("approle", mRoleId, mSecretId);
         vaultConfig.token(response.getAuthClientToken());
 
