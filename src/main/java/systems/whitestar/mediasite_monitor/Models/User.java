@@ -54,7 +54,7 @@ public class User {
     @Expose
     @Getter
     @Setter
-    @ColumnDefault("0")
+    @ColumnDefault("FALSE")
     Boolean admin;
 
     @Expose(serialize = false)
